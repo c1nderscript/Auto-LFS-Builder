@@ -12,4 +12,5 @@ Gaming on Linux from Scratch
 
 
 All in one application.
+Before running any build, run `scripts/validate_environment.sh` to ensure your environment is correctly configured.
 See [setup.md](setup.md) for environment configuration details.
