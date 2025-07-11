@@ -420,6 +420,7 @@ check_environment_health() {
 ```bash
 # Quick setup for desktop GNOME build
 source venv/bin/activate
+pip install -r requirements.txt
 export BUILD_PROFILE="desktop_gnome"
 export ENABLE_GNOME="true"
 export ENABLE_NETWORKING="true"
@@ -431,6 +432,7 @@ export PARALLEL_JOBS="$(nproc)"
 ```bash
 # Quick setup for a headless server build
 source venv/bin/activate
+pip install -r requirements.txt
 export BUILD_PROFILE="server"
 export ENABLE_GNOME="false"
 export ENABLE_NETWORKING="true"
@@ -442,6 +444,7 @@ export PARALLEL_JOBS="$(nproc)"
 ```bash
 # Quick setup including developer tools
 source venv/bin/activate
+pip install -r requirements.txt
 export BUILD_PROFILE="developer"
 export ENABLE_DEVELOPMENT_TOOLS="true"
 export ENABLE_NETWORKING="true"
