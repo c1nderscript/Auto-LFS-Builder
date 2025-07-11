@@ -5,6 +5,13 @@ PACKAGES_DIR="${PACKAGES_DIR:-packages}"
 BUILD_DIR="${BUILD_DIR:-build}"
 mkdir -p "$PACKAGES_DIR" "$BUILD_DIR"
 
+# Ensure required binaries are present
+check_binary_exists() {
+    local bin="$1"
+    local err_msg="$2"
+    command -v "$bin" >/dev/null 2>&1 || handle_error "$err_msg"
+}
+
 verify_checksum() {
     local file="$1"
     local checksum="$2"
