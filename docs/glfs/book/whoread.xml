@@ -1,0 +1,24 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE sect1 PUBLIC "-//OASIS//DTD DocBook XML V4.5//EN"
+   "http://www.oasis-open.org/docbook/xml/4.5/docbookx.dtd" [
+  <!ENTITY % general-entities SYSTEM "../general.ent">
+  %general-entities;
+]>
+
+<sect1 id="whoread" xreflabel="Who Would Want to Read this Book">
+  <?dbhtml filename="whoread.html"?>
+
+
+  <title>Who Would Want to Read this Book</title>
+
+  <para>
+    This book is aimed towards users who want to use a system following
+    the Linux From Scratch book but also want to use <application>Steam
+    </application> and/or <application>Wine</application>.
+    The official Linux From Scratch and Beyond Linux From Scratch books
+    do not support these two packages. However, users should still have
+    both the choice and an easy to follow guide to get these packages
+    working on their system.
+  </para>
+
+</sect1>

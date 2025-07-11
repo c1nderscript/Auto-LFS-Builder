@@ -1,0 +1,178 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE sect1 PUBLIC "-//OASIS//DTD DocBook XML V4.5//EN"
+   "http://www.oasis-open.org/docbook/xml/4.5/docbookx.dtd" [
+  <!ENTITY % general-entities SYSTEM "../../general.ent">
+  %general-entities;
+
+  <!ENTITY mlt-download-http "https://github.com/mltframework/mlt/releases/download/v&mlt-version;/mlt-&mlt-version;.tar.gz">
+  <!ENTITY mlt-download-ftp  " ">
+  <!ENTITY mlt-md5sum        "d8ade248452e023366f4a0e3d20612ca">
+  <!ENTITY mlt-size          "1.7 MB">
+  <!ENTITY mlt-buildsize     "30 MB">
+  <!ENTITY mlt-time          "0.1 SBU (Using parallelism=4)">
+]>
+
+<sect1 id="mlt" xreflabel="mlt-&mlt-version;">
+  <?dbhtml filename="mlt.html"?>
+
+
+  <title>mlt-&mlt-version;</title>
+
+  <indexterm zone="mlt">
+    <primary sortas="a-mlt">mlt</primary>
+  </indexterm>
+
+  <sect2 role="package">
+    <title>Introduction to mlt</title>
+
+    <para>
+      The <application>mlt</application> package is the Media Lovin Toolkit.
+      It is an open source multimedia framework, designed and developed for
+      television broadcasting. It provides a toolkit for broadcasters, video
+      editors, media players, transcoders, web streamers and many more types of
+      applications.
+    </para>
+
+    &lfs123_checked;
+
+    <bridgehead renderas="sect3">Package Information</bridgehead>
+    <itemizedlist spacing="compact">
+      <listitem>
+        <para>
+          Download (HTTP): <ulink url="&mlt-download-http;"/>
+        </para>
+      </listitem>
+      <listitem>
+        <para>
+          Download (FTP): <ulink url="&mlt-download-ftp;"/>
+        </para>
+      </listitem>
+      <listitem>
+        <para>
+          Download MD5 sum: &mlt-md5sum;
+        </para>
+      </listitem>
+      <listitem>
+        <para>
+          Download size: &mlt-size;
+        </para>
+      </listitem>
+      <listitem>
+        <para>
+          Estimated disk space required: &mlt-buildsize;
+        </para>
+      </listitem>
+      <listitem>
+        <para>
+          Estimated build time: &mlt-time;
+        </para>
+      </listitem>
+    </itemizedlist>
+
+    <bridgehead renderas="sect3">mlt Dependencies</bridgehead>
+
+    <bridgehead renderas="sect4">Required</bridgehead>
+    <para>
+      <xref linkend='frei0r'/> and
+      <xref linkend='qt6'/>
+    </para>
+
+    <bridgehead renderas="sect4">Optional</bridgehead>
+    <para>
+      <xref linkend='doxygen'/>,
+      <xref linkend='fftw'/>,
+      <xref linkend="libexif"/>,
+      <xref linkend="sdl2"/>,
+      <ulink url="https://jackaudio.org">JACK</ulink>,
+      <ulink url="https://www.ipswitch.com/moveit/">MOVEit</ulink>,
+      <ulink url="https://sox.sourceforge.net/">SoX</ulink>, and
+      <ulink url="http://public.hronopik.de/vid.stab/">vid.stab</ulink>
+
+    </para>
+
+
+  </sect2>
+
+  <sect2 role="installation">
+    <title>Installation of mlt</title>
+
+    <para>
+      Install <application>mlt</application> by running the following commands:
+    </para>
+
+<screen><userinput>mkdir build &amp;&amp;
+cd    build &amp;&amp;
+
+cmake -D CMAKE_INSTALL_PREFIX=/usr \
+      -D CMAKE_BUILD_TYPE=Release  \
+      -D MOD_QT=OFF                \
+      -D MOD_QT6=ON                \
+      -W no-dev .. &amp;&amp;
+make</userinput></screen>
+
+    <para>
+      This package does not come with a test suite. However a test .mp4
+      file can be played in a local graphical environment with
+      <command>./out/bin/melt &lt;filename&gt;.mp4</command>.
+    </para>
+
+    <note>
+      <para>
+        This application uses advanced graphical capabilities.  In
+        some cases, firmware for your specific graphics adaptor may be needed.
+        See <xref linkend="video-firmware"/> for more information.
+      </para>
+    </note>
+
+    <para>
+      Now, as the <systemitem class="username">root</systemitem> user:
+    </para>
+
+<screen role="root"><userinput>make install</userinput></screen>
+
+  </sect2>
+
+  <sect2 role="content">
+    <title>Contents</title>
+
+    <segmentedlist>
+      <segtitle>Installed Program</segtitle>
+      <segtitle>Installed Libraries</segtitle>
+      <segtitle>Installed Directories</segtitle>
+
+      <seglistitem>
+        <seg>melt-7 and
+             melt (symlink to melt-7)</seg>
+        <seg>libmlt-7.so,
+             libmlt++-7.so, and
+             over twenty plugins</seg>
+        <seg>/usr/include/mlt-7,
+             /usr/lib/mlt-7,
+             /usr/lib/cmake/Mlt7, and
+             /usr/share/mlt-7
+        </seg>
+      </seglistitem>
+    </segmentedlist>
+
+    <variablelist>
+      <bridgehead renderas="sect3">Short Descriptions</bridgehead>
+      <?dbfo list-presentation="list"?>
+      <?dbhtml list-presentation="table"?>
+
+      <varlistentry id="melt">
+        <term><command>melt</command></term>
+        <listitem>
+          <para>
+            is a test tool for mlt
+          </para>
+          <indexterm zone="mlt melt">
+            <primary sortas="b-melt">melt</primary>
+          </indexterm>
+        </listitem>
+      </varlistentry>
+
+    </variablelist>
+
+  </sect2>
+
+</sect1>

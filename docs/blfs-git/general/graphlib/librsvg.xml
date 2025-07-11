@@ -1,0 +1,238 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE sect1 PUBLIC "-//OASIS//DTD DocBook XML V4.5//EN"
+   "http://www.oasis-open.org/docbook/xml/4.5/docbookx.dtd" [
+  <!ENTITY % general-entities SYSTEM "../../general.ent">
+  %general-entities;
+
+  <!ENTITY librsvg-download-http "&gnome-download-http;/librsvg/&librsvg-minor;/librsvg-&librsvg-version;.tar.xz">
+  <!ENTITY librsvg-download-ftp  " ">
+  <!ENTITY librsvg-md5sum        "ba3320798fec656c58c849df030dd7d3">
+  <!ENTITY librsvg-size          "6.4 MB">
+  <!ENTITY librsvg-buildsize     "1.1 GB (17 MB installed), add 494 MB for tests">
+  <!ENTITY librsvg-time          "1.4 SBU (add 1.0 SBU for tests; both using parallelism=4)">
+]>
+
+<sect1 id="librsvg" xreflabel="librsvg-&librsvg-version;">
+  <?dbhtml filename="librsvg.html"?>
+
+
+  <title>librsvg-&librsvg-version;</title>
+
+  <indexterm zone="librsvg">
+    <primary sortas="a-librsvg">librsvg</primary>
+  </indexterm>
+
+  <sect2 role="package">
+    <title>Introduction to librsvg</title>
+
+    <para>
+      The <application>librsvg</application> package contains
+      a library and tools used to manipulate, convert and view
+      Scalable Vector Graphic (SVG) images.
+    </para>
+
+    &lfs123_checked;
+
+    <bridgehead renderas="sect3">Package Information</bridgehead>
+    <itemizedlist spacing="compact">
+      <listitem>
+        <para>
+          Download (HTTP): <ulink url="&librsvg-download-http;"/>
+        </para>
+      </listitem>
+      <listitem>
+        <para>
+          Download (FTP): <ulink url="&librsvg-download-ftp;"/>
+        </para>
+      </listitem>
+      <listitem>
+        <para>
+          Download MD5 sum: &librsvg-md5sum;
+        </para>
+      </listitem>
+      <listitem>
+        <para>
+          Download size: &librsvg-size;
+        </para>
+      </listitem>
+      <listitem>
+        <para>
+          Estimated disk space required: &librsvg-buildsize;
+        </para>
+      </listitem>
+      <listitem>
+        <para>
+          Estimated build time: &librsvg-time;
+        </para>
+      </listitem>
+    </itemizedlist>
+
+    <bridgehead renderas="sect3">librsvg Dependencies</bridgehead>
+
+    <bridgehead renderas="sect4">Required</bridgehead>
+    <para role="required">
+      <xref linkend="cairo"/>,
+      <xref linkend="cargo-c"/>,
+      <xref linkend="gdk-pixbuf"/>, and
+      <xref linkend="pango"/>
+    </para>
+
+    &build-use-internet;
+
+    <bridgehead renderas="sect4">Recommended</bridgehead>
+    <para role="recommended">
+      &gobject-introspection; and
+      <xref linkend="vala"/>
+    </para>
+
+    <bridgehead renderas="sect4">Optional</bridgehead>
+    <para role="optional">
+      <xref linkend="docutils"/> (for man pages),
+      <xref linkend="gi-docgen"/> (for documentation), and
+      <xref linkend="xorg7-font"/> (for tests)
+    </para>
+
+  </sect2>
+
+  <sect2 role="installation">
+    <title>Installation of librsvg</title>
+
+    <para>
+      First, fix the installation path of the API documentation:
+    </para>
+
+<screen><userinput>sed -e "/OUTDIR/s|,| / 'librsvg-&librsvg-version;', '--no-namespace-dir',|" \
+    -e '/output/s|Rsvg-2.0|librsvg-&librsvg-version;|'                      \
+    -i doc/meson.build</userinput></screen>
+
+    <para>
+      Install <application>librsvg</application> by running the following
+      commands:
+    </para>
+
+<screen><userinput>mkdir build &amp;&amp;
+cd    build &amp;&amp;
+
+meson setup --prefix=/usr --buildtype=release .. &amp;&amp;
+ninja</userinput></screen>
+
+    <!-- Be sure to unset GLIB_LOG_LEVEL.  If set, it interferes with the 
+         tests. 
+
+         With 2.59.1 one test of 5 fails. (I cannot see any failures here,
+         but using rustc-1.82.0.)
+     -->
+
+    <para>
+      To test the results, issue:
+    </para>
+
+    <screen remap='test'><userinput>ninja test</userinput></screen>
+
+    <para>
+      One test, Rust tests (rsvg), is known to fail.
+    </para>
+
+    <para>
+      Now, as the &root; user:
+    </para>
+
+<screen role="root"><userinput>ninja install</userinput></screen>
+<!--
+    <note>
+      <para>
+        If you installed the package on to your system using a
+        <quote>DESTDIR</quote> method, an important file was not installed and
+        should be copied and/or generated. Generate it using the following
+        command as the <systemitem class="username">root</systemitem> user:
+      </para>
+
+<screen role="root"><userinput>gdk-pixbuf-query-loaders - -update-cache</userinput></screen>
+    </note>
+-->
+
+  </sect2>
+<!-- Not currently used, but keeping commented just in case. -renodr
+  <sect2 role="commands">
+    <title>Command Explanations</title>
+
+    <para>
+      <command>cargo update - -precise=0.3.36 time</command>: This updates
+      the <filename>Cargo.lock</filename> file to refer to version 0.3.36
+      of the time crate for the test suite.  Originally it refers to
+      version 0.3.34, which fails to build with Rustc-1.80.0 or later.
+    </para>
+
+  </sect2>
+-->
+  <sect2 role="content">
+    <title>Contents</title>
+
+    <segmentedlist>
+      <segtitle>Installed Programs</segtitle>
+      <segtitle>Installed Library</segtitle>
+      <segtitle>Installed Directories</segtitle>
+
+      <seglistitem>
+        <seg>
+          rsvg-convert
+        </seg>
+        <seg>
+          librsvg-2.so and
+          libpixbufloader-svg.so (installed in /usr/lib/gdk-pixbuf-2.0/2.10.0/loaders)
+        </seg>
+        <seg>
+          /usr/include/librsvg-2.0 and
+          /usr/share/doc/librsvg-&librsvg-version;
+        </seg>
+      </seglistitem>
+    </segmentedlist>
+
+    <variablelist>
+      <bridgehead renderas="sect3">Short Descriptions</bridgehead>
+      <?dbfo list-presentation="list"?>
+      <?dbhtml list-presentation="table"?>
+
+      <varlistentry id="rsvg-convert">
+        <term><command>rsvg-convert</command></term>
+        <listitem>
+          <para>
+            is used to convert images into PNG, PDF, PS, SVG and other formats
+          </para>
+          <indexterm zone="librsvg rsvg-convert">
+            <primary sortas="b-rsvg-convert">rsvg-convert</primary>
+          </indexterm>
+        </listitem>
+      </varlistentry>
+
+      <varlistentry id="librsvg-2">
+        <term><filename class="libraryfile">librsvg-2.so</filename></term>
+        <listitem>
+          <para>
+            provides the functions to render Scalable Vector Graphics
+          </para>
+          <indexterm zone="librsvg librsvg-2">
+            <primary sortas="c-librsvg-2">librsvg-2.so</primary>
+          </indexterm>
+        </listitem>
+      </varlistentry>
+
+      <varlistentry id="libpixbufloader-svg">
+        <term><filename class="libraryfile">libpixbufloader-svg.so</filename></term>
+        <listitem>
+          <para>
+            is the <application>Gdk Pixbuf</application> plugin that allows
+            <application>GTK+</application> applications to render Scalable
+            Vector Graphics images
+          </para>
+          <indexterm zone="librsvg libpixbufloader-svg">
+            <primary sortas="c-libpixbufloader-svg">libpixbufloader-svg.so</primary>
+          </indexterm>
+        </listitem>
+      </varlistentry>
+
+    </variablelist>
+
+  </sect2>
+
+</sect1>

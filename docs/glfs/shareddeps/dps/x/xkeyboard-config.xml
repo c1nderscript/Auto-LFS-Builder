@@ -1,0 +1,124 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE sect1 PUBLIC "-//OASIS//DTD DocBook XML V4.5//EN"
+   "http://www.oasis-open.org/docbook/xml/4.5/docbookx.dtd" [
+  <!ENTITY % general-entities SYSTEM "../../../general.ent">
+  %general-entities;
+
+  <!ENTITY xkeyboard-config-download-http
+  "&xorg-download-http;/data/xkeyboard-config/xkeyboard-config-&xkeyboard-config-version;.tar.xz">
+  <!ENTITY xkeyboard-config-download-ftp  " ">
+]>
+
+<sect1 id="xkeyboard-config" xreflabel="xkeyboard-config-&xkeyboard-config-version;">
+  <?dbhtml filename="xkeyboard-config.html"?>
+
+  <title>XKeyboard-Config-&xkeyboard-config-version;</title>
+
+  <indexterm zone="xkeyboard-config">
+    <primary sortas="a-XKeyboard-Config">XKeyboard-Config</primary>
+  </indexterm>
+
+  <sect2 role="package">
+    <title>Introduction to XKeyboard-Config</title>
+
+    <para>
+      The <application>XKeyboard-Config</application> package contains
+      the keyboard configuration database for the X Window System.
+    </para>
+
+    <itemizedlist spacing="compact">
+      <listitem>
+        <para>
+          Download (HTTP): <ulink url="&xkeyboard-config-download-http;"/>
+        </para>
+      </listitem>
+      <listitem>
+        <para>
+          Download (FTP): <ulink url="&xkeyboard-config-download-ftp;"/>
+        </para>
+      </listitem>
+    </itemizedlist>
+
+    <bridgehead renderas="sect3">XKeyboard-Config Dependencies</bridgehead>
+
+    <bridgehead renderas="sect4">Required</bridgehead>
+    <para role="required">
+      <xref linkend="xorg7-lib"/>
+    </para>
+
+  </sect2>
+
+  <sect2 role="installation">
+    <title>Installation of XKeyboard-Config</title>
+
+    <para>
+      Install <application>XKeyboard-Config</application> by running the
+      following commands:
+    </para>
+
+<screen><userinput>mkdir build &amp;&amp;
+cd    build &amp;&amp;
+
+meson setup --prefix=/usr --buildtype=release .. &amp;&amp;
+
+ninja</userinput></screen>
+
+    <important><para>
+      If upgrading from version 2.44 or earlier, the installation will
+      fail if some files are not symbolic links.  To fix this, run as
+      the &root; user:
+    </para>
+<screen role="root"><userinput>if [ -d /usr/share/X11/xkb ]; then
+  rm -rf /usr/share/X11/xkb
+  rm -f  /usr/share/man/man7/xkeyboard-config.7
+  rm -f  /usr/share/pkgconfig/xkeyboard-config.pc
+fi</userinput></screen></important>
+
+    <para>
+      Now, as the &root; user:
+    </para>
+
+<screen role="root"><userinput>ninja install</userinput></screen>
+
+  </sect2>
+  <sect2 role="commands">
+    <title>Command Explanations</title>
+
+    &options-meson;
+
+    &meson-buildtype-release;
+
+<!-- the default for the xorg symlinks is false. So the change to
+     the symlink command is not needed. Note that those symlinks have
+     been deprecated since 2005...
+    <para>
+      <command>sed ... rules/meson.build</command>: Make sure
+      a symlink is created even if it already exists.
+    </para>
+    <para>
+      <parameter>- -with-xkb-rules-symlink=xorg</parameter>: By default, the
+      XKB rules installed are named "base". This creates symlinks named
+      "xorg" to those rules, which is the default name used by Xorg.
+    </para>
+-->
+
+  </sect2>
+
+  <sect2 role="content">
+    <title>Contents</title>
+
+    <segmentedlist>
+      <segtitle>Installed Programs</segtitle>
+      <segtitle>Installed Libraries</segtitle>
+      <segtitle>Installed Directory</segtitle>
+
+      <seglistitem>
+        <seg>None</seg>
+        <seg>None</seg>
+        <seg>/usr/share/X11/xkb</seg>
+      </seglistitem>
+    </segmentedlist>
+
+  </sect2>
+
+</sect1>

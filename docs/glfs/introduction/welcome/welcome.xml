@@ -1,0 +1,45 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE chapter PUBLIC "-//OASIS//DTD DocBook XML V4.5//EN"
+   "http://www.oasis-open.org/docbook/xml/4.5/docbookx.dtd" [
+  <!ENTITY % general-entities SYSTEM "../../general.ent">
+  %general-entities;
+]>
+
+<chapter id="welcome">
+  <?dbhtml filename="welcome.html"?>
+
+  <title>Welcome to GLFS</title>
+
+  <para>
+    The GLFS book is designed to be taken in optional chunks
+    and cover most setups users might be using. It is different
+    from both LFS and BLFS in that LFS is meant to be followed
+    almost command by command unless otherwise told so, and BLFS
+    has packages scattered throughout in chapters, only certain
+    ones meant to be followed through, such as
+    <application>Xorg</application>.
+  </para>
+
+  <para>
+    Please read <xref linkend="whichsections"/> for more
+    information regarding that. Along with that, please read most
+    of this section carefully as it explains important conventions
+    to help you if you were to get lost or stuck.
+  </para>
+
+<!--  <xi:include xmlns:xi="http://www.w3.org/2001/XInclude" href="acknowledgments.xml"/> -->
+  <xi:include xmlns:xi="http://www.w3.org/2001/XInclude" href="which.xml"/>
+  <xi:include xmlns:xi="http://www.w3.org/2001/XInclude" href="conventions.xml"/>
+  <xi:include xmlns:xi="http://www.w3.org/2001/XInclude" href="packages.xml"/>
+  <xi:include xmlns:xi="http://www.w3.org/2001/XInclude" href="rationale.xml"/>
+  <xi:include xmlns:xi="http://www.w3.org/2001/XInclude" href="sa.xml"/>
+  <xi:include xmlns:xi="http://www.w3.org/2001/XInclude" href="changelog.xml"/>
+  <!--   <xi:include xmlns:xi="http://www.w3.org/2001/XInclude" href="newsserver.xml"/> -->
+  <xi:include xmlns:xi="http://www.w3.org/2001/XInclude" href="askhelp.xml"/>
+  <xi:include xmlns:xi="http://www.w3.org/2001/XInclude" href="artwork.xml"/>
+  <xi:include xmlns:xi="http://www.w3.org/2001/XInclude" href="credits.xml"/>
+  <xi:include xmlns:xi="http://www.w3.org/2001/XInclude" href="contact.xml"/>
+  <xi:include xmlns:xi="http://www.w3.org/2001/XInclude" href="important.xml"/>
+  <xi:include xmlns:xi="http://www.w3.org/2001/XInclude" href="bash-profile.xml"/>
+
+</chapter>

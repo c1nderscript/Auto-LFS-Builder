@@ -1,0 +1,12 @@
+# not really forced, though it should display as forced on most editors'
+# system
+FW_LOADER='*'
+
+EXTRA_FIRMWARE='xx/aa.bin xx/bb.bin'
+
+[EXTRA_FIRMWARE_DIR]
+value = '/lib/firmware'
+comment = [
+    'This is the default, you can change it to "/usr/lib/firmware"',
+    'if you want'
+]

@@ -1,0 +1,165 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE sect1 PUBLIC "-//OASIS//DTD DocBook XML V4.5//EN"
+   "http://www.oasis-open.org/docbook/xml/4.5/docbookx.dtd" [
+  <!ENTITY % general-entities SYSTEM "../../../../general.ent">
+  %general-entities;
+]>
+
+<sect1 id="basic-xorg-7" xreflabel="Basic Xorg-&xorg-version; Software Introduction">
+  <?dbhtml filename="basic-xorg-7.html"?>
+
+
+  <title>Basic Xorg-&xorg-version; Software Introduction</title>
+
+  <indexterm zone="basic-xorg-7">
+    <primary sortas="a-basic-xorg-7">Basic Xorg</primary>
+  </indexterm>
+
+
+  <para>
+    <application>Xorg</application> is a freely redistributable,
+    open-source implementation of the <application>X</application> Window
+    System. This system provides a client/server interface between display
+    hardware (the mouse, keyboard, and video displays) and the desktop
+    environment, while also providing both the windowing infrastructure and a
+    standardized application interface (API).
+  </para>
+
+  <para>
+    This section however doesn't install <xref linkend="xorg-server"/>, but
+    instead installs basic software that a lot of other software depend on,
+    including the <application>Xorg</application> server, compositors, window
+    managers or desktop environments, and <xref linkend="xwayland"/>.
+  </para>
+  
+  <note><para>
+    <application>Xwayland</application> is a necessary part of Wayland if you
+    want to use <application>Xorg</application>-only software like <xref
+    linkend="steam"/>. <xref linkend="wine"/> has an experimental
+    <application>Wayland</application> mode but it is still a good idea to
+    install <xref linkend="xwayland"/> for now.
+  </para></note>
+    
+  <bridgehead renderas="sect3">Xorg Download and Installation
+  Instructions</bridgehead>
+
+  <para>
+    Xorg-7.0 introduced a completely auto-tooled, modular build system.
+    With the new modular build system, it is no longer possible to download
+    the entire package in a single file. In fact, there will be well over 100
+    packages that need to be fetched from the download location. To assist
+    with such a large task, installing <xref linkend="wget"/> is strongly
+    recommended for downloading the needed files.  A complete
+    <application>wget</application> file list is provided for each page
+    that includes multiple packages.
+  </para>
+
+  <para>
+    Given the number of packages available, deciding which packages you
+    need to install for your particular setup may seem a bit overwhelming at
+    first.  Take a look at <ulink url=
+    "https://wiki.x.org/wiki/ModuleDescriptions">this page</ulink>
+    and <ulink url=
+    "https://lists.x.org/archives/xorg-modular/2005-November/000801.html">
+    this thread</ulink>
+    to get an idea of what you will need.  If you are unsure, you should
+    install all packages at the cost of extra disk space.
+  </para>
+
+  <note>
+    <para>
+      Even if you intend to download only the necessary packages, you
+      should download the wget file lists.  The list of files are ordered by
+      dependency, and the package versions listed in the files are known to
+      work well with each other. Further, the wget file lists contain comments
+      for specific packages that are deprecated or are not recommended to
+      install. Newer packages are likely intended for the
+      next release of <application>Xorg</application> and have already proved
+      to be incompatible with current versions of software installed in GLFS.
+      The installed size of <application>Xorg</application> can be reduced
+      considerably by installing only the packages that you will need and use,
+      however, the GLFS book cannot account for all dependencies and build
+      options for the individual <application>Xorg</application> packages.
+      The instructions assume that all packages have been built.
+    </para>
+  </note>
+
+  <para>
+    Additionally, because of the large number of repetitive commands,
+    you are encouraged to partially automate the build. Instructions have been
+    given that utilize the
+    <ulink url="&blfs-svn;/postlfs/sudo.html">sudo</ulink> package.
+    It is recommended that you use the <parameter>:NOPASSWD</parameter>
+    configuration option for the user that will be building the xorg packages.
+    There are other accommodations in the off chance you didn't install it.
+    You can use the <command>su</command> utility, invoking <parameter>-c
+    </parameter>. This requires that you enter your password each time a
+    package needs to get installed. The last accommodation is allow you
+    to build and install each package as the <systemitem class="username">root
+    </systemitem> user. This is not recommended but is an option if you
+    don't want to install <application>sudo</application> and don't want
+    to type a password again and again.
+  </para>
+
+  <sect2 id="xorg-env" xreflabel="Xorg build environment">
+    <title>Setting up the Xorg Build Environment</title>
+
+    <para>
+      Set the <envar>XORG_PREFIX</envar> variable for compatibility with BLFS
+      with the following command:
+    </para>
+
+    <screen><userinput>export XORG_PREFIX="/usr"</userinput></screen>
+
+    <note>
+      <para>The <envar>XORG_PREFIX</envar> variable will not be used in this
+      book, but it is a necessary variable to set if you intend to follow
+      certain BLFS instructions. If you aren't just copy and pasting BLFS
+      instructions, you may do without the variable but be sure to replace
+      the variable in the instructions with <filename>/usr</filename>.</para>
+    </note>
+
+    <para>
+      Throughout these instructions, you will use the following
+      <command>configure</command> switches for all of the packages. Create the
+      <envar>XORG_CONFIG</envar> variable to use for this parameter
+      substitution:
+    </para>
+
+<screen><userinput>export XORG_CONFIG="--prefix=/usr --sysconfdir=/etc \
+    --localstatedir=/var --disable-static"</userinput></screen>
+
+    <note>
+      <para>
+        The instructions below depend on the files created in
+        <xref linkend="bash-profile"/>.
+      </para>
+    </note>
+
+    <para>
+      Create an <filename>/etc/profile.d/xorg.sh</filename> configuration
+      file containing these variables as the &root; user:
+    </para>
+
+<screen role="root"><userinput>cat &gt; /etc/profile.d/xorg.sh &lt;&lt; EOF
+<literal>XORG_PREFIX="/usr"
+XORG_CONFIG="--prefix=/usr --sysconfdir=/etc --localstatedir=/var --disable-static"
+export XORG_PREFIX XORG_CONFIG</literal>
+EOF
+chmod 644 /etc/profile.d/xorg.sh</userinput></screen>
+
+    <para>
+      If you've installed <application>sudo</application>, ensure that
+      <envar>XORG_CONFIG</envar> is available
+      in the <application>sudo</application> environment. As the
+      <systemitem class="username">root</systemitem> user, run the following
+      command:
+    </para>
+
+<screen role="root"><userinput>cat &gt; /etc/sudoers.d/xorg &lt;&lt; EOF
+<literal>Defaults env_keep += XORG_CONFIG</literal>
+EOF</userinput></screen>
+
+  </sect2>
+
+</sect1>

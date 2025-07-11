@@ -1,0 +1,58 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE bookinfo PUBLIC "-//OASIS//DTD DocBook XML V4.5//EN"
+   "http://www.oasis-open.org/docbook/xml/4.5/docbookx.dtd" [
+  <!ENTITY % general-entities SYSTEM "../general.ent">
+  %general-entities;
+]>
+
+<bookinfo>
+
+  <date>$Date$</date>
+
+  <title>
+    Gaming Linux<superscript>&reg;</superscript> From Scratch
+    <phrase revision="systemd">(Systemd</phrase>
+    <phrase revision="sysv">(System V</phrase> Edition)
+  </title>
+  <subtitle>Version &version;</subtitle>
+  <subtitle>Published &releasedate;</subtitle>
+
+  <authorgroup>
+    <corpauthor>
+      &copyholder;
+    </corpauthor>
+  </authorgroup>
+
+  <copyright id="copyright">
+    <year>&copyrightdate;</year>
+    <holder>&copyholder;</holder>
+  </copyright>
+
+  <legalnotice>
+    <para>Copyright &copy; &copyrightdate;, &copyholder;</para>
+
+    <para>All rights reserved.</para>
+
+    <para>This book is licensed under a <xref linkend="CC"/>.</para>
+
+    <para>
+      Computer instructions may be extracted from the book under the
+      <xref linkend="MIT"/>.
+    </para>
+
+    <para>
+      <trademark class='registered'>Linux</trademark> is a registered trademark
+      of Linus Torvalds.
+    </para>
+  </legalnotice>
+
+  <abstract>
+    <para>
+      This book introduces and guides the reader through additions to the
+      system like <application>Steam</application>,
+      <application>Wine</application>, and their dependencies after the
+      LFS or Multilib-LFS book on x86_64 systems.
+    </para>
+  </abstract>
+
+</bookinfo>

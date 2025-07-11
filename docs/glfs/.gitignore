@@ -1,0 +1,6 @@
+conditional.ent
+version.ent
+blfs-bootscripts*
+xxx
+*.swp
+local.mk

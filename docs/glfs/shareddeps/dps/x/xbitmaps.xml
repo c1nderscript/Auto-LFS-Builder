@@ -1,0 +1,96 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE sect1 PUBLIC "-//OASIS//DTD DocBook XML V4.5//EN"
+   "http://www.oasis-open.org/docbook/xml/4.5/docbookx.dtd" [
+  <!ENTITY % general-entities SYSTEM "../../../general.ent">
+  %general-entities;
+
+  <!ENTITY xbitmaps-download-http "&xorg-download-http;/data/xbitmaps-&xbitmaps-version;.tar.xz">
+  <!ENTITY xbitmaps-download-ftp  " ">
+]>
+
+<sect1 id="xbitmaps" xreflabel="xbitmaps-&xbitmaps-version;">
+  <?dbhtml filename="xbitmaps.html"?>
+
+  <title>xbitmaps-&xbitmaps-version;</title>
+
+  <indexterm zone="xbitmaps">
+    <primary sortas="a-xbitmaps">xbitmaps</primary>
+  </indexterm>
+
+  <sect2 role="package">
+    <title>Introduction to xbitmaps</title>
+
+    <para>
+      The <application>xbitmaps</application> package contains bitmap
+      images used by multiple applications built in Xorg chapter.
+    </para>
+
+    <itemizedlist spacing="compact">
+      <listitem>
+        <para>
+          Download (HTTP): <ulink url="&xbitmaps-download-http;"/>
+        </para>
+      </listitem>
+      <listitem>
+        <para>
+          Download (FTP): <ulink url="&xbitmaps-download-ftp;"/>
+        </para>
+      </listitem>
+    </itemizedlist>
+
+    <bridgehead renderas="sect3">xbitmaps Dependencies</bridgehead>
+
+    <bridgehead renderas="sect4">Required</bridgehead>
+    <para role="required">
+      <xref linkend="util-macros"/>
+    </para>
+
+  </sect2>
+
+  <sect2 role="installation">
+    <title>Installation of xbitmaps</title>
+
+    <para>
+      Install <application>xbitmaps</application> by running the
+      following commands:
+    </para>
+
+<screen><userinput>./configure $XORG_CONFIG</userinput></screen>
+
+    <para>
+      This package does not come with a test suite.
+    </para>
+
+    <para>
+      Now, as the <systemitem class="username">root</systemitem> user:
+    </para>
+
+<screen role="root"><userinput>make install</userinput></screen>
+
+  </sect2>
+
+  <sect2 role="commands">
+    <title>Command Explanations</title>
+
+    &options-configure;
+
+  </sect2>
+
+  <sect2 role="content">
+    <title>Contents</title>
+
+    <segmentedlist>
+      <segtitle>Installed Programs</segtitle>
+      <segtitle>Installed Libraries</segtitle>
+      <segtitle>Installed Directory</segtitle>
+
+      <seglistitem>
+        <seg>None</seg>
+        <seg>None</seg>
+        <seg>/usr/include/X11/bitmaps</seg>
+      </seglistitem>
+    </segmentedlist>
+
+  </sect2>
+
+</sect1>

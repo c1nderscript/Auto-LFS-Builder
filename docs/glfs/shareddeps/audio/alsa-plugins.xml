@@ -1,0 +1,264 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE sect1 PUBLIC "-//OASIS//DTD DocBook XML V4.5//EN"
+   "http://www.oasis-open.org/docbook/xml/4.5/docbookx.dtd" [
+  <!ENTITY % general-entities SYSTEM "../../general.ent">
+  %general-entities;
+
+  <!ENTITY alsa-plugins-download-http "&alsa-download-http;/plugins/alsa-plugins-&alsa-plugins-version;.tar.bz2">
+  <!ENTITY alsa-plugins-download-ftp  " ">
+]>
+
+<sect1 id="alsa-plugins" xreflabel="alsa-plugins-&alsa-plugins-version;">
+  <?dbhtml filename="alsa-plugins.html"?>
+
+  <title>alsa-plugins-&alsa-plugins-version;</title>
+
+  <indexterm zone="alsa-plugins">
+    <primary sortas="a-alsa-plugins">alsa-plugins</primary>
+  </indexterm>
+
+  <sect2 role="package">
+    <title>Introduction to ALSA Plugins</title>
+
+    <para>
+      The <application>ALSA Plugins</application> package contains
+      plugins for various audio libraries and sound servers.
+    </para>
+
+    <itemizedlist spacing="compact">
+      <listitem>
+        <para>
+          Download (HTTP): <ulink url="&alsa-plugins-download-http;"/>
+        </para>
+      </listitem>
+      <listitem>
+        <para>
+          Download (FTP): <ulink url="&alsa-plugins-download-ftp;"/>
+        </para>
+      </listitem>
+    </itemizedlist>
+
+    <bridgehead renderas="sect3">ALSA Plugins Dependencies</bridgehead>
+
+    <bridgehead renderas="sect4">Required</bridgehead>
+    <para role="required">
+      <xref linkend="alsa-lib"/>
+    </para>
+
+    <bridgehead renderas="sect4">Optional</bridgehead>
+    <para role="optional">
+
+      <xref linkend="ffmpeg"/>,
+      <ulink url="&blfs-svn;/multimedia/libsamplerate.html">
+      libsamplerate</ulink>,
+      <xref linkend="pulseaudio"/>,
+      <ulink url="&blfs-svn;/multimedia/speex.html">
+      Speex</ulink>,
+      <ulink url="https://jackaudio.org/">JACK</ulink>,
+      <ulink url="https://github.com/AVnu/libavtp/">libavtp</ulink>, and
+      <ulink url="http://maemo.org/">maemo</ulink>
+    </para>
+
+  </sect2>
+
+  <sect2 role="installation">
+    <title>Installation of ALSA Plugins</title>
+
+    <para>
+      Install <application>ALSA Plugins</application> by
+      running the following commands:
+    </para>
+
+<screen><userinput>./configure --sysconfdir=/etc --disable-libav &amp;&amp;
+make</userinput></screen>
+
+    <para>
+      This package does not come with a test suite.
+    </para>
+
+    <para>
+      Now, as the <systemitem class="username">root</systemitem> user:
+    </para>
+
+<screen role="root"><userinput>make install</userinput></screen>
+
+  </sect2>
+
+  <sect2 role="installation">
+    <title>lib32 Installation of ALSA Plugins</title>
+
+    <para>
+      Install 32-bit <application>ALSA Plugins</application> by
+      running the following commands:
+    </para>
+
+<screen><userinput>make distclean &amp;&amp;
+CC="gcc -m32" CXX="g++ -m32"    \
+./configure --libdir=/usr/lib32 \
+            --sysconfdir=/etc   \
+            --disable-libav     \
+            --host=i686-pc-linux-gnu &amp;&amp;
+
+make</userinput></screen>
+
+    <para>
+      Now, as the <systemitem class="username">root</systemitem> user:
+    </para>
+
+<screen role="root"><userinput>make DESTDIR=$PWD/DESTDIR install     &amp;&amp;
+cp -vr DESTDIR/usr/lib32/* /usr/lib32 &amp;&amp;
+rm -rf DESTDIR                        &amp;&amp;
+ldconfig</userinput></screen>
+
+  </sect2>
+
+  <sect2 role="commands">
+    <title>Command Explanations</title>
+
+    &options-configure;
+
+    <para>
+      <option>--disable-libav</option>: Disable FFMpeg support as the
+      package does not build when FFmpeg is installed.
+    </para>
+
+  </sect2>
+
+  <sect2 role="content">
+    <title>Contents</title>
+
+    <segmentedlist>
+      <segtitle>Installed Programs</segtitle>
+      <segtitle>Installed Libraries</segtitle>
+      <segtitle>Installed Directories</segtitle>
+
+      <seglistitem>
+        <seg>
+          None
+        </seg>
+        <seg>
+          Numerous libasound_module_<replaceable>&lt;module&gt;</replaceable>
+          modules including
+          conf_pulse,
+          ctl_arcam_av,
+          ctl_oss,
+          ctl_pulse,
+          pcm_a52,
+          pcm_jack,
+          pcm_oss,
+          pcm_pulse,
+          pcm_speex,
+          pcm_upmix,
+          pcm_usb_stream,
+          pcm_vdownmix,
+          rate_lavrate*,
+          rate_samplerate*, and
+          rate_speexrate*
+        </seg>
+        <seg>
+          /usr/lib/alsa-lib
+        </seg>
+      </seglistitem>
+    </segmentedlist>
+
+    <variablelist>
+      <bridgehead renderas="sect3">Short Descriptions</bridgehead>
+      <?dbfo list-presentation="list"?>
+      <?dbhtml list-presentation="table"?>
+
+      <varlistentry id="libasound_module_pcm_oss">
+        <term><filename class="libraryfile">libasound_module_pcm_oss</filename></term>
+        <listitem>
+          <para>
+            Allows native <application>ALSA</application> applications to
+            run on <application>OSS</application>
+          </para>
+          <indexterm zone="alsa-plugins libasound_module_pcm_oss">
+            <primary sortas="c-libasound_module_pcm_oss">libasound_module_pcm_oss</primary>
+          </indexterm>
+        </listitem>
+      </varlistentry>
+
+      <varlistentry id="libasound_module_pcm_upmix">
+        <term><filename class="libraryfile">libasound_module_pcm_upmix</filename></term>
+        <listitem>
+          <para>
+            Allows upmixing sound to 4 or 6 channels
+          </para>
+          <indexterm zone="alsa-plugins libasound_module_pcm_upmix">
+            <primary sortas="c-libasound_module_pcm_upmix">libasound_module_pcm_upmix</primary>
+          </indexterm>
+        </listitem>
+      </varlistentry>
+
+      <varlistentry id="libasound_module_pcm_vdownmix">
+        <term><filename class="libraryfile">libasound_module_pcm_vdownmix</filename></term>
+        <listitem>
+          <para>
+            Allows downmixing sound from 4-6 channels to 2
+            channel stereo output
+          </para>
+          <indexterm zone="alsa-plugins libasound_module_pcm_vdownmix">
+            <primary sortas="c-libasound_module_pcm_vdownmix">libasound_module_pcm_vdownmix</primary>
+          </indexterm>
+        </listitem>
+      </varlistentry>
+
+      <varlistentry id="libasound_module_pcm_jack">
+        <term><filename class="libraryfile">libasound_module_pcm_jack</filename></term>
+        <listitem>
+          <para>
+            Allows native <application>ALSA</application> applications to
+            work with <command>jackd</command>
+          </para>
+          <indexterm zone="alsa-plugins libasound_module_pcm_jack">
+            <primary sortas="c-libasound_module_pcm_jack">libasound_module_pcm_jack</primary>
+          </indexterm>
+        </listitem>
+      </varlistentry>
+
+      <varlistentry id="libasound_module_pcm_pulse">
+        <term><filename class="libraryfile">libasound_module_pcm_pulse</filename></term>
+        <listitem>
+          <para>
+            Allows native <application>ALSA</application> applications
+            to access a <application>PulseAudio</application> sound
+            daemon
+          </para>
+          <indexterm zone="alsa-plugins libasound_module_pcm_pulse">
+            <primary sortas="c-libasound_module_pcm_pulse">libasound_module_pcm_pulse</primary>
+          </indexterm>
+        </listitem>
+      </varlistentry>
+
+      <varlistentry id="libasound_module_pcm_a52">
+        <term><filename class="libraryfile">libasound_module_pcm_a52</filename></term>
+        <listitem>
+          <para>
+            Converts S16 linear sound format to A52 compressed format
+            and sends it to an SPDIF output
+          </para>
+          <indexterm zone="alsa-plugins libasound_module_pcm_a52">
+            <primary sortas="c-libasound_module_pcm_a52">libasound_module_pcm_a52</primary>
+          </indexterm>
+        </listitem>
+      </varlistentry>
+
+      <varlistentry id="libasound_module_rate_samplerate">
+        <term><filename class="libraryfile">libasound_module_rate_samplerate</filename></term>
+        <listitem>
+          <para>
+            Provides an external rate converter through
+            <filename class="libraryfile">libsamplerate</filename>
+          </para>
+          <indexterm zone="alsa-plugins libasound_module_rate_samplerate">
+            <primary sortas="c-libasound_module_rate_samplerate">libasound_module_rate_samplerate</primary>
+          </indexterm>
+        </listitem>
+      </varlistentry>
+
+    </variablelist>
+
+  </sect2>
+
+</sect1>

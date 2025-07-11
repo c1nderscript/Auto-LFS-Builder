@@ -1,0 +1,69 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE sect1 PUBLIC "-//OASIS//DTD DocBook XML V4.5//EN"
+   "http://www.oasis-open.org/docbook/xml/4.5/docbookx.dtd" [
+  <!ENTITY % general-entities SYSTEM "../general.ent">
+  %general-entities;
+]>
+
+<sect1 id="organization" xreflabel="Organization">
+  <?dbhtml filename="organization.html"?>
+
+
+  <title>Organization</title>
+
+  <para>
+    This book is divided into the following sections:
+  </para>
+
+  <bridgehead renderas="sect2">Part I - Introduction</bridgehead>
+
+  <para>
+    This part contains essential information which is needed to
+    understand the rest of the book.
+  </para>
+
+  <bridgehead renderas="sect2">Part II - Shared Dependencies</bridgehead>
+
+  <para>
+    This section is dedicated to covering dependencies that are shared
+    between <application>Steam</application> and <application>Wine.
+    </application> As it turns out, there are quite a lot of
+    dependencies they both depend on. Anything specific to <application>
+    Steam</application> and <application>Wine</application> are covered
+    in their respective chapters.
+  </para>
+
+  <bridgehead renderas="sect2">Part III - Steam</bridgehead>
+
+  <para>
+    This part details how to install <application>Steam</application>
+    and the linear line of dependencies required, as well as some
+    configuration for certain packages.
+  </para>
+
+  <bridgehead renderas="sect2">Part IV - Wine</bridgehead>
+
+  <para>
+    This section goes over installing a toolchain called <application>
+    MinGW-w64</application>, some of the packages necessary to both compile
+    <application>Wine</application> and use it, and lastly how to compile
+    <application>Wine</application> and configure it.
+  </para>
+
+  <bridgehead renderas="sect2">Part V - Quality of Life</bridgehead>
+
+  <para>
+    This section goes over quality of life improvements and packages
+    to improve the experience with the system after following the main
+    part of the book.
+  </para>
+
+  <bridgehead renderas="sect2">Appendices</bridgehead>
+
+  <para>
+    The Appendices present information which doesn't belong in the body of
+    book; they are included as reference material. The glossary of acronyms
+    is a handy feature.
+  </para>
+
+</sect1>

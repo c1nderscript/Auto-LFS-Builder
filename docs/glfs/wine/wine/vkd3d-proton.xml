@@ -1,0 +1,316 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE sect1 PUBLIC "-//OASIS//DTD DocBook XML V4.5//EN"
+   "http://www.oasis-open.org/docbook/xml/4.5/docbookx.dtd" [
+  <!ENTITY % general-entities SYSTEM "../../general.ent">
+  %general-entities;
+]>
+
+<sect1 id="vkd3d-proton" xreflabel="VKD3D-Proton-&vkd3d-proton-version;">
+  <?dbhtml filename="vkd3d-proton.html"?>
+
+  <title>VKD3D-Proton-&vkd3d-proton-version;</title>
+
+  <indexterm zone="vkd3d-proton">
+    <primary sortas="a-vkd3d-proton">VKD3D-Proton</primary>
+  </indexterm>
+
+  <sect2 role="package">
+    <title>Introduction to VKD3D-Proton</title>
+
+    <para>
+      The <application>VKD3D-Proton</application> package contains DLL files
+      which converts Direct3D 12 calls to Vulkan. By default in
+      <application>Wine</application>, Direct3D 12 calls are also converted to
+      Vulkan; however, this package makes more aggressive optimizations geared
+      towards gaming and replaces the default implementation provided by
+      <application>Wine</application>, <application>VKD3D</application>.
+    </para>
+
+    <bridgehead renderas="sect3">VKD3D-Proton Dependencies</bridgehead>
+
+    <bridgehead renderas="sect4">Required</bridgehead>
+    <para role="required">
+      <xref linkend="dxvk"/>
+      (for <filename class="libraryfile">dxgi</filename> and
+      the configuration section),
+      <xref linkend="glslang"/>,
+      <xref linkend="mingw-w64-gcc"/> (compiled with POSIX thread support), and
+      <xref linkend="wine"/>
+    </para>
+
+    <bridgehead renderas="sect4">Required (Runtime)</bridgehead>
+    <para role="runtime">
+      <xref linkend="libvk"/>
+    </para>
+
+  </sect2>
+
+  <sect2>
+    <title>Downloading DXVK</title>
+
+    <para>
+      This package depends on submodules and multiple of them will need to be
+      downloaded. Create a list of the needed tarballs that will be downloaded:
+    </para>
+
+<screen><userinput>cat &gt; vkd3d-proton-&vkd3d-proton-version;-list &lt;&lt; "EOF"
+<literal>HansKristian-Work/vkd3d-proton/archive/v&vkd3d-proton-version;/vkd3d-proton-&vkd3d-proton-version;.tar.gz
+KhronosGroup/SPIRV-Headers/archive/&vkd3d-proton-spirv;.tar.gz
+KhronosGroup/Vulkan-Headers/archive/&vkd3d-proton-vulkan;.tar.gz
+HansKristian-Work/dxil-spirv/archive/&vkd3d-proton-dxil-spirv;.tar.gz
+KhronosGroup/SPIRV-Cross/archive/&vkd3d-proton-spirv-cross;.tar.gz
+KhronosGroup/SPIRV-Headers/archive/&vkd3d-proton-dxil-spirv-headers;.tar.gz
+KhronosGroup/SPIRV-Tools/archive/&vkd3d-proton-spirv-tools;.tar.gz</literal>
+EOF</userinput></screen>
+
+    <para>
+      Download the tarballs using <xref linkend="wget"/>:
+    </para>
+
+<screen><userinput>mkdir vkd3d-proton &amp;&amp;
+cd    vkd3d-proton &amp;&amp;
+grep -v '^#' ../vkd3d-proton-&vkd3d-proton-version;-list | wget -i- -c \
+    -B https://github.com</userinput></screen>
+
+  </sect2>
+
+  <sect2 role="installation">
+    <title>Installation of VKD3D-Proton</title>
+
+    <para>
+      Extract all the tarballs:
+    </para>
+
+<screen><userinput>for i in *.tar.?z*; do
+  echo "Extracting $i..."
+  tar -xf $i
+done</userinput></screen>
+
+    <para>
+      Now that the tarballs have been extracted, the submodules need to be
+      moved in place. Do so now:
+    </para>
+
+<screen><userinput>mv -T SPIRV-Headers-&vkd3d-proton-spirv;                \
+      vkd3d-proton-&vkd3d-proton-version;/khronos/SPIRV-Headers                            &amp;&amp;
+mv -T Vulkan-Headers-*                                                      \
+      vkd3d-proton-&vkd3d-proton-version;/khronos/Vulkan-Headers                           &amp;&amp;
+mv -T dxil-spirv-*                                                          \
+      vkd3d-proton-&vkd3d-proton-version;/subprojects/dxil-spirv                           &amp;&amp;
+mv -T SPIRV-Cross-*                                                         \
+      vkd3d-proton-&vkd3d-proton-version;/subprojects/dxil-spirv/third_party/SPIRV-Cross   &amp;&amp;
+mv -T SPIRV-Headers-&vkd3d-proton-dxil-spirv-headers;                \
+      vkd3d-proton-&vkd3d-proton-version;/subprojects/dxil-spirv/third_party/spirv-headers &amp;&amp;
+mv -T SPIRV-Tools-*                                                         \
+      vkd3d-proton-&vkd3d-proton-version;/subprojects/dxil-spirv/third_party/SPIRV-Tools</userinput></screen>
+<!-- Submodules will be the death of me and alignment. -->
+
+
+    <para>
+      Go into the <filename
+      class="directory">vkd3d-proton-&vkd3d-proton-version;</filename>
+      directory:
+    </para>
+
+<screen><userinput>cd vkd3d-proton-&vkd3d-proton-version;</userinput></screen>
+
+    <para>
+      Fix broken version generation which creates a broken header file during
+      compilation:
+    </para>
+
+<screen><userinput>sed "165s/.*/  command : \['echo', '0'\],/" \
+  -i meson.build</userinput></screen>
+
+    <note><para>
+      If you are doing multilib, it is up to you if you want to install the
+      32-bit DLL files from this package. Direct3D 12 released in mid-2015, so
+      there are less 32-bit D3D12 applications than 64-bit ones. If you wish to
+      stay on the safe side, it would be prudent to install the 32-bit DLL
+      files as well.
+    </para></note>
+
+    <sect3>
+      <title>64-bit Installation</title>
+
+      <para>
+        Install 64-bit <application>VKD3D-Proton</application> by running
+        the following commands:
+      </para>
+
+<screen><userinput>mkdir build-win64 &amp;&amp;
+cd    build-win64 &amp;&amp;
+
+meson setup .. --cross-file=../build-win64.txt \
+               --buildtype=release             \
+               --prefix=$PWD/DESTDIR &amp;&amp;
+
+ninja</userinput></screen>
+
+      <para>Now as the &root; user:</para>
+
+<screen role="root"><userinput>ninja install &amp;&amp;
+cd ..         &amp;&amp;
+
+mkdir   -pv     /usr/lib/vkd3d-proton/win64 &amp;&amp;
+install -vDm644 build-win64/DESTDIR/bin/*.dll \
+                /usr/lib/vkd3d-proton/win64</userinput></screen>
+
+    </sect3>
+
+    <sect3>
+      <title>32-bit Installation</title>
+
+      <para>
+        Install 32-bit <application>VKD3D-Proton</application> by running
+        the following commands:
+      </para>
+
+<screen><userinput>mkdir build-win32 &amp;&amp;
+cd    build-win32 &amp;&amp;
+
+meson setup .. --cross-file ../build-win32.txt \
+               --buildtype=release             \
+               --prefix=$PWD/DESTDIR &amp;&amp;
+
+ninja</userinput></screen>
+
+      <para>Now as the &root; user:</para>
+
+<screen role="root"><userinput>ninja install &amp;&amp;
+cd ..         &amp;&amp;
+
+mkdir   -pv     /usr/lib/vkd3d-proton/win32 &amp;&amp;
+install -vDm644 build-win32/DESTDIR/bin/*.dll \
+                /usr/lib/vkd3d-proton/win32</userinput></screen>
+
+    </sect3>
+
+  </sect2>
+
+  <sect2 role="configuration">
+    <title>Setting Up VKD3D-Proton</title>
+
+    <para>While the VKD3D-Proton DLL files have been installed, they are not yet in the
+    <application>Wine</application> prefix. Create symlinks so that they can be
+    found by <application>Wine</application>, whilst allowing updating of this
+    package without having to copy everything over again. Along with this, the
+    registry must be updated to use the new DLLs. Do this for each
+    archetecture you have installed.</para>
+
+    <sect3>
+      <title>64-bit Setup</title>
+
+      <para>For 64-bit:</para>
+
+<screen><userinput>for DLL_FILE in /usr/lib/vkd3d-proton/win64/*.dll; do
+    ln -sfv $DLL_FILE ~/.wine/drive_c/windows/system32/$(basename $DLL_FILE) &amp;&amp;
+    DLL_FILE=$(basename $DLL_FILE | sed s/.dll//g) &amp;&amp;
+    wine reg add \
+        'HKEY_CURRENT_USER\Software\Wine\DllOverrides' \
+        /v "$DLL_FILE" /d native /f
+done</userinput></screen>
+
+    </sect3>
+
+    <sect3>
+      <title>32-bit Setup</title>
+
+      <para>For 32-bit:</para>
+
+<screen><userinput>for DLL_FILE in /usr/lib/vkd3d-proton/win32/*.dll; do
+    if [ ! -d ~/.wine/drive_c/windows/syswow64 ]; then
+        ln -sfv $DLL_FILE ~/.wine/drive_c/windows/system32/$(basename $DLL_FILE)
+    else
+        ln -sfv $DLL_FILE ~/.wine/drive_c/windows/syswow64/$(basename $DLL_FILE)
+    fi
+    DLL_FILE=$(basename $DLL_FILE | sed s/.dll//g) &amp;&amp;
+    wine reg add \
+        'HKEY_CURRENT_USER\Software\Wine\DllOverrides' \
+        /v "$DLL_FILE" /d native /f
+done</userinput></screen>
+
+    </sect3>
+
+  </sect2>
+
+  <sect2 role="commands">
+    <title>Command Explanations</title>
+
+    &options-meson;
+
+    <para>
+      <command>git checkout v&vkd3d-proton-version;</command>: This command switches to
+      a stable release in the commit history.
+    </para>
+
+    <para>
+      <parameter>--cross-file=../build-win{32,64}.txt</parameter>: This
+      parameter changes what Win archetecture to build for.
+    </para>
+
+    &meson-buildtype-release;
+
+    <para>
+      <command>wine reg add ...</command>: This command overrides the
+      registry so that <application>Wine</application> will use the new DLL
+      files instead of the old ones.
+    </para>
+
+  </sect2>
+
+  <sect2 role="content">
+    <title>Contents</title>
+
+    <segmentedlist>
+      <segtitle>Installed Programs</segtitle>
+      <segtitle>Installed Libraries</segtitle>
+      <segtitle>Installed Directories</segtitle>
+
+      <seglistitem>
+        <seg>
+          None
+        </seg>
+        <seg>
+          d3d12core and d3d12 (all DLLs)
+        </seg>
+        <seg>
+          /usr/lib/vkd3d-proton/{win32,win64}
+        </seg>
+      </seglistitem>
+    </segmentedlist>
+
+    <variablelist>
+      <bridgehead renderas="sect3">Short Descriptions</bridgehead>
+      <?dbfo list-presentation="list"?>
+      <?dbhtml list-presentation="table"?>
+
+      <varlistentry id="d3d12core">
+        <term><filename class="libraryfile">d3d12core</filename></term>
+        <listitem>
+          <para>
+            contains the core Direct3D 12 API functions
+          </para>
+          <indexterm zone="vkd3d-proton d3d12core">
+            <primary sortas="c-d3d12core">d3d12core</primary>
+          </indexterm>
+        </listitem>
+      </varlistentry>
+
+      <varlistentry id="d3d12">
+        <term><filename class="libraryfile">d3d12</filename></term>
+        <listitem>
+          <para>
+            converts Direct3D 12 calls to Vulkan
+          </para>
+          <indexterm zone="vkd3d-proton d3d12">
+            <primary sortas="c-d3d12">d3d12</primary>
+          </indexterm>
+        </listitem>
+      </varlistentry>
+
+    </variablelist>
+
+  </sect2>
+
+</sect1>
