@@ -1,6 +1,7 @@
 # Ignore AI-generated build scripts except keep placeholder
 /generated/*
 !/generated/.gitkeep
+!/generated/validation_suite.sh
 
 # Ignore temporary log files
 logs/
