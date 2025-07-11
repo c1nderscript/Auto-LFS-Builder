@@ -12,3 +12,12 @@ Gaming on Linux from Scratch
 
 
 All in one application.
+
+## Setup
+
+Install the Python dependencies before running the parsing tools:
+
+```bash
+pip install -r requirements.txt
+```
+
