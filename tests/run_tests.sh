@@ -10,4 +10,7 @@ if check_binary_exists nonexistent_binary "should fail"; then
     exit 1
 fi
 
+# run Python unit tests
+python -m pytest -q tests
+
 echo "All unit tests passed"
