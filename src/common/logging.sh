@@ -1,4 +1,7 @@
 #!/bin/bash
+# SPDX-License-Identifier: MIT
+# Copyright (c) 2025 The LFS Automation Team
+
 # Logging utilities for Auto-LFS-Builder
 
 LOG_DIR="${LOG_DIR:-logs}"
