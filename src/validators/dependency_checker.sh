@@ -7,8 +7,12 @@ source src/common/error_handling.sh
 source src/common/package_management.sh
 
 check_dependencies() {
-    # Placeholder for dependency checking logic
-    :
+    # Verify required build tools are present
+    log_info "Verifying essential tools" || true
+    local tools=(gcc make bash tar xz)
+    for t in "${tools[@]}"; do
+        command -v "$t" >/dev/null || handle_error "missing $t"
+    done
 }
 
 main() {

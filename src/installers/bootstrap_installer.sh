@@ -7,8 +7,14 @@ source src/common/error_handling.sh
 source src/common/package_management.sh
 
 run_installer() {
-    # Placeholder for bootstrap installation routine
-    :
+    # Detect hardware and launch automated installation
+    log_info "Detecting hardware" || true
+    lshw -short || handle_error "hardware detection"
+
+    log_info "Starting automated installation" || true
+    bash src/installers/partition_manager.sh || handle_error "partitioning"
+    bash src/builders/master_builder.sh || handle_error "system build"
+    bash src/installers/iso_creator.sh || handle_error "iso creation"
 }
 
 main() {

@@ -7,8 +7,15 @@ source src/common/error_handling.sh
 source src/common/package_management.sh
 
 test_package() {
-    # Placeholder for package testing logic
-    :
+    local pkg="$1"
+    log_info "Running tests for $pkg" || true
+    if [ -d "$pkg" ]; then
+        pushd "$pkg" > /dev/null || handle_error "enter $pkg"
+        make check || handle_error "tests failed for $pkg"
+        popd > /dev/null || handle_error "leave $pkg"
+    else
+        handle_error "package directory $pkg not found"
+    fi
 }
 
 main() {
