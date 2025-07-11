@@ -1,0 +1,54 @@
+Auto-LFS-Builder
+=================
+
+Primary License
+---------------
+
+The source code in this repository is released under the terms of the MIT
+License as described below.
+
+```
+MIT License
+
+Copyright (c) 2025 Auto-LFS-Builder Developers
+
+Permission is hereby granted, free of charge, to any person obtaining a copy
+of this software and associated documentation files (the "Software"), to deal
+in the Software without restriction, including without limitation the rights
+to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+copies of the Software, and to permit persons to whom the Software is
+furnished to do so, subject to the following conditions:
+
+The above copyright notice and this permission notice shall be included in
+all copies or substantial portions of the Software.
+
+THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
+SOFTWARE.
+```
+
+Documentation Licenses
+----------------------
+
+This repository contains documentation from several Linux From Scratch
+projects. Redistribution of those materials is governed by their respective
+licenses:
+
+* **LFS and BLFS Books** – Creative Commons Attribution-NonCommercial-
+  ShareAlike 2.0. Computer instructions within those books are licensed under
+  the MIT License. See `docs/lfs-git/appendices/license.xml` and
+  `docs/blfs-git/appendices/creat-comm.xml` for the full text.
+* **GLFS Book** – Creative Commons Attribution-NonCommercial-ShareAlike 2.0
+  with the MIT License applying to build instructions. See
+  `docs/glfs/appendices/creat-comm.xml` and `docs/glfs/appendices/mit-lic.xml`.
+* **JHALFS** – MIT License. See `docs/jhalfs/LICENSE`.
+* **JHALFS menu configuration system** – ISC License. See
+  `docs/jhalfs/menu/LICENSE.txt`.
+
+When redistributing the documentation or any derived materials, please ensure
+that the appropriate license notices from the above files accompany those
+works.
