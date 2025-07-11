@@ -3,6 +3,16 @@
 ## Overview
 This document describes all environment variables, configuration options, and setup procedures for the Auto-LFS-Builder project. This system generates complete Linux From Scratch automation scripts by processing documentation sources and creating self-installing systems with GNOME desktop environments.
 
+## Installing Dependencies
+
+The project uses a small set of Python packages. Create a virtual environment and install them using `requirements.txt`:
+
+```bash
+python3 -m venv venv
+source venv/bin/activate
+pip install -r requirements.txt
+```
+
 ## Core LFS Build Variables
 
 ### Essential LFS Environment Variables
