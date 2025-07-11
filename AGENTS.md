@@ -1,481 +1,594 @@
 ------
 
-## name: "Auto-LFS-Builder" description: "Automated Linux From Scratch builder that creates fully self-installing Linux systems including LFS, BLFS, and Gaming on Linux from Scratch in one comprehensive application" category: "Systems Automation" author: "LFS Automation Team" tags: ["linux-from-scratch", "automation", "systems", "build-tools", "self-installing", "blfs", "gaming"] lastUpdated: "2025-07-11"
+------
 
-# Auto-LFS-Builder
+## name: "Auto-LFS-Builder: Complete System Automation" description: "Comprehensive LFS automation system that reads documentation from docs/ folder and generates complete self-installing Linux systems with LFS, networking, GNOME GUI, and full desktop environment" category: "Systems Automation & Documentation Processing" author: "LFS Automation Team" tags: ["linux-from-scratch", "jhalfs", "gnome", "blfs", "automation", "documentation-driven", "self-installing", "codex-agents"] lastUpdated: "2025-07-11"
 
-## Project Overview
+# Auto-LFS-Builder: Complete System Automation for Codex Agents
 
-Auto-LFS-Builder is a comprehensive automation system that reads Linux From Scratch documentation and generates fully automated, self-installing Linux systems. The project combines three major LFS variants into a single application:
+## Project Overview for AI Agents
 
-- **Linux from Scratch (LFS)** - Base system automation
-- **Beyond Linux from Scratch (BLFS)** - Extended packages and services
-- **Gaming on Linux from Scratch** - Gaming-optimized packages and drivers
+**CRITICAL CONTEXT**: This project is a documentation-driven LFS automation system that reads comprehensive Linux From Scratch documentation from the `docs/` folder and generates complete autobuilding scripts. Your primary task as a Codex agent is to process these documentation sources and create intelligent automation that builds fully functional Linux systems.
 
-The system processes documentation from the `docs/` folder, builds intelligent wrapper scripts, and creates modular installation components that can bootstrap a complete Linux system without manual intervention.
+### Documentation Sources Available in docs/
 
-## Tech Stack
+- **LFS Documentation**: Core Linux From Scratch build instructions (toolchain, temporary system, final system)
+- **JHALFS Documentation**: Automated LFS build tool specifications and configuration
+- **GLFS Documentation**: GNOME Linux From Scratch desktop environment instructions
+- **BLFS Documentation**: Beyond Linux From Scratch extended packages and services
 
-- **Primary Language**: Bash scripting with Python automation components
-- **Documentation Processing**: Markdown, XML, and HTML parsers
-- **Build System**: GNU Make, CMake integration
-- **Package Management**: Custom dependency resolver
-- **Virtualization**: QEMU/KVM for testing builds
-- **Version Control**: Git with automated documentation updates
-- **Testing Framework**: Bats (Bash Automated Testing System)
-- **Monitoring**: Custom build status tracking and logging
+### Primary Mission
 
-## Project Structure
+Generate a comprehensive autobuilding script that:
+
+1. **Processes all documentation sources** systematically
+2. **Builds complete LFS base system** with proper toolchain and dependency management
+3. **Implements networking capabilities** including NetworkManager, wireless support, and firewall
+4. **Installs full GNOME desktop environment** with all necessary components
+5. **Creates self-installing system** that can bootstrap on target hardware
+6. **Handles all dependencies** automatically with proper build order
+7. **Includes error recovery** and logging throughout the process
+
+## Tech Stack & Tools for Documentation Processing
+
+- **Primary Languages**: Bash scripting (95%), Python (documentation parsing)
+- **Documentation Formats**: XML, HTML, Markdown, plain text
+- **Parsing Tools**: xmllint, Beautiful Soup (Python), pandoc, sed/awk
+- **Build System**: GNU Make, custom dependency resolver
+- **Package Management**: wget/curl for downloads, custom build automation
+- **Testing Environment**: QEMU/KVM for automated testing
+- **Version Control**: Git with submodules for documentation tracking
+
+## Project Structure for AI Navigation
 
 ```
 auto-lfs-builder/
-├── docs/                           # LFS documentation sources
-│   ├── lfs/                       # Linux From Scratch docs
-│   ├── blfs/                      # Beyond LFS docs
-│   ├── gaming/                    # Gaming LFS extensions
-│   └── patches/                   # Custom patches and modifications
-├── src/                            # Core automation scripts
-│   ├── parsers/                   # Documentation parsers
-│   │   ├── lfs_parser.py          # LFS book parser
-│   │   ├── blfs_parser.py         # BLFS book parser
-│   │   └── dependency_resolver.py # Package dependency analysis
-│   ├── builders/                  # Build automation modules
-│   │   ├── toolchain_builder.sh   # Cross-compilation toolchain
-│   │   ├── system_builder.sh      # Base system construction
-│   │   ├── package_builder.sh     # Individual package builders
-│   │   └── installer_builder.sh   # Self-installer creation
-│   ├── wrappers/                  # Intelligent wrapper scripts
-│   │   ├── configure_wrapper.sh   # ./configure automation
-│   │   ├── make_wrapper.sh        # Make process optimization
-│   │   └── install_wrapper.sh     # Installation automation
-│   └── modules/                   # Modular components
-│       ├── disk_manager.sh        # Disk partitioning and formatting
-│       ├── bootloader.sh          # Bootloader configuration
-│       ├── network_config.sh      # Network setup automation
-│       └── user_setup.sh          # User account creation
-├── config/                        # Configuration files
-│   ├── build_profiles/            # Different build configurations
-│   │   ├── minimal.conf           # Minimal LFS build
-│   │   ├── desktop.conf           # Desktop-oriented build
-│   │   ├── server.conf            # Server configuration
-│   │   └── gaming.conf            # Gaming-optimized build
-│   ├── package_lists/             # Package selection lists
-│   └── hardware_profiles/         # Hardware-specific configs
-├── tools/                         # Build and development tools
-│   ├── doc_updater.sh             # Documentation synchronization
-│   ├── dependency_checker.sh      # Dependency validation
-│   ├── build_monitor.sh           # Build progress monitoring
-│   └── test_runner.sh             # Automated testing
-├── output/                        # Generated build artifacts
-│   ├── images/                    # Bootable system images
-│   ├── packages/                  # Compiled packages
-│   ├── installers/                # Self-installing scripts
-│   └── logs/                      # Build logs and reports
-├── tests/                         # Testing infrastructure
-│   ├── unit/                      # Unit tests for modules
-│   ├── integration/               # Integration testing
-│   └── vm_tests/                  # Virtual machine testing
-└── README.md
+├── docs/                           # DOCUMENTATION SOURCES (READ THESE FIRST)
+│   ├── lfs/                       # Linux From Scratch documentation
+│   │   ├── index.html             # Main LFS book index
+│   │   ├── chapter*/              # Build phases and instructions
+│   │   ├── packages.xml           # Package specifications
+│   │   └── dependencies.xml       # Dependency mappings
+│   ├── jhalfs/                    # JHALFS automation documentation
+│   │   ├── README                 # JHALFS setup and usage
+│   │   ├── config/                # Build configurations
+│   │   └── common/                # Common build functions
+│   ├── glfs/                      # GNOME LFS documentation
+│   │   ├── gnome-session/         # GNOME session setup
+│   │   ├── gtk4/                  # GTK4 desktop framework
+│   │   └── desktop-integration/   # Desktop environment integration
+│   └── blfs/                      # Beyond LFS documentation
+│       ├── networking/            # Network stack components
+│       ├── x/                     # X Window System
+│       ├── kde/                   # Alternative desktop (reference)
+│       └── multimedia/            # Media support packages
+├── src/                           # GENERATED AUTOMATION SCRIPTS
+│   ├── parsers/                   # Documentation processing engines
+│   │   ├── lfs_parser.py          # LFS XML/HTML parser
+│   │   ├── dependency_resolver.py # Build order calculator
+│   │   ├── package_analyzer.py    # Package requirement analyzer
+│   │   └── documentation_merger.py # Multi-source documentation combiner
+│   ├── builders/                  # Build automation generators
+│   │   ├── lfs_builder.sh         # Core LFS build automation
+│   │   ├── networking_builder.sh  # Network stack automation
+│   │   ├── gnome_builder.sh       # GNOME desktop automation
+│   │   ├── blfs_builder.sh        # Extended packages automation
+│   │   └── master_builder.sh      # Orchestrates complete build
+│   ├── installers/                # Self-installing system generators
+│   │   ├── iso_creator.sh         # Bootable ISO generation
+│   │   ├── partition_manager.sh   # Automatic disk partitioning
+│   │   └── bootstrap_installer.sh # Hardware detection and installation
+│   └── validators/                # Build verification and testing
+│       ├── dependency_checker.sh  # Validate build dependencies
+│       ├── package_tester.sh      # Test individual packages
+│       └── system_validator.sh    # Complete system validation
+├── generated/                     # AI-GENERATED BUILD SCRIPTS
+│   ├── complete_build.sh          # Master build script (YOUR PRIMARY OUTPUT)
+│   ├── networking_setup.sh        # Network configuration automation
+│   ├── gnome_desktop.sh           # Full GNOME installation
+│   ├── package_builds/            # Individual package build scripts
+│   └── validation_suite.sh        # Comprehensive testing
+├── config/                        # Build configurations
+│   ├── build_profiles/            # Target system configurations
+│   ├── package_versions.conf      # Version specifications
+│   └── hardware_support.conf      # Hardware-specific settings
+└── logs/                          # Build logs and debugging
+    ├── parsing_logs/              # Documentation processing logs
+    ├── build_logs/                # Construction logs
+    └── validation_logs/           # Testing and verification logs
 ```
 
-## Development Guidelines
+## AI Agent Instructions for Documentation Processing
 
-### Code Style and Standards
+### Phase 1: Documentation Analysis and Parsing
 
-- **Shell Scripts**: Follow Google Shell Style Guide
-- **Python Code**: PEP 8 compliance with Black formatting
-- **Error Handling**: Comprehensive error checking with meaningful messages
-- **Logging**: Structured logging with different verbosity levels
-- **Documentation**: Inline comments for complex logic, module documentation
+**FIRST PRIORITY**: Read and analyze all documentation in `docs/` folder systematically:
 
-### Naming Conventions
+1. **Parse LFS Documentation Structure**:
 
-- **Files**: `snake_case.sh` for scripts, `snake_case.py` for Python
-- **Functions**: `function_name()` in shell, `function_name()` in Python
-- **Variables**: `UPPER_CASE` for constants, `lower_case` for variables
-- **Modules**: Descriptive names reflecting functionality
+   ```bash
+   # Your analysis should identify:
+   - Build phases (toolchain, temporary system, final system)
+   - Package dependencies and build order
+   - Configuration requirements
+   - Testing procedures
+   ```
 
-### Version Control Workflow
+2. **Extract JHALFS Automation Patterns**:
 
-- **Branches**: `feature/description`, `bugfix/issue-number`, `docs/update-type`
-- **Commits**: Conventional commits format: `type(scope): description`
-- **Tags**: Semantic versioning for releases: `v1.2.3`
+   ```bash
+   # Focus on:
+   - Existing automation scripts and functions
+   - Configuration templates
+   - Error handling patterns
+   - Build optimization techniques
+   ```
 
-## Environment Setup
+3. **Process GNOME/GLFS Requirements**:
 
-### Development Requirements
+   ```bash
+   # Identify:
+   - Desktop environment components
+   - GTK and graphics requirements
+   - Session management setup
+   - User interface configurations
+   ```
 
-- **Host System**: Modern Linux distribution (Ubuntu 20.04+, Fedora 35+)
-- **Disk Space**: Minimum 50GB free space for builds
-- **Memory**: 8GB RAM minimum, 16GB recommended
-- **Network**: Stable internet for package downloads
-- **Virtualization**: KVM/QEMU for testing
+4. **Analyze BLFS Extended Packages**:
 
-### Installation Steps
+   ```bash
+   # Map out:
+   - Networking components (NetworkManager, wireless tools)
+   - Multimedia support requirements
+   - Additional desktop applications
+   - System services and daemons
+   ```
+
+### Phase 2: Intelligent Build Script Generation
+
+**CORE REQUIREMENT**: Generate `generated/complete_build.sh` that orchestrates the entire process:
 
 ```bash
-# 1. Clone the repository
-git clone https://github.com/yourusername/auto-lfs-builder.git
-cd auto-lfs-builder
+#!/bin/bash
+# AUTO-GENERATED COMPLETE LFS BUILD SCRIPT
+# Generated by Codex agents from documentation in docs/ folder
 
-# 2. Install system dependencies
-sudo apt-get update
-sudo apt-get install -y build-essential bison gawk texinfo \
-    python3 python3-pip git wget curl rsync qemu-kvm \
-    libvirt-clients libvirt-daemon-system
+set -e
+source config/build_profiles/desktop_gnome.conf
 
-# 3. Install Python dependencies
-pip3 install -r requirements.txt
+# Phase 1: LFS Base System
+echo "=== Phase 1: Building LFS Base System ==="
+./generated/lfs_base_build.sh
 
-# 4. Initialize the build environment
-./tools/setup_environment.sh
+# Phase 2: Networking Infrastructure  
+echo "=== Phase 2: Setting up Networking ==="
+./generated/networking_setup.sh
 
-# 5. Verify installation
-./tools/dependency_checker.sh
+# Phase 3: X Window System
+echo "=== Phase 3: Installing X Window System ==="
+./generated/x_window_build.sh
 
-# 6. Update documentation (optional)
-./tools/doc_updater.sh
+# Phase 4: GNOME Desktop Environment
+echo "=== Phase 4: Installing GNOME Desktop ==="
+./generated/gnome_desktop.sh
+
+# Phase 5: Additional BLFS Packages
+echo "=== Phase 5: Installing Extended Packages ==="
+./generated/blfs_extras.sh
+
+# Phase 6: System Configuration and Validation
+echo "=== Phase 6: Final System Configuration ==="
+./generated/system_finalization.sh
+
+echo "=== LFS Build Complete with GNOME Desktop ==="
 ```
 
-## Core Feature Implementation
+### Phase 3: Component-Specific Build Scripts
 
-### Documentation Processing Engine
+Generate specialized scripts for each major component:
 
-The system intelligently parses LFS documentation to extract build instructions:
+#### LFS Base System Builder
 
 ```bash
-# Main parser script
-./src/parsers/lfs_parser.py --input docs/lfs --output src/builders/generated/
+# generated/lfs_base_build.sh
+# Build core LFS system following documentation in docs/lfs/
 
-# Generate dependency graph
-./src/parsers/dependency_resolver.py --books lfs,blfs,gaming --output config/dependencies.json
+# Toolchain construction
+build_toolchain() {
+    # Parse docs/lfs/chapter05/ for toolchain instructions
+    # Generate automated binutils, gcc, glibc builds
+}
+
+# Temporary system
+build_temporary_system() {
+    # Process docs/lfs/chapter06/ for temporary tools
+    # Automate chroot environment setup
+}
+
+# Final system
+build_final_system() {
+    # Follow docs/lfs/chapter07-10/ for final system
+    # Implement kernel compilation and bootloader setup
+}
 ```
 
-### Wrapper Script Generation
-
-Intelligent wrappers adapt build commands based on package requirements:
+#### Networking Infrastructure Builder
 
 ```bash
-# Example configure wrapper usage
-./src/wrappers/configure_wrapper.sh \
-    --package glibc \
-    --prefix /usr \
-    --enable-kernel=5.15 \
-    --with-headers=/usr/include
+# generated/networking_setup.sh
+# Network stack automation from docs/blfs/networking/
 
-# Adaptive make wrapper
-./src/wrappers/make_wrapper.sh \
-    --package gcc \
-    --jobs auto \
-    --check-tests \
-    --log-level verbose
+install_network_stack() {
+    # NetworkManager for desktop networking
+    # Wireless tools and drivers
+    # Firewall configuration (iptables/nftables)
+    # DNS resolution setup
+}
+
+configure_network_services() {
+    # SSH daemon setup
+    # Network time synchronization
+    # DHCP client configuration
+}
 ```
 
-### Self-Installer Creation
-
-Generate bootable, self-installing systems:
+#### GNOME Desktop Builder
 
 ```bash
-# Create desktop installer
-./src/builders/installer_builder.sh \
-    --profile desktop \
-    --target-disk /dev/sdb \
-    --auto-partition \
-    --include-gaming
+# generated/gnome_desktop.sh
+# Complete GNOME installation from docs/glfs/
 
-# Server installation
-./src/builders/installer_builder.sh \
-    --profile server \
-    --unattended \
-    --ssh-keys ~/.ssh/authorized_keys
+install_graphics_stack() {
+    # Mesa 3D graphics
+    # Graphics drivers (Intel, AMD, NVIDIA)
+    # Wayland and X11 support
+}
+
+install_gnome_core() {
+    # GTK4 and dependencies
+    # GNOME Shell and session
+    # GDM display manager
+    # Core GNOME applications
+}
+
+configure_desktop_environment() {
+    # User session setup
+    # Desktop themes and icons
+    # Application launchers
+    # System settings
+}
 ```
 
-## Build Process Automation
+## Coding Standards for Generated Scripts
 
-### Toolchain Construction
+### Error Handling Requirements
+
+- **Every command must check exit status**: Use `|| handle_error "description"`
+- **Comprehensive logging**: Log all operations with timestamps
+- **Recovery mechanisms**: Implement rollback for failed builds
+- **User feedback**: Provide clear progress indicators
+
+### Script Structure Standards
 
 ```bash
-# Phase 1: Cross-compilation toolchain
-./src/builders/toolchain_builder.sh --phase 1 --target x86_64-lfs-linux-gnu
+#!/bin/bash
+# Script header with purpose and dependencies
+set -euo pipefail  # Strict error handling
 
-# Phase 2: Temporary system
-./src/builders/toolchain_builder.sh --phase 2 --chroot-prep
+# Source common functions
+source src/common/logging.sh
+source src/common/error_handling.sh
+source src/common/package_management.sh
 
-# Phase 3: Final system build
-./src/builders/system_builder.sh --final --profile minimal
+# Main function with clear phases
+main() {
+    log_info "Starting [COMPONENT] build process"
+    check_prerequisites
+    download_packages
+    build_packages
+    install_packages
+    validate_installation
+    log_success "[COMPONENT] build completed successfully"
+}
 ```
 
-### Package Management
+### Package Management Standards
 
 ```bash
-# Build specific package
-./src/builders/package_builder.sh --package gcc --version 13.2.0 --profile gaming
+# Consistent package handling
+download_package() {
+    local package_name="$1"
+    local package_url="$2"
+    local checksum="$3"
+    
+    log_info "Downloading $package_name"
+    wget -c "$package_url" -O "${PACKAGES_DIR}/${package_name}"
+    verify_checksum "${PACKAGES_DIR}/${package_name}" "$checksum"
+}
 
-# Batch build from list
-./src/builders/package_builder.sh --batch config/package_lists/desktop_packages.txt
-
-# Update all packages
-./src/builders/package_builder.sh --update-all --parallel 4
+build_package() {
+    local package_name="$1"
+    local build_function="$2"
+    
+    log_info "Building $package_name"
+    extract_package "$package_name"
+    cd "${BUILD_DIR}/${package_name}"
+    "$build_function"
+    cd - > /dev/null
+}
 ```
 
-### Quality Assurance
+## Documentation Processing Requirements
+
+### XML/HTML Parsing for Build Instructions
+
+```python
+# src/parsers/lfs_parser.py
+def extract_build_commands(chapter_file):
+    """Extract build commands from LFS documentation"""
+    soup = BeautifulSoup(open(chapter_file), 'html.parser')
+    
+    # Find all code blocks with build instructions
+    build_blocks = soup.find_all('pre', class_='userinput')
+    
+    commands = []
+    for block in build_blocks:
+        # Clean and process commands
+        cmd = clean_command(block.get_text())
+        if is_build_command(cmd):
+            commands.append(cmd)
+    
+    return commands
+
+def resolve_dependencies(package_name):
+    """Parse dependency information from documentation"""
+    # Read docs/lfs/dependencies.xml or similar
+    # Build dependency graph
+    # Return ordered build list
+```
+
+### Configuration Extraction
 
 ```bash
-# Run comprehensive tests
-./tools/test_runner.sh --all --verbose
-
-# Test specific profile
-./tools/test_runner.sh --profile gaming --vm-test
-
-# Validate dependencies
-./tools/dependency_checker.sh --strict --package-list all
+# Extract configuration from JHALFS documentation
+parse_jhalfs_config() {
+    local config_file="docs/jhalfs/config/LFS"
+    
+    # Extract build parameters
+    grep -E "^[A-Z_]+=" "$config_file" | while IFS='=' read key value; do
+        echo "export $key=$value" >> config/extracted_jhalfs.conf
+    done
+}
 ```
 
-## Configuration Management
+## Build Validation and Testing
 
-### Build Profiles
-
-Customize builds for different use cases:
+### Automated Testing Requirements
 
 ```bash
-# config/build_profiles/gaming.conf
-ENABLE_GRAPHICS_DRIVERS=true
-INCLUDE_STEAM=true
-INCLUDE_LUTRIS=true
-OPTIMIZE_FOR_GAMING=true
-INCLUDE_NVIDIA_DRIVERS=auto-detect
-INCLUDE_AMD_DRIVERS=auto-detect
-AUDIO_SYSTEM=pipewire
+# generated/validation_suite.sh
+validate_lfs_system() {
+    log_info "Validating LFS base system"
+    
+    # Check essential binaries exist
+    check_binary_exists gcc "Compiler not found"
+    check_binary_exists make "Build system not found"
+    check_binary_exists bash "Shell not found"
+    
+    # Verify system libraries
+    validate_glibc_installation
+    validate_kernel_modules
+}
+
+validate_gnome_desktop() {
+    log_info "Validating GNOME desktop installation"
+    
+    # Check GNOME components
+    check_binary_exists gnome-session "GNOME session not found"
+    check_binary_exists gdm "Display manager not found"
+    
+    # Test graphics stack
+    validate_graphics_drivers
+    validate_wayland_support
+}
 ```
 
-### Hardware Profiles
+## Current Task Priority for Codex Agents
 
-Adapt builds for specific hardware:
+### Immediate Action Items
+
+1. **FIRST**: Parse all documentation in `docs/lfs/`, `docs/jhalfs/`, `docs/glfs/`, `docs/blfs/`
+2. **SECOND**: Generate dependency graph and build order from documentation
+3. **THIRD**: Create `generated/complete_build.sh` master orchestration script
+4. **FOURTH**: Generate component-specific builders (LFS, networking, GNOME, BLFS)
+5. **FIFTH**: Implement validation and testing automation
+6. **SIXTH**: Create self-installing ISO generation scripts
+
+### Critical Success Criteria
+
+- **Complete automation**: No manual intervention required after script launch
+- **Full desktop system**: Bootable system with GNOME desktop and networking
+- **Robust error handling**: Graceful failure and recovery mechanisms
+- **Documentation traceability**: All build steps traceable to source documentation
+- **Reproducible builds**: Consistent results across different hardware
+- **Modular architecture**: Individual components can be rebuilt independently
+
+## Environment Setup for Documentation Processing
+
+### Required Tools and Dependencies
 
 ```bash
-# config/hardware_profiles/laptop.conf
-ENABLE_WIFI=true
-ENABLE_BLUETOOTH=true
-POWER_MANAGEMENT=tlp
-GRAPHICS_DRIVER=auto-detect
-INCLUDE_LAPTOP_TOOLS=true
+# Documentation processing tools
+sudo apt-get install -y python3 python3-pip xmllint pandoc
+pip3 install beautifulsoup4 lxml requests
+
+# LFS build requirements
+sudo apt-get install -y build-essential bison gawk texinfo
+sudo apt-get install -y wget curl git subversion
+
+# Testing and virtualization
+sudo apt-get install -y qemu-kvm libvirt-clients virt-manager
 ```
 
-## Testing Strategy
-
-### Unit Testing
-
-- **Framework**: Bats for shell scripts, pytest for Python
-- **Coverage**: Minimum 80% test coverage for critical modules
-- **Mocking**: Mock external dependencies and system calls
-
-### Integration Testing
-
-- **Build Testing**: Full LFS builds in isolated environments
-- **Cross-Platform**: Test on multiple host distributions
-- **Version Testing**: Test against different LFS book versions
-
-### Virtual Machine Testing
+### Environment Variables for Build Control
 
 ```bash
-# Automated VM testing
-./tests/vm_tests/run_vm_test.sh --profile desktop --memory 4G --disk 20G
+# Core LFS variables
+export LFS=/mnt/lfs
+export LFS_TGT=$(uname -m)-lfs-linux-gnu
+export LFS_MAKEFLAGS="-j$(nproc)"
 
-# Boot test for installer
-./tests/vm_tests/boot_test.sh --installer output/installers/lfs-desktop-installer.iso
+# Documentation processing
+export DOCS_ROOT="./docs"
+export BUILD_OUTPUT="./generated"
+export LOG_LEVEL="INFO"
+
+# Build customization
+export ENABLE_GNOME="true"
+export ENABLE_NETWORKING="true"
+export TARGET_ARCH="x86_64"
+export BUILD_PROFILE="desktop_gnome"
 ```
 
-## Monitoring and Logging
+## Performance Optimization for Large-Scale Builds
 
-### Build Monitoring
+### Parallel Processing Strategy
 
-- **Progress Tracking**: Real-time build progress with ETA calculations
-- **Resource Usage**: CPU, memory, and disk usage monitoring
-- **Error Detection**: Automatic error detection and reporting
-
-### Logging Strategy
-
-```bash
-# Log levels: DEBUG, INFO, WARN, ERROR, FATAL
-export LFS_LOG_LEVEL=INFO
-export LFS_LOG_FILE=output/logs/build-$(date +%Y%m%d-%H%M%S).log
-
-# Structured logging format
-[2025-07-11 10:30:15] [INFO] [package_builder] Starting GCC compilation
-[2025-07-11 10:30:16] [DEBUG] [configure_wrapper] Using flags: --enable-languages=c,c++
-```
-
-## Performance Optimization
-
-### Build Optimization
-
-- **Parallel Compilation**: Automatic CPU core detection for optimal -j flags
-- **Caching**: Intelligent caching of compiled packages and dependencies
-- **Incremental Builds**: Skip unchanged packages in rebuild scenarios
-- **Network Optimization**: Parallel downloads with integrity checking
+- **Multi-core compilation**: Automatic detection of CPU cores for -j flags
+- **Parallel package downloads**: Download multiple packages simultaneously
+- **Staged building**: Overlap dependency building with main packages
+- **Caching strategy**: Cache compiled packages for faster rebuilds
 
 ### Resource Management
 
 ```bash
-# Configure build resources
-export LFS_BUILD_JOBS=auto  # Auto-detect CPU cores
-export LFS_MAX_MEMORY=8G    # Memory limit for builds
-export LFS_CACHE_SIZE=10G   # Package cache size
-export LFS_TEMP_DIR=/tmp/lfs-build  # Temporary build directory
-```
-
-## Security Considerations
-
-### Package Verification
-
-- **Cryptographic Verification**: GPG signature verification for all packages
-- **Checksum Validation**: SHA-256 checksum verification
-- **Source Authenticity**: Verify package sources against official repositories
-
-### Build Security
-
-```bash
-# Security-focused build options
-./src/builders/system_builder.sh \
-    --security-hardened \
-    --enable-selinux \
-    --disable-debug-symbols \
-    --strip-binaries
-```
-
-### Secure Installation
-
-- **Encrypted Disk**: Optional full-disk encryption during installation
-- **Secure Boot**: Support for secure boot configuration
-- **Minimal Attack Surface**: Remove unnecessary packages and services
-
-## Deployment and Distribution
-
-### Image Generation
-
-```bash
-# Create ISO installer
-./src/builders/installer_builder.sh --output-format iso --hybrid-boot
-
-# Create VM image
-./src/builders/installer_builder.sh --output-format qcow2 --cloud-init
-
-# Create container base
-./src/builders/installer_builder.sh --output-format container --minimal
-```
-
-### Distribution Methods
-
-- **Direct Download**: Generate downloadable ISO images
-- **Network Install**: PXE boot and network installation support
-- **Cloud Deployment**: Cloud-init compatible images for VPS deployment
-
-## Troubleshooting Guide
-
-### Common Build Issues
-
-**Issue 1: Package compilation failure**
-
-```bash
-# Check build logs
-tail -n 100 output/logs/package-gcc-error.log
-
-# Retry with debug output
-./src/builders/package_builder.sh --package gcc --debug --clean-first
-```
-
-**Issue 2: Dependency resolution problems**
-
-```bash
-# Regenerate dependency graph
-./src/parsers/dependency_resolver.py --force-refresh
-
-# Manual dependency check
-./tools/dependency_checker.sh --package glibc --verbose
-```
-
-**Issue 3: Self-installer boot failure**
-
-```bash
-# Test installer in VM
-./tests/vm_tests/boot_test.sh --installer output/installers/failed-build.iso --debug
-
-# Check bootloader configuration
-./src/modules/bootloader.sh --verify --config-file output/boot/grub.cfg
-```
-
-## Documentation Synchronization
-
-### Keeping LFS Books Updated
-
-```bash
-# Update LFS documentation
-./tools/doc_updater.sh --book lfs --version stable
-
-# Update BLFS documentation
-./tools/doc_updater.sh --book blfs --version development
-
-# Update gaming extensions
-./tools/doc_updater.sh --book gaming --source community
-```
-
-### Version Tracking
-
-The system tracks LFS book versions and automatically adapts scripts:
-
-```bash
-# Current LFS book versions
-cat config/lfs_versions.json
-{
-  "lfs": "12.0",
-  "lfs-systemd": "12.0",
-  "blfs": "12.0",
-  "gaming-extensions": "community-2025.7"
+# Memory and disk management
+monitor_system_resources() {
+    local available_memory=$(free -m | awk 'NR==2{printf "%.1f", $7/1024}')
+    local available_disk=$(df -h /tmp | awk 'NR==2{print $4}')
+    
+    if (( $(echo "$available_memory < 2.0" | bc -l) )); then
+        log_warning "Low memory detected: ${available_memory}GB available"
+        reduce_parallel_jobs
+    fi
 }
 ```
 
-## Contributing Guidelines
+## Security and Verification Standards
 
-### Code Contributions
+### Package Verification
 
-1. **Fork and Branch**: Create feature branches from main
-2. **Test First**: Write tests before implementing features
-3. **Documentation**: Update documentation for any changes
-4. **Review Process**: All changes require peer review
+- **GPG signature verification**: Verify all downloaded packages
+- **Checksum validation**: SHA-256 checksum verification
+- **Source authenticity**: Download only from official sources
+- **Build environment isolation**: Use chroot/container environments
 
-### Documentation Contributions
+### Security Hardening
 
-- **LFS Updates**: Help maintain current LFS book compatibility
-- **Hardware Support**: Add new hardware profiles
-- **Use Cases**: Document new build profiles and use cases
+```bash
+# Security configuration during build
+apply_security_hardening() {
+    # Enable stack protection
+    export CFLAGS="$CFLAGS -fstack-protector-strong"
+    
+    # Position independent executables
+    export CFLAGS="$CFLAGS -fpie"
+    export LDFLAGS="$LDFLAGS -pie"
+    
+    # Remove debug symbols in production
+    export CFLAGS="$CFLAGS -s"
+}
+```
 
-## Resource Links
+## Continuous Integration and Automation
 
-- [Linux From Scratch Official](http://www.linuxfromscratch.org/)
-- [Beyond Linux From Scratch](http://www.linuxfromscratch.org/blfs/)
-- [LFS Community Forums](http://www.linuxfromscratch.org/support.html)
-- [Gaming on Linux Resources](https://www.gamingonlinux.com/)
-- [Auto-LFS-Builder Wiki](https://github.com/yourusername/auto-lfs-builder/wiki)
+### Automated Testing Pipeline
 
-## Changelog
+```bash
+# Automated build verification
+run_ci_pipeline() {
+    log_info "Starting CI pipeline for LFS build"
+    
+    # Phase 1: Documentation validation
+    validate_documentation_integrity
+    
+    # Phase 2: Generated script testing
+    test_generated_scripts
+    
+    # Phase 3: Virtual machine build test
+    run_vm_build_test
+    
+    # Phase 4: Hardware compatibility test
+    run_hardware_compatibility_test
+}
+```
 
-### v1.0.0 (2025-07-11)
+## Troubleshooting and Debug Support
 
-- Initial release of Auto-LFS-Builder
-- Complete LFS automation pipeline
-- BLFS integration support
-- Gaming extensions framework
-- Self-installing system generation
-- Comprehensive testing suite
+### Common Build Issues and Automated Solutions
 
-### Future Roadmap
+```bash
+# Automated problem detection and resolution
+detect_and_fix_issues() {
+    # Check for common LFS build problems
+    if ! check_toolchain_integrity; then
+        log_error "Toolchain integrity check failed"
+        rebuild_toolchain
+    fi
+    
+    # Verify GNOME dependencies
+    if ! check_gnome_dependencies; then
+        log_error "GNOME dependencies missing"
+        install_missing_gnome_deps
+    fi
+    
+    # Network configuration validation
+    if ! test_network_connectivity; then
+        log_error "Network configuration failed"
+        reconfigure_networking
+    fi
+}
+```
 
-- GUI installer interface
-- Advanced package management
-- Cloud-native deployment options
-- Mobile/embedded LFS variants
-- Real-time system updates
+## Documentation Synchronization and Updates
+
+### Keeping Documentation Current
+
+```bash
+# Automated documentation updates
+update_documentation() {
+    log_info "Updating LFS documentation sources"
+    
+    # Update LFS book
+    cd docs/lfs && git pull origin master
+    
+    # Update BLFS book  
+    cd ../blfs && git pull origin master
+    
+    # Update JHALFS
+    cd ../jhalfs && git pull origin master
+    
+    # Regenerate build scripts if documentation changed
+    if documentation_changed; then
+        log_info "Documentation updated, regenerating build scripts"
+        ./src/parsers/regenerate_all_scripts.sh
+    fi
+}
+```
+
+## Final Output Requirements
+
+Your primary deliverable as a Codex agent must be a **complete, fully functional build automation system** that:
+
+1. **Reads and processes all documentation** in the docs/ folder
+2. **Generates working shell scripts** that build a complete LFS system
+3. **Includes full GNOME desktop environment** with networking capabilities
+4. **Creates self-installing media** that can deploy on target hardware
+5. **Provides comprehensive logging and error handling**
+6. **Includes validation and testing automation**
+
+The generated `complete_build.sh` script should be able to take a bare metal system and produce a fully functional Linux desktop environment without any manual intervention.
 
 ------
 
-**Note**: This agents.md file is specifically designed for Linux From Scratch automation projects. Adjust configurations, build profiles, and hardware support based on your specific requirements and target systems.
+**Remember**: This is a documentation-driven automation project. Your success depends on accurately parsing and implementing the build instructions found in the comprehensive documentation provided in the docs/ folder. Every generated script must be traceable back to its source documentation and include proper error handling and validation.
