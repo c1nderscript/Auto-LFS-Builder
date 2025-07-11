@@ -12,3 +12,5 @@ Gaming on Linux from Scratch
 
 
 All in one application.
+
+See **SETUP.md** for environment configuration details.
