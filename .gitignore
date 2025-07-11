@@ -1,0 +1,11 @@
+# Ignore generated build scripts
+generated/
+
+# Ignore log files
+logs/
+*.log
+
+# Python cache files
+*.pyc
+__pycache__/
+
