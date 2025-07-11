@@ -12,4 +12,4 @@ Gaming on Linux from Scratch
 
 
 All in one application.
-See [setup.md](setup.md) for environment configuration details.
+See [SETUP.md](SETUP.md) for environment configuration details.
