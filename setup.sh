@@ -1,271 +1,423 @@
-#!/bin/bash
-# Auto-LFS-Builder Environment Setup and Initialization Scripts
+# Auto-LFS-Builder Environment Configuration
 
-# =============================================================================
-# setup_environment.sh - Initial environment setup
-# =============================================================================
+## Overview
+This document describes all environment variables, configuration options, and setup procedures for the Auto-LFS-Builder project. This system generates complete Linux From Scratch automation scripts by processing documentation sources and creating self-installing systems with GNOME desktop environments.
 
-setup_lfs_environment() {
-    echo "Setting up Auto-LFS-Builder environment..."
-    
-    # Set LFS environment variables
-    export LFS=/mnt/lfs
-    export LFS_TGT=$(uname -m)-lfs-linux-gnu
-    export PATH=/usr/bin
-    
-    # Create LFS directory structure
-    sudo mkdir -pv $LFS/{etc,var,usr/{bin,lib,sbin}}
-    sudo mkdir -pv $LFS/lib64
-    sudo mkdir -pv $LFS/{dev,proc,sys,run}
-    sudo mkdir -pv $LFS/tmp
-    sudo mkdir -pv $LFS/mnt
-    sudo mkdir -pv $LFS/media/{floppy,cdrom}
-    
-    # Set permissions
-    sudo chmod -v a+wt $LFS/tmp
-    
-    # Create tools directory
-    sudo mkdir -pv $LFS/tools
-    sudo ln -sfv $LFS/tools /
-    
-    echo "LFS environment setup complete!"
-}
+## Core LFS Build Variables
 
-# =============================================================================
-# initialize_codex_agents.sh - Codex agent initialization
-# =============================================================================
+### Essential LFS Environment Variables
+- **`LFS`**: Mount point for LFS build system (default: `/mnt/lfs`)
+- **`LFS_TGT`**: Target triplet for cross-compilation (auto-detected: `$(uname -m)-lfs-linux-gnu`)
+- **`LFS_MAKEFLAGS`**: Parallel compilation flags (default: `-j$(nproc)`)
+- **`LFS_WORKSPACE`**: Alternative workspace for non-root builds (default: `./workspace/lfs-build`)
 
-initialize_codex_agents() {
-    echo "Initializing Codex agents for Auto-LFS-Builder..."
-    
-    # Set Codex context variables
-    export CODEX_PROJECT_TYPE="lfs-automation"
-    export CODEX_DOCUMENTATION_PATH="./docs/"
-    export CODEX_BUILD_CONTEXT="linux-from-scratch"
-    export CODEX_LOG_LEVEL="INFO"
-    
-    # Create agent working directories
-    mkdir -p .codex/{context,cache,logs,temp}
-    
-    # Initialize agent configuration
-    cat > .codex/agent_config.json << 'EOF'
-{
-    "project_type": "linux_from_scratch_automation",
-    "primary_language": "bash",
-    "secondary_languages": ["python", "make"],
-    "documentation_sources": [
-        "docs/lfs/",
-        "docs/blfs/", 
-        "docs/gaming/"
-    ],
-    "build_phases": [
-        "toolchain",
-        "temporary_system", 
-        "final_system",
-        "blfs_packages",
-        "gaming_setup"
-    ],
-    "target_architectures": ["x86_64", "aarch64"],
-    "optimization_level": "balanced",
-    "testing_required": true,
-    "vm_testing_enabled": true
-}
-EOF
-    
-    # Create context prompts for Codex
-    cat > .codex/context_prompts.txt << 'EOF'
-This is an Auto-LFS-Builder project that automates Linux From Scratch builds.
+### Documentation Processing Variables
+- **`DOCS_ROOT`**: Source documentation directory (default: `./docs`)
+- **`GENERATED_DIR`**: Generated automation scripts directory (default: `./generated`)
+- **`PARSING_LOG_LEVEL`**: Documentation parsing verbosity (`DEBUG`, `INFO`, `WARN`, `ERROR`)
+- **`VALIDATION_MODE`**: Documentation validation strictness (`strict`, `permissive`)
 
-Key Context:
-- Project reads LFS documentation from docs/ folder
-- Generates wrapper scripts for build automation  
-- Creates self-installing Linux systems
-- Supports LFS, BLFS, and Gaming on Linux variants
-- Uses modular architecture with builders, parsers, and wrappers
-- Requires careful dependency management and build order
-- Targets multiple hardware profiles and use cases
+### Build Configuration Variables
+- **`BUILD_PROFILE`**: System build configuration profile
+  - `desktop_gnome`: Full GNOME desktop with networking
+  - `minimal`: Base LFS system only
+  - `server`: Server configuration with networking, no GUI
+  - `developer`: Development tools and environment
+- **`TARGET_ARCH`**: Target system architecture (`x86_64`, `aarch64`)
+- **`PARALLEL_JOBS`**: Build parallelization (`auto`, specific number)
+- **`BUILD_OPTIMIZATION`**: Compilation optimization level (`-O2`, `-O3`, `-Os`)
 
-When working on this project:
-1. Always consider LFS build phases and dependencies
-2. Ensure proper error handling for system-critical operations
-3. Follow LFS security and verification practices
-4. Maintain compatibility across different LFS book versions
-5. Test changes in isolated VM environments
-6. Document any custom patches or modifications
-EOF
+### Component Control Flags
+- **`ENABLE_GNOME`**: Install GNOME desktop environment (`true`/`false`)
+- **`ENABLE_NETWORKING`**: Configure network stack and tools (`true`/`false`)
+- **`ENABLE_MULTIMEDIA`**: Include multimedia codecs and tools (`true`/`false`)
+- **`ENABLE_DEVELOPMENT_TOOLS`**: Include compilers and dev tools (`true`/`false`)
+- **`ENABLE_VIRTUALIZATION`**: Support for VM/container tools (`true`/`false`)
 
-    echo "Codex agents initialized successfully!"
-}
+### Security and Verification Settings
+- **`VERIFY_PACKAGES`**: Enable GPG signature verification (`true`/`false`)
+- **`CHECKSUM_VALIDATION`**: Validate package checksums (`sha256`, `all`, `none`)
+- **`SECURITY_HARDENING`**: Apply security hardening flags (`true`/`false`)
+- **`TRUSTED_KEYRING`**: GPG keyring for package verification
 
-# =============================================================================
-# health_check.sh - System health and readiness check
-# =============================================================================
+## Environment-Specific Configurations
 
-health_check() {
-    echo "Running Auto-LFS-Builder health check..."
-    
-    local errors=0
-    
-    # Check disk space
-    local available_space=$(df . | awk 'NR==2 {print $4}')
-    local required_space=52428800  # 50GB in KB
-    
-    if [ "$available_space" -lt "$required_space" ]; then
-        echo "ERROR: Insufficient disk space. Need at least 50GB free."
-        ((errors++))
-    else
-        echo "✓ Disk space: OK"
-    fi
-    
-    # Check memory
-    local available_memory=$(free -m | awk 'NR==2{print $7}')
-    if [ "$available_memory" -lt 4096 ]; then
-        echo "WARNING: Less than 4GB available memory. Builds may be slow."
-    else
-        echo "✓ Memory: OK"
-    fi
-    
-    # Check required tools
+### Development Environment
+```bash
+# Local development setup for testing automation
+export LFS_WORKSPACE="$(pwd)/workspace/lfs-build"
+export BUILD_PROFILE="desktop_gnome"
+export PARALLEL_JOBS="auto"
+export PARSING_LOG_LEVEL="DEBUG"
+export VALIDATION_MODE="strict"
+export ENABLE_GNOME="true"
+export ENABLE_NETWORKING="true"
+export ENABLE_DEVELOPMENT_TOOLS="true"
+export VERIFY_PACKAGES="true"
+export CHECKSUM_VALIDATION="sha256"
+```
+
+### Production Build Environment
+```bash
+# Production LFS build configuration
+export LFS="/mnt/lfs"
+export BUILD_PROFILE="desktop_gnome"
+export PARALLEL_JOBS="$(nproc)"
+export PARSING_LOG_LEVEL="INFO"
+export VALIDATION_MODE="strict"
+export ENABLE_GNOME="true"
+export ENABLE_NETWORKING="true"
+export ENABLE_MULTIMEDIA="true"
+export SECURITY_HARDENING="true"
+export VERIFY_PACKAGES="true"
+export CHECKSUM_VALIDATION="all"
+```
+
+### CI/CD Testing Environment
+```bash
+# Continuous integration testing
+export LFS="/tmp/lfs-ci-build"
+export BUILD_PROFILE="minimal"
+export PARALLEL_JOBS="2"
+export PARSING_LOG_LEVEL="DEBUG"
+export VALIDATION_MODE="permissive"
+export ENABLE_GNOME="false"
+export ENABLE_NETWORKING="true"
+export VERIFY_PACKAGES="false"  # Speed up CI builds
+export CHECKSUM_VALIDATION="sha256"
+```
+
+### Virtual Machine Testing
+```bash
+# VM testing environment
+export LFS="/mnt/lfs-vm"
+export BUILD_PROFILE="desktop_gnome"
+export PARALLEL_JOBS="4"
+export PARSING_LOG_LEVEL="INFO"
+export VM_MEMORY="4G"
+export VM_DISK_SIZE="50G"
+export VM_TEST_GRAPHICS="true"
+export VM_TEST_NETWORKING="true"
+```
+
+## Hardware-Specific Configuration
+
+### x86_64 Desktop Configuration
+```bash
+export TARGET_ARCH="x86_64"
+export CPU_FAMILY="x86_64"
+export ENABLE_GRAPHICS_DRIVERS="intel,amd,nvidia"
+export ENABLE_WIRELESS="true"
+export ENABLE_BLUETOOTH="true"
+export ENABLE_AUDIO="pulseaudio,pipewire"
+export GRAPHICS_BACKEND="wayland,x11"
+export FIRMWARE_SUPPORT="uefi,bios"
+```
+
+### ARM64/AArch64 Configuration
+```bash
+export TARGET_ARCH="aarch64"
+export CPU_FAMILY="arm64"
+export CROSS_COMPILE="aarch64-linux-gnu-"
+export ENABLE_GRAPHICS_DRIVERS="arm,mali,adreno"
+export ENABLE_WIRELESS="true"
+export ENABLE_BLUETOOTH="true"
+export GRAPHICS_BACKEND="wayland"
+export FIRMWARE_SUPPORT="uefi"
+```
+
+### Raspberry Pi Specific
+```bash
+export TARGET_ARCH="aarch64"
+export BOARD_TYPE="raspberry_pi_4"
+export ENABLE_GRAPHICS_DRIVERS="broadcom"
+export ENABLE_GPIO="true"
+export ENABLE_CAMERA="true"
+export BOOT_PARTITION_SIZE="256M"
+export GPU_MEMORY_SPLIT="64"
+```
+
+## Performance and Resource Management
+
+### Build Optimization Settings
+```bash
+# Adjust based on available system resources
+export MAX_PARALLEL_JOBS="$(nproc)"
+export BUILD_MEMORY_LIMIT="8G"
+export TMPFS_BUILD_DIR="true"        # Use tmpfs for faster builds
+export TMPFS_SIZE="4G"               # Size of tmpfs for builds
+export CCACHE_ENABLED="true"         # Enable compilation cache
+export CCACHE_SIZE="10G"             # Compilation cache size
+export LINK_TIME_OPTIMIZATION="true" # Enable LTO for smaller binaries
+```
+
+### Disk and Storage Management
+```bash
+export PACKAGE_CACHE_DIR="/var/cache/lfs-packages"
+export BUILD_CACHE_DIR="/var/cache/lfs-builds"
+export LOG_RETENTION_DAYS="30"
+export CLEANUP_BUILD_DIRS="true"     # Clean intermediate build dirs
+export COMPRESS_LOGS="true"          # Compress old log files
+export PACKAGE_MIRROR="https://www.linuxfromscratch.org/lfs/downloads/"
+```
+
+### Memory and Process Limits
+```bash
+export MAX_BUILD_MEMORY="6G"         # Per-build memory limit
+export MAX_LINK_MEMORY="4G"          # Linker memory limit
+export SWAP_MANAGEMENT="auto"        # Automatic swap management
+export OOM_PROTECTION="true"         # Enable OOM protection
+export PROCESS_NICE_LEVEL="10"       # Build process nice level
+```
+
+## Documentation Processing Configuration
+
+### Parser Behavior Settings
+```bash
+export DOC_PARSER_TIMEOUT="300"      # Parser timeout in seconds
+export DEPENDENCY_ANALYSIS="deep"    # Depth of dependency analysis
+export CROSS_REFERENCE="true"        # Enable cross-reference validation
+export EXTRACT_EXAMPLES="true"       # Extract code examples from docs
+export VALIDATE_URLS="true"          # Validate documentation URLs
+export CACHE_PARSED_DATA="true"      # Cache parsed documentation
+```
+
+### Code Generation Settings
+```bash
+export SCRIPT_TEMPLATE_DIR="templates/"
+export GENERATED_SCRIPT_PREFIX="autogen_"
+export INCLUDE_DEBUG_INFO="true"     # Include debug info in scripts
+export SCRIPT_VALIDATION="strict"    # Validate generated scripts
+export ERROR_HANDLING_LEVEL="comprehensive"
+export LOGGING_VERBOSITY="detailed"
+```
+
+## Network and Download Configuration
+
+### Package Download Settings
+```bash
+export DOWNLOAD_TIMEOUT="300"        # Download timeout in seconds
+export DOWNLOAD_RETRIES="3"          # Number of download retries
+export PARALLEL_DOWNLOADS="4"        # Concurrent downloads
+export BANDWIDTH_LIMIT="0"           # Bandwidth limit (0=unlimited)
+export MIRROR_SELECTION="auto"       # Automatic mirror selection
+export PACKAGE_SIGNATURE_CHECK="mandatory"
+```
+
+### Proxy and Network Settings
+```bash
+# Uncomment and configure if using proxy
+# export HTTP_PROXY="http://proxy.example.com:8080"
+# export HTTPS_PROXY="http://proxy.example.com:8080"
+# export FTP_PROXY="ftp://proxy.example.com:2121"
+# export NO_PROXY="localhost,127.0.0.1,*.local"
+
+export DNS_SERVERS="8.8.8.8,1.1.1.1"
+export NETWORK_TIMEOUT="30"
+export CONNECTION_RETRIES="3"
+```
+
+## GNOME Desktop Configuration
+
+### GNOME Component Selection
+```bash
+export GNOME_VERSION="44"            # Target GNOME version
+export GNOME_COMPONENTS="core,apps"  # GNOME components to install
+export GNOME_SHELL_EXTENSIONS="true" # Enable shell extensions
+export GNOME_THEMES="adwaita"        # Default theme selection
+export GNOME_DISPLAY_MANAGER="gdm"   # Display manager choice
+```
+
+### Desktop Environment Settings
+```bash
+export WAYLAND_ENABLED="true"        # Enable Wayland support
+export X11_FALLBACK="true"           # X11 fallback support
+export HARDWARE_ACCELERATION="true"  # Enable hardware acceleration
+export FONT_RENDERING="freetype"     # Font rendering engine
+export ACCESSIBILITY_SUPPORT="true"  # Accessibility features
+```
+
+### Application Selection
+```bash
+export INCLUDE_FIREFOX="true"        # Include Firefox browser
+export INCLUDE_LIBREOFFICE="false"   # Include LibreOffice suite
+export INCLUDE_DEVELOPMENT_TOOLS="true"
+export INCLUDE_MULTIMEDIA_APPS="true"
+export INCLUDE_GAMES="false"
+export INCLUDE_ADDITIONAL_APPS="web-browsers,text-editors"
+```
+
+## Testing and Validation Configuration
+
+### Build Testing Settings
+```bash
+export ENABLE_BUILD_TESTS="true"     # Enable build-time testing
+export TEST_COVERAGE="comprehensive" # Test coverage level
+export PERFORMANCE_TESTS="true"      # Enable performance testing
+export REGRESSION_TESTS="true"       # Enable regression testing
+export INTEGRATION_TESTS="true"      # Enable integration testing
+```
+
+### Virtual Machine Testing
+```bash
+export VM_TESTING_ENABLED="true"
+export VM_ENGINE="qemu"              # VM engine (qemu, virtualbox)
+export VM_MEMORY_SIZE="4G"           # VM memory allocation
+export VM_DISK_SIZE="50G"            # VM disk size
+export VM_CPU_CORES="4"              # VM CPU cores
+export VM_GRAPHICS_TEST="true"       # Test graphics in VM
+export VM_NETWORK_TEST="true"        # Test networking in VM
+export VM_BOOT_TEST="true"           # Test boot process
+```
+
+### Hardware Compatibility Testing
+```bash
+export HW_COMPAT_TESTING="true"
+export TEST_GRAPHICS_DRIVERS="intel,amd,nvidia"
+export TEST_WIRELESS_CHIPS="intel,broadcom,realtek"
+export TEST_AUDIO_SYSTEMS="alsa,pulseaudio,pipewire"
+export TEST_USB_DEVICES="true"
+export TEST_STORAGE_DEVICES="sata,nvme,usb"
+```
+
+## Security and Hardening Configuration
+
+### Build Security Settings
+```bash
+export SECURITY_LEVEL="high"         # Security hardening level
+export ENABLE_PIE="true"             # Position Independent Executables
+export ENABLE_STACK_PROTECTION="true"
+export ENABLE_FORTIFY_SOURCE="true"
+export ENABLE_RELRO="true"           # Relocation Read-Only
+export STRIP_DEBUG_SYMBOLS="true"    # Strip debug symbols
+```
+
+### Package Verification Settings
+```bash
+export GPG_VERIFICATION="mandatory"  # GPG signature verification
+export CHECKSUM_ALGORITHMS="sha256,sha512"
+export TRUSTED_SOURCES_ONLY="true"   # Only trusted package sources
+export VULNERABILITY_SCANNING="true" # Scan for known vulnerabilities
+export SECURITY_UPDATES="auto"       # Automatic security updates
+```
+
+### System Hardening Options
+```bash
+export KERNEL_HARDENING="true"       # Kernel hardening options
+export FIREWALL_ENABLED="true"       # Enable firewall by default
+export SELINUX_ENABLED="false"       # SELinux support (experimental)
+export APPARMOR_ENABLED="false"      # AppArmor support (experimental)
+export SECURE_BOOT="auto"            # Secure boot configuration
+```
+
+## Debugging and Development Options
+
+### Debug Build Settings
+```bash
+export DEBUG_BUILD="false"           # Enable debug build mode
+export KEEP_BUILD_SOURCES="false"    # Keep source directories after build
+export PRESERVE_INTERMEDIATE="false" # Keep intermediate build files
+export VERBOSE_OUTPUT="false"        # Verbose build output
+export TRACE_EXECUTION="false"       # Trace script execution
+export PROFILING_ENABLED="false"     # Enable build profiling
+```
+
+### Development Mode Settings
+```bash
+export DEVELOPMENT_MODE="false"      # Enable development features
+export LIVE_DOCUMENTATION="false"    # Live documentation updates
+export INTERACTIVE_DEBUGGING="false" # Interactive debug sessions
+export BUILD_MONITORING="true"       # Real-time build monitoring
+export PERFORMANCE_PROFILING="false" # Performance profiling
+```
+
+### Logging and Monitoring
+```bash
+export LOG_LEVEL="INFO"              # Global log level
+export LOG_FORMAT="structured"       # Log format (structured, plain)
+export LOG_TIMESTAMPS="true"         # Include timestamps in logs
+export LOG_ROTATION="daily"          # Log rotation schedule
+export METRICS_COLLECTION="true"     # Collect build metrics
+export MONITORING_INTERVAL="60"      # Monitoring check interval (seconds)
+```
+
+## Troubleshooting Environment Variables
+
+### Error Handling Configuration
+```bash
+export ERROR_HANDLING="fail_fast"    # Error handling strategy
+export ERROR_RECOVERY="auto"         # Automatic error recovery
+export BACKUP_RESTORE="true"         # Enable backup and restore
+export CHECKPOINT_FREQUENCY="build"  # Checkpoint creation frequency
+export ROLLBACK_ENABLED="true"       # Enable rollback capability
+```
+
+### Diagnostic Settings
+```bash
+export DIAGNOSTIC_MODE="false"       # Enable diagnostic mode
+export SYSTEM_INFO_COLLECTION="true" # Collect system information
+export BUILD_ANALYTICS="true"        # Build analytics and reporting
+export ERROR_REPORTING="true"        # Automatic error reporting
+export PERFORMANCE_METRICS="true"    # Performance metrics collection
+```
+
+## Environment Validation
+
+### Required Tools Check
+```bash
+# Validation script for required tools
+validate_environment() {
     local required_tools=(
-        "gcc" "g++" "make" "bison" "flex" "gawk" 
-        "texinfo" "patch" "tar" "gzip" "bzip2" 
-        "xz" "wget" "curl" "git" "python3"
+        "bash" "gcc" "g++" "make" "bison" "flex" "gawk"
+        "texinfo" "patch" "tar" "gzip" "bzip2" "xz"
+        "wget" "curl" "git" "python3" "xmllint" "pandoc"
     )
     
     for tool in "${required_tools[@]}"; do
         if ! command -v "$tool" &> /dev/null; then
             echo "ERROR: Required tool '$tool' not found"
-            ((errors++))
+            return 1
         fi
     done
     
-    if [ $errors -eq 0 ]; then
-        echo "✓ Required tools: OK"
+    echo "All required tools are available"
+    return 0
+}
+```
+
+### Environment Health Check
+```bash
+# Check environment configuration
+check_environment_health() {
+    # Check disk space
+    local available_space=$(df . | awk 'NR==2 {print $4}')
+    local required_space=52428800  # 50GB in KB
+    
+    if [ "$available_space" -lt "$required_space" ]; then
+        echo "WARNING: Insufficient disk space"
     fi
     
-    # Check Python dependencies
-    if python3 -c "import requests, lxml, beautifulsoup4" 2>/dev/null; then
-        echo "✓ Python dependencies: OK"
-    else
-        echo "WARNING: Some Python dependencies missing. Run: pip3 install -r requirements.txt"
+    # Check memory
+    local available_memory=$(free -m | awk 'NR==2{print $7}')
+    if [ "$available_memory" -lt 4096 ]; then
+        echo "WARNING: Less than 4GB available memory"
     fi
     
-    # Check virtualization support
-    if [ -r /dev/kvm ]; then
-        echo "✓ KVM virtualization: Available"
-    else
-        echo "WARNING: KVM not available. VM testing will be limited."
-    fi
-    
-    # Report results
-    if [ $errors -eq 0 ]; then
-        echo "Health check PASSED. System ready for LFS builds."
-        return 0
-    else
-        echo "Health check FAILED with $errors errors."
+    # Check documentation
+    if [ ! -d "$DOCS_ROOT" ]; then
+        echo "ERROR: Documentation directory not found: $DOCS_ROOT"
         return 1
     fi
+    
+    echo "Environment health check passed"
+    return 0
 }
+```
 
-# =============================================================================
-# monitor_setup.sh - Build monitoring initialization
-# =============================================================================
+## Quick Setup Commands
 
-setup_monitoring() {
-    echo "Setting up build monitoring..."
-    
-    # Create monitoring directories
-    mkdir -p output/logs/{builds,errors,performance}
-    mkdir -p output/metrics
-    
-    # Initialize build tracking database
-    cat > output/metrics/build_tracking.json << 'EOF'
-{
-    "builds": [],
-    "current_build": null,
-    "statistics": {
-        "total_builds": 0,
-        "successful_builds": 0,
-        "failed_builds": 0,
-        "average_build_time": 0
-    }
-}
-EOF
-    
-    # Create monitoring script
-    cat > tools/build_monitor.sh << 'EOF'
-#!/bin/bash
-# Real-time build monitoring
-
-monitor_build() {
-    local build_id="$1"
-    local log_file="output/logs/builds/build-${build_id}.log"
-    
-    echo "Monitoring build $build_id..."
-    echo "Log file: $log_file"
-    echo "Press Ctrl+C to stop monitoring"
-    
-    # Monitor log file and show progress
-    tail -f "$log_file" | while read line; do
-        case "$line" in
-            *"ERROR"*|*"FAILED"*)
-                echo -e "\033[31m$line\033[0m"  # Red for errors
-                ;;
-            *"SUCCESS"*|*"COMPLETED"*)
-                echo -e "\033[32m$line\033[0m"  # Green for success
-                ;;
-            *"WARNING"*)
-                echo -e "\033[33m$line\033[0m"  # Yellow for warnings
-                ;;
-            *)
-                echo "$line"
-                ;;
-        esac
-    done
-}
-
-# Usage: ./tools/build_monitor.sh <build_id>
-monitor_build "$1"
-EOF
-    
-    chmod +x tools/build_monitor.sh
-    echo "Build monitoring setup complete!"
-}
-
-# =============================================================================
-# Main initialization script
-# =============================================================================
-
-main() {
-    echo "=== Auto-LFS-Builder Initialization ==="
-    echo "Starting comprehensive setup..."
-    
-    # Run setup steps
-    setup_lfs_environment
-    initialize_codex_agents
-    setup_monitoring
-    
-    echo ""
-    echo "Running health check..."
-    if health_check; then
-        echo ""
-        echo "=== Setup Complete ==="
-        echo "Auto-LFS-Builder is ready!"
-        echo ""
-        echo "Next steps:"
-        echo "1. Update documentation: ./tools/doc_updater.sh"
-        echo "2. Configure build profile: edit config/build_profiles/your_profile.conf"
-        echo "3. Start a build: ./src/builders/system_builder.sh --profile minimal"
-        echo "4. Monitor progress: ./tools/build_monitor.sh <build_id>"
-    else
-        echo ""
-        echo "=== Setup Issues Detected ==="
-        echo "Please resolve the issues above before proceeding."
-        exit 1
-    fi
-}
-
-# Run main function if script is executed directly
-if [[ "${BASH_SOURCE[0]}" == "${0}" ]]; then
-    main "$@"
-fi
+### Standard Desktop Build
+```bash
+# Quick setup for desktop GNOME build
+source venv/bin/activate
+export BUILD_PROFILE="desktop_gnome"
