@@ -1,6 +1,11 @@
 import sys
 from pathlib import Path
 
+import pytest
+
+# skip if BeautifulSoup is unavailable
+pytest.importorskip("bs4")
+
 sys.path.insert(0, str(Path(__file__).resolve().parents[1] / 'src'))
 
 from parsers import dependency_resolver

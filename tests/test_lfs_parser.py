@@ -1,6 +1,10 @@
 import sys
 from pathlib import Path
 
+import pytest
+
+pytest.importorskip("bs4")
+
 sys.path.insert(0, str(Path(__file__).resolve().parents[1] / 'src'))
 
 from parsers import lfs_parser
