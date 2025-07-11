@@ -1,4 +1,7 @@
 #!/bin/bash
+# SPDX-License-Identifier: MIT
+# Copyright (c) 2025 The LFS Automation Team
+
 # Master Builder: Orchestrates complete system build
 set -euo pipefail
 

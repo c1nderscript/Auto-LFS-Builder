@@ -1,4 +1,7 @@
 #!/bin/bash
+# SPDX-License-Identifier: MIT
+# Copyright (c) 2025 The LFS Automation Team
+
 # LFS Builder: Core LFS build automation
 set -euo pipefail
 

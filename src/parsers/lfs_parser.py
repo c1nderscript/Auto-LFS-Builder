@@ -1,3 +1,6 @@
+# SPDX-License-Identifier: MIT
+# Copyright (c) 2025 The LFS Automation Team
+
 """Utilities for parsing LFS documentation files."""
 
 from __future__ import annotations

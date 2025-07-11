@@ -1,4 +1,7 @@
 #!/bin/bash
+# SPDX-License-Identifier: MIT
+# Copyright (c) 2025 The LFS Automation Team
+
 # ISO Creator: Generate bootable ISO image
 set -euo pipefail
 

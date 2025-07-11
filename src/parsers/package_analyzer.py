@@ -1,3 +1,6 @@
+# SPDX-License-Identifier: MIT
+# Copyright (c) 2025 The LFS Automation Team
+
 """Helpers for analyzing package build instructions."""
 
 from __future__ import annotations

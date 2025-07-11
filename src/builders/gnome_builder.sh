@@ -1,4 +1,7 @@
 #!/bin/bash
+# SPDX-License-Identifier: MIT
+# Copyright (c) 2025 The LFS Automation Team
+
 # GNOME Builder: Install GNOME desktop environment
 set -euo pipefail
 
