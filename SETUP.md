@@ -453,3 +453,19 @@ export PARALLEL_JOBS="$(nproc)"
 ```bash
 validate_environment && check_environment_health
 ```
+
+## Testing Process
+
+The repository provides a small validation suite and unit tests.
+To execute them manually run:
+
+```bash
+# Validate the base system
+ENABLE_GNOME=false bash generated/validation_suite.sh
+
+# Run unit tests
+bash tests/run_tests.sh
+```
+
+These commands are executed automatically in the GitHub Actions workflow
+located at `.github/workflows/ci.yml`.
