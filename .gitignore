@@ -1,5 +1,6 @@
-# Ignore AI-generated build scripts
-/generated/
+# Ignore AI-generated build scripts except keep placeholder
+/generated/*
+!/generated/.gitkeep
 
 # Ignore temporary log files
 logs/
