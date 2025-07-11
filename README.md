@@ -12,3 +12,5 @@ Gaming on Linux from Scratch
 
 
 All in one application.
+
+Configuration defaults are stored in `config/build_profiles/desktop_gnome.conf`.

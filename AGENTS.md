@@ -90,6 +90,7 @@ auto-lfs-builder/
 │   └── validation_suite.sh        # Comprehensive testing
 ├── config/                        # Build configurations
 │   ├── build_profiles/            # Target system configurations
+│   │   └── desktop_gnome.conf    # Default GNOME profile
 │   ├── package_versions.conf      # Version specifications
 │   └── hardware_support.conf      # Hardware-specific settings
 └── logs/                          # Build logs and debugging
@@ -97,6 +98,7 @@ auto-lfs-builder/
     ├── build_logs/                # Construction logs
     └── validation_logs/           # Testing and verification logs
 ```
+The `config/build_profiles/desktop_gnome.conf` file provides default build options for GNOME and networking.
 
 ## AI Agent Instructions for Documentation Processing
 
