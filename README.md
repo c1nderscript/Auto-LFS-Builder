@@ -12,3 +12,8 @@ Gaming on Linux from Scratch
 
 
 All in one application.
+
+## Documentation Updates
+
+Run `scripts/update_docs.sh` to pull the latest LFS, BLFS, and JHALFS documentation.
+
