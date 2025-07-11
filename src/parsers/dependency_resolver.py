@@ -6,7 +6,10 @@ import argparse
 import re
 from pathlib import Path
 
-from bs4 import BeautifulSoup
+try:
+    from bs4 import BeautifulSoup  # type: ignore
+except Exception:  # pragma: no cover - optional dependency
+    BeautifulSoup = None
 
 DOCS_ROOT = Path(__file__).resolve().parents[2] / "docs"
 DEPENDENCY_XML = DOCS_ROOT / "lfs-git" / "appendices" / "dependencies.xml"
@@ -20,30 +23,48 @@ def build_dependency_graph(packages: list[str], dependency_file: str | Path = DE
     if not dep_path.exists():
         return graph
 
-    with dep_path.open(encoding="utf-8") as fh:
-        soup = BeautifulSoup(fh, "xml")
+    text = dep_path.read_text(encoding="utf-8")
 
-    for pkg in packages:
-        bridge = None
-        for b in soup.find_all("bridgehead"):
-            if b.get_text().strip().lower() == pkg.lower():
-                bridge = b
-                break
+    if BeautifulSoup:
+        soup = BeautifulSoup(text, "xml")
 
-        if not bridge:
-            continue
+        for pkg in packages:
+            bridge = None
+            for b in soup.find_all("bridgehead"):
+                if b.get_text().strip().lower() == pkg.lower():
+                    bridge = b
+                    break
 
-        seglist = bridge.find_next("segmentedlist", id=re.compile(r".*-depends$"))
-        if not seglist:
-            continue
+            if not bridge:
+                continue
 
-        seg = seglist.find("seg")
-        if not seg:
-            continue
+            seglist = bridge.find_next("segmentedlist", id=re.compile(r".*-depends$"))
+            if not seglist:
+                continue
 
-        text = seg.get_text().replace(" and ", ", ")
-        deps = [d.strip().rstrip(".") for d in text.split(",") if d.strip() and d.strip().lower() != "none"]
-        graph[pkg] = deps
+            seg = seglist.find("seg")
+            if not seg:
+                continue
+
+            deps_text = seg.get_text()
+            deps_text = re.sub(r"\s+and\s+", ", ", deps_text)
+            deps = [d.strip().rstrip(".") for d in deps_text.split(",") if d.strip() and d.strip().lower() != "none"]
+            graph[pkg] = deps
+    else:
+        for pkg in packages:
+            m = re.search(
+                rf"<bridgehead[^>]*>\s*{re.escape(pkg)}\s*</bridgehead>.*?"
+                rf"<segmentedlist[^>]*id=[\"']{pkg.lower()}-depends[\"'][^>]*>"
+                r".*?<seg>(.*?)</seg>",
+                text,
+                flags=re.DOTALL | re.IGNORECASE,
+            )
+            if not m:
+                continue
+            deps_text = m.group(1)
+            deps_text = re.sub(r"\s+and\s+", ", ", deps_text)
+            deps = [d.strip().rstrip(".") for d in deps_text.split(",") if d.strip() and d.strip().lower() != "none"]
+            graph[pkg] = deps
 
     return graph
 
