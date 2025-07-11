@@ -1,5 +1,3 @@
-# Ignore AI-generated build scripts
-/generated/
 
 # Ignore temporary log files
 logs/
