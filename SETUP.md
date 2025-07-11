@@ -27,6 +27,16 @@ This document describes all environment variables, configuration options, and se
 - **`PARALLEL_JOBS`**: Build parallelization (`auto`, specific number)
 - **`BUILD_OPTIMIZATION`**: Compilation optimization level (`-O2`, `-O3`, `-Os`)
 
+### Selecting a Build Profile
+Build profile files live in `config/build_profiles/` and use the `.conf` extension. Source one of these files to load its settings before running the build scripts.
+
+```bash
+# Use the GNOME desktop profile
+source config/build_profiles/desktop_gnome.conf
+```
+
+You can create additional profiles by adding new `.conf` files to this directory.
+
 ### Component Control Flags
 - **`ENABLE_GNOME`**: Install GNOME desktop environment (`true`/`false`)
 - **`ENABLE_NETWORKING`**: Configure network stack and tools (`true`/`false`)
