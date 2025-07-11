@@ -1,9 +1,9 @@
 import sys
 from pathlib import Path
 
-sys.path.insert(0, str(Path(__file__).resolve().parents[1] / 'src'))
+sys.path.insert(0, str(Path(__file__).resolve().parents[1]))
 
-from parsers import dependency_resolver
+from src.parsers import dependency_resolver
 
 
 def test_topological_sort_simple():
