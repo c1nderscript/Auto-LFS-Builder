@@ -1,0 +1,24 @@
+Auto-LFS-Builder Licensing Overview
+
+This project combines several components that are under different licenses.
+
+1. **Source Code**
+   - All automation scripts and utilities in this repository are released under
+     the MIT License.
+
+2. **JHALFS Tool**
+   - The jhalfs automation helper located in `docs/jhalfs` is also distributed
+     under the MIT License. The full license text can be found in
+     `docs/jhalfs/LICENSE`.
+
+3. **Documentation**
+   - The Linux From Scratch, Beyond Linux From Scratch and related books in the
+     `docs/` directory are provided under a Creative Commons
+     Attribution-NonCommercial-ShareAlike license. See each book's
+     `appendices/creat-comm.xml` for the complete terms.
+
+4. **Generated Systems and Third‑Party Packages**
+   - Scripts produced by this project build software from many upstream
+     projects. These components retain their original licenses as specified in
+     the Linux From Scratch documentation.
+
