@@ -1,4 +1,7 @@
 #!/bin/bash
+# SPDX-License-Identifier: MIT
+# Copyright (c) 2025 The LFS Automation Team
+
 # Bootstrap Installer: Hardware detection and installation
 set -euo pipefail
 

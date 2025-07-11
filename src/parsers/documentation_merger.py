@@ -1,3 +1,6 @@
+# SPDX-License-Identifier: MIT
+# Copyright (c) 2025 The LFS Automation Team
+
 """Utilities for combining documentation sources."""
 
 from __future__ import annotations

@@ -1,4 +1,7 @@
 #!/bin/bash
+# SPDX-License-Identifier: MIT
+# Copyright (c) 2025 The LFS Automation Team
+
 # BLFS Builder: Install additional BLFS packages
 set -euo pipefail
 
