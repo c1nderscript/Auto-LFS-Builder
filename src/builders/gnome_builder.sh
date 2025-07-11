@@ -2,9 +2,10 @@
 # GNOME Builder: Install GNOME desktop environment
 set -euo pipefail
 
-source src/common/logging.sh
-source src/common/error_handling.sh
-source src/common/package_management.sh
+SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
+source "${SCRIPT_DIR}/../common/logging.sh"
+source "${SCRIPT_DIR}/../common/error_handling.sh"
+source "${SCRIPT_DIR}/../common/package_management.sh"
 
 install_graphics_stack() {
     # Mesa, graphics drivers, Wayland/X11

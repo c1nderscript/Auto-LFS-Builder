@@ -2,9 +2,10 @@
 # LFS Builder: Core LFS build automation
 set -euo pipefail
 
-source src/common/logging.sh
-source src/common/error_handling.sh
-source src/common/package_management.sh
+SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
+source "${SCRIPT_DIR}/../common/logging.sh"
+source "${SCRIPT_DIR}/../common/error_handling.sh"
+source "${SCRIPT_DIR}/../common/package_management.sh"
 
 build_toolchain() {
     # Placeholder for toolchain build steps
