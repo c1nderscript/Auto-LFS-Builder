@@ -28,7 +28,8 @@ run_parsers() {
         || handle_error "Dependency resolution failed"
 
     log_info "Analyzing package requirements"
-    python3 src/parsers/package_analyzer.py > logs/parsing_logs/package_analyzer.log 2>&1 \
+    PYTHONPATH="src${PYTHONPATH:+:$PYTHONPATH}" \
+        python3 -m parsers.package_analyzer > logs/parsing_logs/package_analyzer.log 2>&1 \
         || handle_error "Package analysis failed"
 }
 
