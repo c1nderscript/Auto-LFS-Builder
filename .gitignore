@@ -1,0 +1,18 @@
+# Ignore AI-generated build scripts
+/generated/
+
+# Ignore temporary log files
+logs/
+*.log
+
+# Ignore build artifacts
+build/
+dist/
+
+# Ignore editor swap files and folders
+*~
+*.swp
+*.swo
+.DS_Store
+.idea/
+.vscode/
