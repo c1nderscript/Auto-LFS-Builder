@@ -1,4 +1,4 @@
-# Auto-LFS-Builder Environment Configuration
+# Auto-LFS-Builder Setup Guide
 
 ## Overview
 This document describes all environment variables, configuration options, and setup procedures for the Auto-LFS-Builder project. This system generates complete Linux From Scratch automation scripts by processing documentation sources and creating self-installing systems with GNOME desktop environments.
