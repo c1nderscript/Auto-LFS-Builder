@@ -421,3 +421,35 @@ check_environment_health() {
 # Quick setup for desktop GNOME build
 source venv/bin/activate
 export BUILD_PROFILE="desktop_gnome"
+export ENABLE_GNOME="true"
+export ENABLE_NETWORKING="true"
+export PARALLEL_JOBS="$(nproc)"
+./generated/complete_build.sh
+```
+
+### Minimal Server Build
+```bash
+# Quick setup for a headless server build
+source venv/bin/activate
+export BUILD_PROFILE="server"
+export ENABLE_GNOME="false"
+export ENABLE_NETWORKING="true"
+export PARALLEL_JOBS="$(nproc)"
+./generated/complete_build.sh
+```
+
+### Developer Build
+```bash
+# Quick setup including developer tools
+source venv/bin/activate
+export BUILD_PROFILE="developer"
+export ENABLE_DEVELOPMENT_TOOLS="true"
+export ENABLE_NETWORKING="true"
+export PARALLEL_JOBS="$(nproc)"
+./generated/complete_build.sh
+```
+
+### Validate the Environment
+```bash
+validate_environment && check_environment_health
+```
