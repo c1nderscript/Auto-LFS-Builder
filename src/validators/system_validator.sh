@@ -8,22 +8,13 @@ set -euo pipefail
 source src/common/logging.sh
 source src/common/error_handling.sh
 source src/common/package_management.sh
+source generated/validation_suite.sh
 
 validate_system() {
-    log_info "Checking core LFS utilities"
-    local bins=(bash gcc ld make gawk bison diff)
-    for b in "${bins[@]}"; do
-        check_binary_exists "$b" "$b missing" || handle_error "$b missing"
-    done
-
-    [ -f /lib/x86_64-linux-gnu/libc.so.6 ] || handle_error "glibc not installed"
-
+    validate_lfs_system || return 1
     if [ "${ENABLE_GNOME:-false}" = "true" ]; then
-        log_info "Checking GNOME desktop components"
-        check_binary_exists gnome-session "GNOME session not found" || handle_error "gnome-session missing"
+        validate_gnome_desktop || return 1
     fi
-
-    log_success "System validation checks passed"
 }
 
 main() {

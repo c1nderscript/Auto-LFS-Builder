@@ -8,28 +8,23 @@ set -euo pipefail
 source src/common/logging.sh
 source src/common/error_handling.sh
 source src/common/package_management.sh
+source generated/validation_suite.sh
 
 # Basic package sanity test referencing LFS/BLFS requirements
 # Usage: test_package <package>
 
 test_package() {
-    local pkg="$1"
-    case "$pkg" in
-        bash)
-            bash --version >/dev/null 2>&1 || handle_error "bash test failed"
-            ;;
-        gcc)
-            gcc --version >/dev/null 2>&1 || handle_error "gcc test failed"
-            ;;
-        make)
-            make --version >/dev/null 2>&1 || handle_error "make test failed"
-            ;;
-        *)
-            check_binary_exists "$pkg" "$pkg binary not found" || handle_error "$pkg missing"
-            "$pkg" --version >/dev/null 2>&1 || handle_error "$pkg --version failed"
-            ;;
-    esac
-    log_success "$pkg passed basic tests"
+    local pkg="${1:-}"
+    if [ -z "$pkg" ]; then
+        log_error "No package specified"
+        return 1
+    fi
+
+    check_binary_exists "$pkg" "$pkg not installed" || return 1
+    "$pkg" --version >/dev/null 2>&1 || {
+        log_error "$pkg failed to run"
+        return 1
+    }
 }
 
 main() {
