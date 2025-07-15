@@ -8,10 +8,13 @@ set -euo pipefail
 source src/common/logging.sh
 source src/common/error_handling.sh
 source src/common/package_management.sh
+source generated/validation_suite.sh
 
 check_dependencies() {
-    # Placeholder for dependency checking logic
-    :
+    local deps=(wget tar gcc make)
+    for bin in "${deps[@]}"; do
+        check_binary_exists "$bin" "$bin not found" || return 1
+    done
 }
 
 main() {

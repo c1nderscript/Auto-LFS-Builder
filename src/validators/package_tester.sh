@@ -8,10 +8,20 @@ set -euo pipefail
 source src/common/logging.sh
 source src/common/error_handling.sh
 source src/common/package_management.sh
+source generated/validation_suite.sh
 
 test_package() {
-    # Placeholder for package testing logic
-    :
+    local pkg="${1:-}"
+    if [ -z "$pkg" ]; then
+        log_error "No package specified"
+        return 1
+    fi
+
+    check_binary_exists "$pkg" "$pkg not installed" || return 1
+    "$pkg" --version >/dev/null 2>&1 || {
+        log_error "$pkg failed to run"
+        return 1
+    }
 }
 
 main() {
