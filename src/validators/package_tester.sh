@@ -10,9 +10,6 @@ source src/common/error_handling.sh
 source src/common/package_management.sh
 source generated/validation_suite.sh
 
-# Basic package sanity test referencing LFS/BLFS requirements
-# Usage: test_package <package>
-
 test_package() {
     local pkg="${1:-}"
     if [ -z "$pkg" ]; then
