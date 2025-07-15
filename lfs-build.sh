@@ -111,7 +111,7 @@ trap cleanup EXIT
 validate_environment() {
     log_phase "Validating Build Environment"
     
-# Check if running in Docker
+    # Check if running in Docker
     if [[ -f /.dockerenv ]]; then
         log_info "Running in Docker environment"
     else
@@ -155,19 +155,17 @@ setup_lfs_environment() {
     log_phase "Setting up LFS Environment"
     
     # Create LFS directories
-    # Set up config.site for build configuration
-    mkdir -p "$LFS_WORKSPACE/usr/share"
-    echo "ac_cv_sys_mb_len_max=16" > "$LFS_WORKSPACE/usr/share/config.site"
-    export CONFIG_SITE="$LFS_WORKSPACE/usr/share/config.site"
     export LFS="$LFS_WORKSPACE/lfs"
-    # Set up config.site for MB_LEN_MAX fix
-    mkdir -p "$LFS/usr/share"
-    echo 'ac_cv_sys_mb_len_max=16' > "$LFS/usr/share/config.site"
-    export CONFIG_SITE="$LFS/usr/share/config.site"
     mkdir -p "$LFS"
     mkdir -p "$LFS"/{etc,var,usr,tools,home,mnt,proc,sys,dev}
     mkdir -p "$LFS/usr"/{bin,lib,sbin}
     mkdir -p "$LFS/var"/{log,mail,spool}
+    mkdir -p "$LFS/etc/sysconfig"
+    
+    # Set up config.site for MB_LEN_MAX fix
+    mkdir -p "$LFS/usr/share"
+    echo 'ac_cv_sys_mb_len_max=16' > "$LFS/usr/share/config.site"
+    export CONFIG_SITE="$LFS/usr/share/config.site"
     
     # Create sources directory
     mkdir -p "$LFS_WORKSPACE/sources"
@@ -190,10 +188,13 @@ download_packages() {
     
     cd "$LFS_WORKSPACE/sources"
     
-    # Core packages for LFS (simplified list)
+    # Core packages for LFS (with required dependencies)
     local packages=(
         "https://ftp.gnu.org/gnu/binutils/binutils-2.42.tar.xz"
         "https://ftp.gnu.org/gnu/gcc/gcc-13.2.0/gcc-13.2.0.tar.xz"
+        "https://ftp.gnu.org/gnu/mpfr/mpfr-4.2.1.tar.xz"
+        "https://ftp.gnu.org/gnu/gmp/gmp-6.3.0.tar.xz"
+        "https://ftp.gnu.org/gnu/mpc/mpc-1.3.1.tar.gz"
         "https://cdn.kernel.org/pub/linux/kernel/v6.x/linux-6.7.4.tar.xz"
         "https://ftp.gnu.org/gnu/glibc/glibc-2.39.tar.xz"
         "https://ftp.gnu.org/gnu/bash/bash-5.2.21.tar.gz"
@@ -482,6 +483,9 @@ install_networking() {
     if [[ "$ENABLE_NETWORKING" == "true" ]]; then
         log_phase "Installing Network Configuration"
         
+        # Ensure sysconfig directory exists
+        mkdir -p "$LFS/etc/sysconfig"
+        
         # Create network interfaces file
         cat > "$LFS/etc/sysconfig/ifconfig.eth0" << "EOF"
 ONBOOT=yes
@@ -583,8 +587,6 @@ EOF
 # Create system image
 create_system_image() {
     log_phase "Creating System Image"
-    
-    local image_path="$LFS_WORKSPACE/lfs-system.img"
     
     # Create a basic system tarball
     cd "$LFS"
