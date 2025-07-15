@@ -156,6 +156,10 @@ setup_lfs_environment() {
     
     # Create LFS directories
     export LFS="$LFS_WORKSPACE/lfs"
+    # Set up config.site for MB_LEN_MAX fix
+    mkdir -p "$LFS/usr/share"
+    echo 'ac_cv_sys_mb_len_max=16' > "$LFS/usr/share/config.site"
+    export CONFIG_SITE="$LFS/usr/share/config.site"
     mkdir -p "$LFS"
     mkdir -p "$LFS"/{etc,var,usr,tools,home,mnt,proc,sys,dev}
     mkdir -p "$LFS/usr"/{bin,lib,sbin}
@@ -170,7 +174,6 @@ setup_lfs_environment() {
     export LFS_TGT=$(uname -m)-lfs-linux-gnu
     export PATH="$LFS/tools/bin:/bin:/usr/bin"
     export MAKEFLAGS="-j$PARALLEL_JOBS"
-    export MB_LEN_MAX=16
     
     log_success "LFS environment set up at $LFS"
 }
