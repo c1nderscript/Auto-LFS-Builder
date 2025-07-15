@@ -17,6 +17,9 @@ PARALLEL_JOBS="${PARALLEL_JOBS:-$(nproc)}"
 LFS_VERSION="${LFS_VERSION:-development}"
 ENABLE_GNOME="${ENABLE_GNOME:-true}"
 ENABLE_NETWORKING="${ENABLE_NETWORKING:-true}"
+CREATE_ISO="${CREATE_ISO:-true}"
+ISO_VOLUME="${ISO_VOLUME:-AUTO_LFS}"
+ISO_OUTPUT="${ISO_OUTPUT:-${LFS_WORKSPACE}/auto-lfs.iso}"
 
 # Colors for output
 RED='\033[0;31m'
@@ -67,6 +70,15 @@ validate_environment() {
             exit 1
         fi
     done
+    
+    # Check for ISO creation tools if needed
+    if [[ "$CREATE_ISO" == "true" ]]; then
+        if ! command -v xorriso >/dev/null 2>&1 && ! command -v genisoimage >/dev/null 2>&1; then
+            log_warning "Neither xorriso nor genisoimage found. ISO creation will be skipped."
+            log_info "To enable ISO creation, install: sudo apt-get install xorriso"
+            CREATE_ISO="false"
+        fi
+    fi
     
     log_success "Environment validation passed"
 }
@@ -503,6 +515,25 @@ create_system_image() {
     log_info "Size: $(du -h "$LFS_WORKSPACE/lfs-system.tar.gz" | cut -f1)"
 }
 
+# Create bootable ISO
+create_bootable_iso() {
+    if [[ "$CREATE_ISO" == "true" ]]; then
+        log_phase "Creating Bootable ISO"
+        
+        # Source the ISO creator script
+        local iso_creator="$(dirname "$0")/iso-creator.sh"
+        if [[ -f "$iso_creator" ]]; then
+            source "$iso_creator"
+            create_iso_image "$ISO_VOLUME" "" "$ISO_OUTPUT" "$LFS"
+        else
+            log_warning "ISO creator script not found at $iso_creator"
+            log_info "Skipping ISO creation"
+        fi
+    else
+        log_info "ISO creation disabled"
+    fi
+}
+
 # Main build process
 main() {
     local start_time=$(date +%s)
@@ -513,6 +544,7 @@ main() {
     log_info "LFS Workspace: $LFS_WORKSPACE"
     log_info "GNOME Enabled: $ENABLE_GNOME"
     log_info "Networking Enabled: $ENABLE_NETWORKING"
+    log_info "Create ISO: $CREATE_ISO"
     echo
     
     # Build steps
@@ -529,6 +561,7 @@ main() {
     create_boot_config
     finalize_system
     create_system_image
+    create_bootable_iso
     
     # Calculate build time
     local end_time=$(date +%s)
@@ -541,12 +574,21 @@ main() {
     log_success "Total build time: ${hours}h ${minutes}m ${seconds}s"
     log_success "LFS system built at: $LFS"
     log_success "System image: $LFS_WORKSPACE/lfs-system.tar.gz"
+    if [[ "$CREATE_ISO" == "true" && -f "$ISO_OUTPUT" ]]; then
+        log_success "Bootable ISO: $ISO_OUTPUT"
+    fi
     echo
     log_info "Next steps:"
-    log_info "1. Create a bootable disk/VM"
-    log_info "2. Extract the system image to the target"
-    log_info "3. Install and configure a bootloader"
-    log_info "4. Boot your new LFS system!"
+    if [[ -f "$ISO_OUTPUT" ]]; then
+        log_info "1. Use the ISO: $ISO_OUTPUT"
+        log_info "2. Boot from ISO in a VM or burn to USB/DVD"
+        log_info "3. Install to your target system"
+    else
+        log_info "1. Create a bootable disk/VM"
+        log_info "2. Extract the system image to the target"
+        log_info "3. Install and configure a bootloader"
+        log_info "4. Boot your new LFS system!"
+    fi
     echo
 }
 
