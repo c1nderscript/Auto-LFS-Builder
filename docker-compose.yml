@@ -44,10 +44,10 @@ services:
       BUILDKIT_STEP_LOG_MAX_SIZE: 10485760
       COMPOSE_DOCKER_CLI_BUILD: 1
       VERBOSE: "true"
-      PARALLEL_JOBS: 32  # Using max available CPU cores
+      PARALLEL_JOBS: 16  # Reduced from 32 for stability
       BUILD_PROFILE: desktop_gnome
-      GNOME_ENABLED: "true"
-      NETWORKING_ENABLED: "true"
+      GNOME_ENABLED: "true"  # Standardized variable name
+      NETWORKING_ENABLED: "true"  # Standardized variable name
       CREATE_ISO: "true"
       LOG_PATH: /lfs-build/logs/build.log
       DEBUG: 1
@@ -74,4 +74,3 @@ volumes:
 networks:
   lfs_network:
     driver: bridge
-
