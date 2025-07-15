@@ -8,10 +8,13 @@ set -euo pipefail
 source src/common/logging.sh
 source src/common/error_handling.sh
 source src/common/package_management.sh
+source generated/validation_suite.sh
 
 validate_system() {
-    # Placeholder for system validation logic
-    :
+    validate_lfs_system || return 1
+    if [ "${ENABLE_GNOME:-false}" = "true" ]; then
+        validate_gnome_desktop || return 1
+    fi
 }
 
 main() {
