@@ -8,9 +8,39 @@ This script builds:
 - **Networking** - Network configuration and tools
 - **Development Tools** - Essential build tools and utilities
 
+## 🏗️ Enhanced Arch Linux Support
+
+Auto-LFS-Builder now includes comprehensive **Arch Linux optimizations** for the best possible experience:
+
+### ⚡ Performance Optimizations
+- **ccache integration** - Faster rebuilds with compile caching
+- **tmpfs builds** - RAM-based compilation for speed
+- **Arch compiler flags** - Optimized for your CPU architecture
+- **Multi-core compilation** - Parallel builds using all CPU cores
+
+### 🛠️ Arch-Specific Features
+- **Automatic pacman integration** - Seamless package management
+- **AUR helper support** - Works with yay, paru, and other AUR helpers
+- **Package mapping** - Intelligent translation of package names
+- **System validation** - Comprehensive Arch Linux compatibility checks
+
+### 📖 Arch Linux Documentation
+- [docs/ARCH-LINUX.md](docs/ARCH-LINUX.md) - Complete Arch Linux setup guide
+- [README-ARCH.md](README-ARCH.md) - Quick start for Arch users
+
 ## 🚀 Quick Installation
 
-The easiest way to install Auto-LFS-Builder is using the automated installation script:
+### For Arch Linux Users (Recommended)
+
+```bash
+# Enhanced setup with Arch Linux optimizations
+curl -sSL https://raw.githubusercontent.com/c1nderscript/Auto-LFS-Builder/main/scripts/arch-support.sh | bash
+
+# Standard installation
+curl -sSL https://raw.githubusercontent.com/c1nderscript/Auto-LFS-Builder/main/install.sh | bash
+```
+
+### For All Linux Distributions
 
 ```bash
 curl -sSL https://raw.githubusercontent.com/c1nderscript/Auto-LFS-Builder/main/install.sh | bash
@@ -46,6 +76,11 @@ Common options:
 - **Network**: Internet connection for downloading packages
 - **Time**: Several hours for complete build
 
+### Arch Linux Specific Requirements
+- **Arch Linux**: Current installation
+- **base-devel**: Package group for development tools
+- **Internet**: For downloading packages and AUR access
+
 ## 🔧 Manual Installation
 
 If you prefer to install manually:
@@ -70,8 +105,12 @@ sudo apt-get install -y build-essential bison flex gawk texinfo wget curl git ba
 sudo dnf install -y @development-tools bison flex gawk texinfo wget curl git bash binutils coreutils diffutils findutils grep gzip m4 make patch sed tar xz
 ```
 
-**Arch Linux:**
+**Arch Linux (Enhanced):**
 ```bash
+# Run the enhanced Arch Linux setup
+./scripts/arch-support.sh
+
+# Or install manually
 sudo pacman -S base-devel bison flex gawk texinfo wget curl git bash binutils coreutils diffutils findutils grep gzip m4 make patch sed tar xz
 ```
 
@@ -83,6 +122,12 @@ Edit `lfs-builder.env` to customize your build:
 cp lfs-builder.env.example lfs-builder.env
 # Edit the configuration file
 nano lfs-builder.env
+```
+
+For **Arch Linux users**, also configure Arch-specific settings:
+```bash
+# Arch Linux users get additional configuration
+nano lfs-builder-arch.env
 ```
 
 ## 🚀 Quick Start
@@ -109,6 +154,21 @@ After installation:
    ./lfs-build
    ```
 
+### Arch Linux Quick Start
+
+For Arch Linux users, additional commands are available:
+
+```bash
+# Validate Arch Linux system
+./scripts/arch-validation.sh
+
+# Apply performance optimizations
+./scripts/arch-support.sh --optimize
+
+# Run troubleshooting diagnostics
+./scripts/arch-support.sh --troubleshoot
+```
+
 ## 📊 Build Profiles
 
 The system supports several build profiles:
@@ -133,6 +193,13 @@ After installation, you'll have access to these convenience commands:
 - `./lfs-test` - Run test suite (if available)
 - `./lfs-clean` - Clean build artifacts and temporary files
 
+### Arch Linux Specific Commands
+
+- `./scripts/arch-support.sh --validate` - Validate Arch Linux system
+- `./scripts/arch-support.sh --optimize` - Apply performance optimizations
+- `./scripts/arch-support.sh --troubleshoot` - Run diagnostics
+- `./scripts/arch-validation.sh` - Comprehensive Arch Linux validation
+
 ## 📖 Build Process
 
 The build process follows these main steps:
@@ -146,6 +213,12 @@ The build process follows these main steps:
 7. **System Configuration** - Configure users, networking, and system files
 8. **Desktop Environment** - Install GNOME (if enabled)
 9. **Finalization** - Create bootable system image
+
+For **Arch Linux users**, the build process is enhanced with:
+- Optimized compiler flags from your `/etc/makepkg.conf`
+- ccache integration for faster rebuilds
+- tmpfs usage for RAM-based compilation
+- Parallel processing optimized for your CPU
 
 ## 🔧 Configuration
 
@@ -169,6 +242,19 @@ export ENABLE_DEVELOPMENT_TOOLS="true"
 export VERIFY_PACKAGES="true"
 export CHECKSUM_VALIDATION="sha256"
 export SECURITY_HARDENING="true"
+```
+
+### Arch Linux Configuration
+
+Arch Linux users get additional configuration in `lfs-builder-arch.env`:
+
+```bash
+# Arch Linux optimizations
+export ARCH_LINUX=true
+export USE_CCACHE=true
+export CCACHE_SIZE="5G"
+export ENABLE_TMPFS="auto"
+export PARALLEL_JOBS="$(nproc)"
 ```
 
 ### Build Profiles
@@ -197,6 +283,11 @@ This checks for:
 - Environment configuration
 - Network connectivity
 
+**Arch Linux users** also have enhanced validation:
+```bash
+./scripts/arch-validation.sh
+```
+
 ## 🧪 Testing
 
 After building, you can test your LFS system:
@@ -212,6 +303,11 @@ After building, you can test your LFS system:
 - [SETUP.md](SETUP.md) - Detailed setup and configuration
 - [AGENTS.md](AGENTS.md) - Advanced usage and automation
 
+### Arch Linux Documentation
+- [docs/ARCH-LINUX.md](docs/ARCH-LINUX.md) - Comprehensive Arch Linux guide
+- [README-ARCH.md](README-ARCH.md) - Quick start for Arch users
+- [config/arch-linux.conf](config/arch-linux.conf) - Arch Linux configuration template
+
 ## ⚠️ Important Notes
 
 **Please read before building:**
@@ -222,6 +318,12 @@ After building, you can test your LFS system:
 - Review the configuration in `lfs-builder.env` before building
 - Always run validation before starting a build
 - The resulting system will need a bootloader to be bootable
+
+**For Arch Linux users:**
+- Enhanced build performance with automatic optimizations
+- ccache and tmpfs can significantly speed up builds
+- System validation is more comprehensive
+- AUR helper integration provides additional packages
 
 ## 🎯 Next Steps After Building
 
@@ -247,6 +349,19 @@ Common issues and solutions:
 - **Disk space**: Ensure you have sufficient free space (50GB+)
 - **Memory issues**: Reduce `PARALLEL_JOBS` for systems with limited RAM
 
+### Arch Linux Specific Troubleshooting
+
+```bash
+# Run comprehensive diagnostics
+./scripts/arch-support.sh --troubleshoot
+
+# Check system compatibility
+./scripts/arch-validation.sh
+
+# View Arch-specific logs
+tail -f logs/arch-lfs-build.log
+```
+
 ## 📄 License
 
 This project is licensed under the MIT License. See the [LICENSE](LICENSE) file for details.
@@ -255,10 +370,18 @@ This project is licensed under the MIT License. See the [LICENSE](LICENSE) file 
 
 For issues and questions:
 1. Check the [documentation](SETUP.md) first
-2. Run the validation suite to identify missing dependencies
-3. Review the logs in the `logs/` directory
-4. Open an issue on GitHub with detailed information
+2. **Arch Linux users**: See [docs/ARCH-LINUX.md](docs/ARCH-LINUX.md)
+3. Run the validation suite to identify missing dependencies
+4. Review the logs in the `logs/` directory
+5. Open an issue on GitHub with detailed information
+
+### Arch Linux Support
+- [Arch Linux Forums](https://bbs.archlinux.org/) - Community support
+- [Arch Wiki](https://wiki.archlinux.org/) - Comprehensive documentation
+- Run `./scripts/arch-support.sh --troubleshoot` for system diagnostics
 
 ---
 
 **Happy building!** 🎉
+
+*Special thanks to the Arch Linux community for their excellent documentation and tools that made these optimizations possible.*
