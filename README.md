@@ -308,7 +308,12 @@ After building, you can test your LFS system:
 - [README-ARCH.md](README-ARCH.md) - Quick start for Arch users
 - [config/arch-linux.conf](config/arch-linux.conf) - Arch Linux configuration template
 
-## ⚠️ Important Notes
+## Scheduled Documentation Updates
+
+A GitHub Actions workflow runs nightly to update the documentation and regenerate all build scripts. The results are logged to `logs/parsing_logs/` and uploaded as workflow artifacts.
+
+
+## Important Notes
 
 **Please read before building:**
 
