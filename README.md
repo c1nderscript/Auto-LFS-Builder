@@ -146,6 +146,11 @@ After installation, you'll have access to these convenience commands:
 - [SETUP.md](SETUP.md) - Detailed setup and configuration
 - [AGENTS.md](AGENTS.md) - Advanced usage and agent documentation
 
+## Scheduled Documentation Updates
+
+A GitHub Actions workflow runs nightly to update the documentation and regenerate all build scripts. The results are logged to `logs/parsing_logs/` and uploaded as workflow artifacts.
+
+
 ## Important Notes
 
 ⚠️ **Please read before building:**

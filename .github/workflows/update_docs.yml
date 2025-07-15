@@ -1,0 +1,29 @@
+name: Update Documentation
+
+on:
+  schedule:
+    - cron: '0 0 * * *'
+  workflow_dispatch:
+
+jobs:
+  update-docs:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v3
+      - uses: actions/setup-python@v4
+        with:
+          python-version: '3.x'
+      - name: Install requirements
+        run: |
+          python -m pip install --upgrade pip
+          pip install beautifulsoup4 lxml requests
+      - name: Update documentation and regenerate scripts
+        run: |
+          mkdir -p logs/parsing_logs
+          python3 src/parsers/documentation_merger.py --update-docs > logs/parsing_logs/update_docs.log 2>&1
+          bash src/parsers/regenerate_all_scripts.sh >> logs/parsing_logs/update_docs.log 2>&1
+      - name: Upload logs
+        uses: actions/upload-artifact@v3
+        with:
+          name: parsing-logs
+          path: logs/parsing_logs/
