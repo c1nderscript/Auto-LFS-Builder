@@ -155,6 +155,10 @@ setup_lfs_environment() {
     log_phase "Setting up LFS Environment"
     
     # Create LFS directories
+    # Set up config.site for build configuration
+    mkdir -p "$LFS_WORKSPACE/usr/share"
+    echo "ac_cv_sys_mb_len_max=16" > "$LFS_WORKSPACE/usr/share/config.site"
+    export CONFIG_SITE="$LFS_WORKSPACE/usr/share/config.site"
     export LFS="$LFS_WORKSPACE/lfs"
     # Set up config.site for MB_LEN_MAX fix
     mkdir -p "$LFS/usr/share"
