@@ -25,7 +25,6 @@ export BUILD_PROFILE="desktop_gnome"
 export ENABLE_GNOME="true"
 export ENABLE_NETWORKING="true"
 export PARALLEL_JOBS="$(nproc)"
-export PARSING_LOG_LEVEL="INFO"
 export VALIDATION_MODE="strict"
 export VERIFY_PACKAGES="true"
 export CHECKSUM_VALIDATION="sha256"
@@ -123,56 +122,31 @@ install_system_dependencies() {
     
     case $pkg_manager in
         "apt")
-            packages="build-essential bison flex gawk texinfo wget curl git python3 python3-pip python3-venv libxml2-utils pandoc bash binutils coreutils diffutils findutils gawk grep gzip m4 make patch sed tar texinfo xz-utils"
+            packages="build-essential bison flex gawk texinfo wget curl git bash binutils coreutils diffutils findutils gawk grep gzip m4 make patch sed tar texinfo xz-utils"
             sudo apt-get update
             sudo apt-get install -y $packages
             ;;
         "dnf"|"yum")
-            packages="@development-tools bison flex gawk texinfo wget curl git python3 python3-pip libxml2 pandoc bash binutils coreutils diffutils findutils gawk grep gzip m4 make patch sed tar texinfo xz"
+            packages="@development-tools bison flex gawk texinfo wget curl git bash binutils coreutils diffutils findutils gawk grep gzip m4 make patch sed tar texinfo xz"
             sudo $pkg_manager install -y $packages
             ;;
         "zypper")
-            packages="patterns-devel-base-devel_basis bison flex gawk texinfo wget curl git python3 python3-pip libxml2-tools pandoc bash binutils coreutils diffutils findutils gawk grep gzip m4 make patch sed tar texinfo xz"
+            packages="patterns-devel-base-devel_basis bison flex gawk texinfo wget curl git bash binutils coreutils diffutils findutils gawk grep gzip m4 make patch sed tar texinfo xz"
             sudo zypper install -y $packages
             ;;
         "pacman")
-            packages="base-devel bison flex gawk texinfo wget curl git python python-pip libxml2 pandoc bash binutils coreutils diffutils findutils gawk grep gzip m4 make patch sed tar texinfo xz"
+            packages="base-devel bison flex gawk texinfo wget curl git bash binutils coreutils diffutils findutils gawk grep gzip m4 make patch sed tar texinfo xz"
             sudo pacman -S --noconfirm $packages
             ;;
         *)
             print_error "Unsupported package manager: $pkg_manager"
             print_info "Please install the following packages manually:"
-            print_info "build-essential, bison, flex, gawk, texinfo, wget, curl, git, python3, python3-pip, python3-venv, libxml2-utils, pandoc"
+            print_info "build-essential, bison, flex, gawk, texinfo, wget, curl, git, bash, binutils, coreutils, diffutils, findutils, gawk, grep, gzip, m4, make, patch, sed, tar, texinfo, xz-utils"
             exit 1
             ;;
     esac
     
     print_success "System dependencies installed"
-}
-
-# Install Python dependencies
-install_python_dependencies() {
-    print_header "Setting up Python Environment"
-    
-    # Check Python version
-    if ! python3 -c "import sys; exit(0 if sys.version_info >= (3, 8) else 1)" 2>/dev/null; then
-        print_error "Python 3.8 or higher is required"
-        exit 1
-    fi
-    
-    # Create virtual environment
-    python3 -m venv "$INSTALL_DIR/$VENV_NAME"
-    
-    # Activate virtual environment
-    source "$INSTALL_DIR/$VENV_NAME/bin/activate"
-    
-    # Upgrade pip
-    pip install --upgrade pip
-    
-    # Install requirements
-    pip install -r "$INSTALL_DIR/requirements.txt"
-    
-    print_success "Python environment set up"
 }
 
 # Clone or update repository
@@ -219,12 +193,6 @@ export ENABLE_NETWORKING="$ENABLE_NETWORKING"
 export ENABLE_MULTIMEDIA="true"
 export ENABLE_DEVELOPMENT_TOOLS="true"
 
-# Documentation Processing
-export DOCS_ROOT="$INSTALL_DIR/docs"
-export GENERATED_DIR="$INSTALL_DIR/generated"
-export PARSING_LOG_LEVEL="$PARSING_LOG_LEVEL"
-export VALIDATION_MODE="$VALIDATION_MODE"
-
 # Security and Verification
 export VERIFY_PACKAGES="$VERIFY_PACKAGES"
 export CHECKSUM_VALIDATION="$CHECKSUM_VALIDATION"
@@ -240,10 +208,6 @@ export CLEANUP_BUILD_DIRS="true"
 export LOG_LEVEL="INFO"
 export LOG_FORMAT="structured"
 export LOG_TIMESTAMPS="true"
-
-# Python virtual environment
-export VIRTUAL_ENV="$INSTALL_DIR/$VENV_NAME"
-export PATH="$INSTALL_DIR/$VENV_NAME/bin:\$PATH"
 EOF
     
     # Create workspace directory
@@ -273,13 +237,13 @@ echo "Build Profile: $BUILD_PROFILE"
 echo "Parallel Jobs: $PARALLEL_JOBS"
 echo ""
 echo "Available commands:"
-echo "  lfs-validate    - Run validation suite"
-echo "  lfs-build       - Start LFS build process"
-echo "  lfs-test        - Run test suite"
-echo "  lfs-clean       - Clean build artifacts"
+echo "  ./lfs-validate    - Run validation suite"
+echo "  ./lfs-build       - Start LFS build process"
+echo "  ./lfs-test        - Run test suite"
+echo "  ./lfs-clean       - Clean build artifacts"
 echo ""
-echo "To run a build:"
-echo "  bash generated/complete_build.sh"
+echo "To start building:"
+echo "  ./lfs-build"
 EOF
     
     # Create validation wrapper
@@ -288,12 +252,22 @@ EOF
 SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
 source "$SCRIPT_DIR/lfs-builder.env"
 
-if [[ -f "$GENERATED_DIR/validation_suite.sh" ]]; then
-    bash "$GENERATED_DIR/validation_suite.sh"
+if [[ -f "$SCRIPT_DIR/generated/validation_suite.sh" ]]; then
+    bash "$SCRIPT_DIR/generated/validation_suite.sh"
 else
-    echo "Error: validation_suite.sh not found in $GENERATED_DIR"
-    echo "Please run the documentation parser first"
-    exit 1
+    echo "Error: validation_suite.sh not found"
+    echo "Running basic validation..."
+    
+    # Basic validation checks
+    echo "Checking required tools..."
+    required_tools="bash bison flex gawk gcc make tar wget curl git"
+    for tool in $required_tools; do
+        if command -v "$tool" >/dev/null 2>&1; then
+            echo "✓ $tool found"
+        else
+            echo "✗ $tool NOT found"
+        fi
+    done
 fi
 EOF
     
@@ -303,11 +277,10 @@ EOF
 SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
 source "$SCRIPT_DIR/lfs-builder.env"
 
-if [[ -f "$GENERATED_DIR/complete_build.sh" ]]; then
-    bash "$GENERATED_DIR/complete_build.sh"
+if [[ -f "$SCRIPT_DIR/lfs-build.sh" ]]; then
+    bash "$SCRIPT_DIR/lfs-build.sh" "$@"
 else
-    echo "Error: complete_build.sh not found in $GENERATED_DIR"
-    echo "Please run the documentation parser first"
+    echo "Error: lfs-build.sh not found in $SCRIPT_DIR"
     exit 1
 fi
 EOF
@@ -333,8 +306,9 @@ SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
 source "$SCRIPT_DIR/lfs-builder.env"
 
 echo "Cleaning build artifacts..."
-rm -rf "$LFS_WORKSPACE/build"
+rm -rf "$LFS_WORKSPACE/lfs"
 rm -rf "$LFS_WORKSPACE/sources"
+rm -f "$LFS_WORKSPACE/lfs-system.tar.gz"
 rm -f "$SCRIPT_DIR/logs/"*.log
 echo "Cleanup complete"
 EOF
@@ -345,27 +319,33 @@ EOF
     chmod +x "$INSTALL_DIR/lfs-build"
     chmod +x "$INSTALL_DIR/lfs-test"
     chmod +x "$INSTALL_DIR/lfs-clean"
+    chmod +x "$INSTALL_DIR/lfs-build.sh"
     
     print_success "Convenience scripts created"
 }
 
-# Run validation
+# Run basic validation
 run_validation() {
-    print_header "Running Validation Suite"
+    print_header "Running Basic Validation"
     
-    # Source environment
-    source "$INSTALL_DIR/lfs-builder.env"
+    # Check for essential build tools
+    local required_tools="bash bison flex gawk gcc make tar wget curl git"
+    local missing_tools=""
     
-    # Run validation if it exists
-    if [[ -f "$INSTALL_DIR/generated/validation_suite.sh" ]]; then
-        cd "$INSTALL_DIR"
-        bash generated/validation_suite.sh
+    for tool in $required_tools; do
+        if ! command -v "$tool" >/dev/null 2>&1; then
+            missing_tools="$missing_tools $tool"
+        fi
+    done
+    
+    if [[ -n "$missing_tools" ]]; then
+        print_warning "Missing required tools:$missing_tools"
+        print_info "Please install these tools before running a build"
     else
-        print_warning "Validation suite not found - this is normal for a fresh installation"
-        print_info "Run the documentation parser to generate validation scripts"
+        print_success "All required tools found"
     fi
     
-    print_success "Validation complete"
+    print_success "Basic validation complete"
 }
 
 # Create desktop entry (optional)
@@ -373,6 +353,7 @@ create_desktop_entry() {
     if command -v xdg-desktop-menu &> /dev/null; then
         print_header "Creating Desktop Entry"
         
+        mkdir -p "$HOME/.local/share/applications"
         cat > "$HOME/.local/share/applications/auto-lfs-builder.desktop" << EOF
 [Desktop Entry]
 Name=Auto-LFS-Builder
@@ -410,10 +391,7 @@ display_instructions() {
     echo "3. Run validation (optional):"
     echo "   ./lfs-validate"
     echo ""
-    echo "4. Parse documentation and generate build scripts:"
-    echo "   python3 -m src.parsers.lfs_parser docs/lfs-git/chapter01/chapter01.xml"
-    echo ""
-    echo "5. Start a build:"
+    echo "4. Start building LFS:"
     echo "   ./lfs-build"
     echo ""
     
@@ -436,13 +414,14 @@ display_instructions() {
     echo ""
     
     echo -e "${RED}Important Notes:${NC}"
-    echo "• LFS building requires root privileges for certain operations"
+    echo "• LFS building requires significant time (several hours)"
     echo "• Ensure you have at least 50GB free disk space"
-    echo "• The build process can take several hours to complete"
-    echo "• Read the documentation thoroughly before starting a build"
+    echo "• The build process will download and compile many packages"
+    echo "• Review the configuration in lfs-builder.env before building"
+    echo "• Always run validation before starting a build"
     echo ""
     
-    echo -e "${GREEN}Happy building!${NC}"
+    echo -e "${GREEN}Ready to build Linux From Scratch!${NC}"
 }
 
 # Main installation function
@@ -503,7 +482,6 @@ main() {
     check_system_requirements
     install_system_dependencies
     setup_repository
-    install_python_dependencies
     create_configuration
     create_scripts
     run_validation
