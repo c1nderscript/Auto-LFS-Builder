@@ -28,6 +28,10 @@ Generate a comprehensive autobuilding script that:
 5. **Creates self-installing system** that can bootstrap on target hardware
 6. **Handles all dependencies** automatically with proper build order
 7. **Includes error recovery** and logging throughout the process
+8. **Sets up GitHub workflow actions** to automatically test the LFS build on every push
+9. **Maintains the build script** to reflect documentation updates and ensure reproducible builds
+10. **Builds Linux From Scratch, Beyond Linux From Scratch, and gaming components** for a complete gaming environment
+
 
 ## Tech Stack & Tools for Documentation Processing
 
@@ -522,6 +526,10 @@ run_ci_pipeline() {
     run_hardware_compatibility_test
 }
 ```
+### GitHub Actions Integration
+
+Use a GitHub workflow to run `tests/run_tests.sh` for each push and pull request. This workflow should execute the `run_ci_pipeline` function on an Ubuntu runner.
+
 
 ## Troubleshooting and Debug Support
 
