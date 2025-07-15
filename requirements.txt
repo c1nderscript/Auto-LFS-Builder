@@ -1,3 +1,5 @@
-beautifulsoup4==4.13.4
-soupsieve==2.7
-typing_extensions==4.14.1
+# Auto-LFS-Builder Requirements
+# No Python dependencies required - all functionality is in shell scripts
+
+# If you need to add Python tools for optional features, add them here
+# For now, the system works entirely with shell scripts and system tools
