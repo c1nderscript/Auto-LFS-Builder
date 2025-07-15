@@ -447,13 +447,6 @@ display_instructions() {
 
 # Main installation function
 main() {
-    print_header "Auto-LFS-Builder Installation"
-    
-    print_info "This script will install Auto-LFS-Builder and its dependencies"
-    print_info "Installation directory: $INSTALL_DIR"
-    print_info "Workspace directory: $LFS_WORKSPACE"
-    echo ""
-    
     # Parse command line arguments
     while [[ $# -gt 0 ]]; do
         case $1 in
@@ -497,6 +490,13 @@ main() {
                 ;;
         esac
     done
+
+    print_header "Auto-LFS-Builder Installation"
+
+    print_info "This script will install Auto-LFS-Builder and its dependencies"
+    print_info "Installation directory: $INSTALL_DIR"
+    print_info "Workspace directory: $LFS_WORKSPACE"
+    echo ""
     
     # Run installation steps
     check_root
