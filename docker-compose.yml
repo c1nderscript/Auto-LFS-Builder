@@ -1,3 +1,5 @@
+version: "3.9"
+
 services:
   lfs-builder:
     build: 
@@ -5,34 +7,44 @@ services:
       args:
         BUILDKIT_STEP_LOG_MAX_SIZE: 10485760
         BUILDKIT_STEP_LOG_MAX_SPEED: 10485760
+
     volumes:
       - ./workspace:/lfs-build/workspace
+      - ./logs:/lfs-build/logs
       - type: volume
         source: lfs_output
         target: /lfs-build/output
-      - ./logs:/lfs-build/logs
+      - type: volume
+        source: lfs_mount
+        target: /mnt/lfs  # 👈 persisted across container restarts
+
+      # Optional: Give container access to system
       - /dev:/dev
       - /proc:/proc
       - /sys:/sys
       - /var/run/docker.sock:/var/run/docker.sock
-    privileged: true  # Required for LFS build operations
+
+    privileged: true
     cap_add:
       - ALL
     security_opt:
       - seccomp:unconfined
       - apparmor:unconfined
+
     tmpfs:
       - /tmp:exec,dev
       - /run:exec,dev
+
     sysctls:
       net.ipv6.conf.all.disable_ipv6: 0
+
     environment:
       BUILDKIT_PROGRESS: plain
       DOCKER_BUILDKIT: 1
       BUILDKIT_STEP_LOG_MAX_SIZE: 10485760
       COMPOSE_DOCKER_CLI_BUILD: 1
       VERBOSE: "true"
-      PARALLEL_JOBS: 4  # Adjust based on your CPU cores
+      PARALLEL_JOBS: 32  # Using max available CPU cores
       BUILD_PROFILE: desktop_gnome
       GNOME_ENABLED: "true"
       NETWORKING_ENABLED: "true"
@@ -41,34 +53,25 @@ services:
       DEBUG: 1
       V: 1
       SHELL: "/bin/bash -x"
-    tty: true  # Allocate a pseudo-TTY
-    stdin_open: true  # Keep STDIN open
+
+    tty: true
+    stdin_open: true
     networks:
       - lfs_network
+
     logging:
       driver: "json-file"
       options:
         max-size: "100m"
         max-file: "3"
-    develop:
-      watch:
-        - action: sync+restart
-          path: ./lfs-build.sh
-          target: /lfs-build/lfs-build.sh
-        - action: sync
-          path: ./workspace
-          target: /lfs-build/workspace
-        - action: sync
-          path: ./logs
-          target: /lfs-build/logs
-          ignore:
-            - "*.tmp"
-            - "*.log"
 
 volumes:
   lfs_output:
     name: lfs_output
+  lfs_mount:
+    name: lfs_mount  # 👈 keeps /mnt/lfs persistent
 
 networks:
   lfs_network:
     driver: bridge
+
