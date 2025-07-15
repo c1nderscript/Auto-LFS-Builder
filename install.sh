@@ -29,6 +29,12 @@ export VALIDATION_MODE="strict"
 export VERIFY_PACKAGES="true"
 export CHECKSUM_VALIDATION="sha256"
 
+# Arch Linux detection
+ARCH_LINUX_DETECTED=false
+if [[ -f /etc/arch-release ]]; then
+    ARCH_LINUX_DETECTED=true
+fi
+
 # Print functions
 print_info() {
     echo -e "${BLUE}[INFO]${NC} $1"
@@ -69,6 +75,11 @@ check_system_requirements() {
     if [[ "$(uname -s)" != "Linux" ]]; then
         print_error "This script requires Linux"
         exit 1
+    fi
+    
+    # Special message for Arch Linux users
+    if [[ "$ARCH_LINUX_DETECTED" == "true" ]]; then
+        print_success "Arch Linux detected - enhanced optimizations will be applied"
     fi
     
     # Check architecture
@@ -173,6 +184,29 @@ setup_repository() {
     print_success "Repository set up"
 }
 
+# Setup Arch Linux specific features
+setup_arch_linux() {
+    if [[ "$ARCH_LINUX_DETECTED" == "true" ]]; then
+        print_header "Setting up Arch Linux Optimizations"
+        
+        # Run the Arch Linux support script
+        if [[ -f "$INSTALL_DIR/scripts/arch-support.sh" ]]; then
+            print_info "Running Arch Linux support script..."
+            bash "$INSTALL_DIR/scripts/arch-support.sh"
+            
+            # Make sure arch-specific scripts are executable
+            chmod +x "$INSTALL_DIR/scripts/arch-support.sh"
+            if [[ -f "$INSTALL_DIR/scripts/arch-validation.sh" ]]; then
+                chmod +x "$INSTALL_DIR/scripts/arch-validation.sh"
+            fi
+            
+            print_success "Arch Linux optimizations applied"
+        else
+            print_warning "Arch Linux support script not found"
+        fi
+    fi
+}
+
 # Create configuration files
 create_configuration() {
     print_header "Creating Configuration"
@@ -223,7 +257,7 @@ EOF
 create_scripts() {
     print_header "Creating Convenience Scripts"
     
-    # Create activation script
+    # Create activation script with Arch Linux support
     cat > "$INSTALL_DIR/activate" << 'EOF'
 #!/bin/bash
 # Activate the Auto-LFS-Builder environment
@@ -231,7 +265,14 @@ create_scripts() {
 SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
 source "$SCRIPT_DIR/lfs-builder.env"
 
-echo "Auto-LFS-Builder environment activated"
+# Load Arch Linux specific configuration if available
+if [[ -f /etc/arch-release && -f "$SCRIPT_DIR/lfs-builder-arch.env" ]]; then
+    source "$SCRIPT_DIR/lfs-builder-arch.env"
+    echo "Auto-LFS-Builder environment activated (with Arch Linux optimizations)"
+else
+    echo "Auto-LFS-Builder environment activated"
+fi
+
 echo "Workspace: $LFS_WORKSPACE"
 echo "Build Profile: $BUILD_PROFILE"
 echo "Parallel Jobs: $PARALLEL_JOBS"
@@ -241,22 +282,40 @@ echo "  ./lfs-validate    - Run validation suite"
 echo "  ./lfs-build       - Start LFS build process"
 echo "  ./lfs-test        - Run test suite"
 echo "  ./lfs-clean       - Clean build artifacts"
+
+# Arch Linux specific commands
+if [[ -f /etc/arch-release ]]; then
+    echo ""
+    echo "Arch Linux specific commands:"
+    echo "  ./scripts/arch-support.sh --validate      - Validate Arch system"
+    echo "  ./scripts/arch-support.sh --optimize      - Apply optimizations"
+    echo "  ./scripts/arch-support.sh --troubleshoot  - Run diagnostics"
+    echo "  ./scripts/arch-validation.sh              - Comprehensive validation"
+fi
+
 echo ""
 echo "To start building:"
 echo "  ./lfs-build"
 EOF
     
-    # Create validation wrapper
+    # Create validation wrapper with Arch Linux support
     cat > "$INSTALL_DIR/lfs-validate" << 'EOF'
 #!/bin/bash
 SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
 source "$SCRIPT_DIR/lfs-builder.env"
 
+# Load Arch Linux specific configuration if available
+if [[ -f /etc/arch-release && -f "$SCRIPT_DIR/lfs-builder-arch.env" ]]; then
+    source "$SCRIPT_DIR/lfs-builder-arch.env"
+fi
+
+echo "Running validation suite..."
+
+# Run generated validation suite if available
 if [[ -f "$SCRIPT_DIR/generated/validation_suite.sh" ]]; then
     bash "$SCRIPT_DIR/generated/validation_suite.sh"
 else
-    echo "Error: validation_suite.sh not found"
-    echo "Running basic validation..."
+    echo "Generated validation suite not found, running basic validation..."
     
     # Basic validation checks
     echo "Checking required tools..."
@@ -269,6 +328,13 @@ else
         fi
     done
 fi
+
+# Run Arch Linux specific validation if available
+if [[ -f /etc/arch-release && -f "$SCRIPT_DIR/scripts/arch-validation.sh" ]]; then
+    echo ""
+    echo "Running Arch Linux specific validation..."
+    bash "$SCRIPT_DIR/scripts/arch-validation.sh"
+fi
 EOF
     
     # Create build wrapper
@@ -276,6 +342,14 @@ EOF
 #!/bin/bash
 SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
 source "$SCRIPT_DIR/lfs-builder.env"
+
+# Load Arch Linux specific configuration if available
+if [[ -f /etc/arch-release && -f "$SCRIPT_DIR/lfs-builder-arch.env" ]]; then
+    source "$SCRIPT_DIR/lfs-builder-arch.env"
+    echo "Starting LFS build with Arch Linux optimizations..."
+else
+    echo "Starting LFS build..."
+fi
 
 if [[ -f "$SCRIPT_DIR/lfs-build.sh" ]]; then
     bash "$SCRIPT_DIR/lfs-build.sh" "$@"
@@ -310,6 +384,16 @@ rm -rf "$LFS_WORKSPACE/lfs"
 rm -rf "$LFS_WORKSPACE/sources"
 rm -f "$LFS_WORKSPACE/lfs-system.tar.gz"
 rm -f "$SCRIPT_DIR/logs/"*.log
+
+# Clean Arch Linux specific artifacts
+if [[ -f /etc/arch-release ]]; then
+    rm -f "$SCRIPT_DIR/logs/arch-lfs-build.log"
+    if command -v ccache &> /dev/null; then
+        echo "Clearing ccache..."
+        ccache --clear
+    fi
+fi
+
 echo "Cleanup complete"
 EOF
     
@@ -319,7 +403,11 @@ EOF
     chmod +x "$INSTALL_DIR/lfs-build"
     chmod +x "$INSTALL_DIR/lfs-test"
     chmod +x "$INSTALL_DIR/lfs-clean"
-    chmod +x "$INSTALL_DIR/lfs-build.sh"
+    
+    # Make sure main build script is executable
+    if [[ -f "$INSTALL_DIR/lfs-build.sh" ]]; then
+        chmod +x "$INSTALL_DIR/lfs-build.sh"
+    fi
     
     print_success "Convenience scripts created"
 }
@@ -343,6 +431,16 @@ run_validation() {
         print_info "Please install these tools before running a build"
     else
         print_success "All required tools found"
+    fi
+    
+    # Run Arch Linux validation if available
+    if [[ "$ARCH_LINUX_DETECTED" == "true" && -f "$INSTALL_DIR/scripts/arch-validation.sh" ]]; then
+        print_info "Running Arch Linux system validation..."
+        if bash "$INSTALL_DIR/scripts/arch-validation.sh"; then
+            print_success "Arch Linux validation passed"
+        else
+            print_warning "Arch Linux validation found issues (see above)"
+        fi
     fi
     
     print_success "Basic validation complete"
@@ -375,6 +473,10 @@ display_instructions() {
     
     echo -e "${GREEN}Auto-LFS-Builder has been successfully installed!${NC}\n"
     
+    if [[ "$ARCH_LINUX_DETECTED" == "true" ]]; then
+        echo -e "${BLUE}🏗️  Arch Linux optimizations have been applied${NC}\n"
+    fi
+    
     echo -e "${BLUE}Installation Directory:${NC} $INSTALL_DIR"
     echo -e "${BLUE}Workspace Directory:${NC} $LFS_WORKSPACE"
     echo -e "${BLUE}Build Profile:${NC} $BUILD_PROFILE"
@@ -388,7 +490,7 @@ display_instructions() {
     echo "2. Activate the environment:"
     echo "   source activate"
     echo ""
-    echo "3. Run validation (optional):"
+    echo "3. Run validation (recommended):"
     echo "   ./lfs-validate"
     echo ""
     echo "4. Start building LFS:"
@@ -402,15 +504,31 @@ display_instructions() {
     echo "  ./lfs-clean     - Clean build artifacts"
     echo ""
     
+    if [[ "$ARCH_LINUX_DETECTED" == "true" ]]; then
+        echo -e "${YELLOW}Arch Linux specific commands:${NC}"
+        echo "  ./scripts/arch-support.sh --validate      - Validate Arch system"
+        echo "  ./scripts/arch-support.sh --optimize      - Apply optimizations"
+        echo "  ./scripts/arch-support.sh --troubleshoot  - Run diagnostics"
+        echo "  ./scripts/arch-validation.sh              - Comprehensive validation"
+        echo ""
+    fi
+    
     echo -e "${YELLOW}Configuration:${NC}"
     echo "  Edit $INSTALL_DIR/lfs-builder.env to modify settings"
+    if [[ "$ARCH_LINUX_DETECTED" == "true" ]]; then
+        echo "  Edit $INSTALL_DIR/lfs-builder-arch.env for Arch-specific settings"
+    fi
     echo "  See SETUP.md for detailed configuration options"
     echo ""
     
     echo -e "${YELLOW}Documentation:${NC}"
-    echo "  README.md  - Quick start guide"
-    echo "  SETUP.md   - Detailed setup and configuration"
-    echo "  AGENTS.md  - Advanced usage"
+    echo "  README.md        - Quick start guide"
+    echo "  SETUP.md         - Detailed setup and configuration"
+    echo "  AGENTS.md        - Advanced usage"
+    if [[ "$ARCH_LINUX_DETECTED" == "true" ]]; then
+        echo "  docs/ARCH-LINUX.md - Arch Linux specific guide"
+        echo "  README-ARCH.md     - Arch Linux quick start"
+    fi
     echo ""
     
     echo -e "${RED}Important Notes:${NC}"
@@ -419,9 +537,17 @@ display_instructions() {
     echo "• The build process will download and compile many packages"
     echo "• Review the configuration in lfs-builder.env before building"
     echo "• Always run validation before starting a build"
+    if [[ "$ARCH_LINUX_DETECTED" == "true" ]]; then
+        echo "• Arch Linux optimizations are automatically applied"
+        echo "• Consider using ccache and tmpfs for faster builds"
+    fi
     echo ""
     
     echo -e "${GREEN}Ready to build Linux From Scratch!${NC}"
+    
+    if [[ "$ARCH_LINUX_DETECTED" == "true" ]]; then
+        echo -e "${BLUE}🏗️  Arch Linux users: Your system is optimized for LFS building!${NC}"
+    fi
 }
 
 # Main installation function
@@ -460,6 +586,10 @@ main() {
                 echo "  minimal              Base LFS system only"
                 echo "  server               Server configuration with networking, no GUI"
                 echo "  developer            Development tools and environment"
+                echo ""
+                if [[ "$ARCH_LINUX_DETECTED" == "true" ]]; then
+                    echo "Arch Linux detected: Enhanced optimizations will be applied automatically"
+                fi
                 exit 0
                 ;;
             *)
@@ -471,6 +601,10 @@ main() {
     done
 
     print_header "Auto-LFS-Builder Installation"
+    
+    if [[ "$ARCH_LINUX_DETECTED" == "true" ]]; then
+        print_info "🏗️  Arch Linux detected - Enhanced setup will be applied"
+    fi
 
     print_info "This script will install Auto-LFS-Builder and its dependencies"
     print_info "Installation directory: $INSTALL_DIR"
@@ -482,6 +616,7 @@ main() {
     check_system_requirements
     install_system_dependencies
     setup_repository
+    setup_arch_linux  # New step for Arch Linux
     create_configuration
     create_scripts
     run_validation
