@@ -10,8 +10,11 @@ source src/common/error_handling.sh
 source src/common/package_management.sh
 
 check_dependencies() {
-    # Placeholder for dependency checking logic
-    :
+    local deps=(gcc make bash bison gawk patch tar gzip xz)
+    for bin in "${deps[@]}"; do
+        check_binary_exists "$bin" "$bin not found" || handle_error "$bin missing"
+    done
+    log_success "All required dependencies are present"
 }
 
 main() {
