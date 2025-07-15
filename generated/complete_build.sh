@@ -17,4 +17,7 @@ log_phase "Installing GNOME desktop"
 log_phase "Applying BLFS packages"
 # Placeholder for BLFS extras
 
+log_phase "Creating ISO image"
+src/installers/iso_creator.sh "$ISO_VOLUME" "$BOOTLOADER_CFG" "$ISO_OUTPUT"
+
 log_phase "Build process complete"
