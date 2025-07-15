@@ -1,0 +1,10 @@
+#!/bin/bash
+SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
+source "$SCRIPT_DIR/lfs-builder.env"
+
+if [[ -f "$SCRIPT_DIR/lfs-build.sh" ]]; then
+    bash "$SCRIPT_DIR/lfs-build.sh" "$@"
+else
+    echo "Error: lfs-build.sh not found in $SCRIPT_DIR"
+    exit 1
+fi

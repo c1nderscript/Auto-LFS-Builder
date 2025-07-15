@@ -1,0 +1,21 @@
+#!/bin/bash
+SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
+source "$SCRIPT_DIR/lfs-builder.env"
+
+if [[ -f "$SCRIPT_DIR/generated/validation_suite.sh" ]]; then
+    bash "$SCRIPT_DIR/generated/validation_suite.sh"
+else
+    echo "Error: validation_suite.sh not found"
+    echo "Running basic validation..."
+    
+    # Basic validation checks
+    echo "Checking required tools..."
+    required_tools="bash bison flex gawk gcc make tar wget curl git"
+    for tool in $required_tools; do
+        if command -v "$tool" >/dev/null 2>&1; then
+            echo "✓ $tool found"
+        else
+            echo "✗ $tool NOT found"
+        fi
+    done
+fi

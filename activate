@@ -1,0 +1,19 @@
+#!/bin/bash
+# Activate the Auto-LFS-Builder environment
+
+SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
+source "$SCRIPT_DIR/lfs-builder.env"
+
+echo "Auto-LFS-Builder environment activated"
+echo "Workspace: $LFS_WORKSPACE"
+echo "Build Profile: $BUILD_PROFILE"
+echo "Parallel Jobs: $PARALLEL_JOBS"
+echo ""
+echo "Available commands:"
+echo "  ./lfs-validate    - Run validation suite"
+echo "  ./lfs-build       - Start LFS build process"
+echo "  ./lfs-test        - Run test suite"
+echo "  ./lfs-clean       - Clean build artifacts"
+echo ""
+echo "To start building:"
+echo "  ./lfs-build"

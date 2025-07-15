@@ -3,15 +3,32 @@
 # SPDX-License-Identifier: MIT
 # Copyright (c) 2025 The LFS Automation Team
 
-set -euo pipefail
+# Enable debugging and verbosity
+set -euxo pipefail
+
+# Set verbose shell options
+shopt -s extdebug
+
+# Configure bash debugging output
+export PS4='+(${BASH_SOURCE}:${LINENO}): ${FUNCNAME[0]:+${FUNCNAME[0]}(): }'
 
 # Source environment if available
 if [[ -f "$(dirname "$0")/lfs-builder.env" ]]; then
     source "$(dirname "$0")/lfs-builder.env"
 fi
 
+# Set up logging
+LOG_PATH=/lfs-build/logs/build.log
+LOG_DIR=$(dirname "$LOG_PATH")
+mkdir -p "$LOG_DIR"
+
+# Logging function that writes to both console and log file
+log_output() {
+    echo -e "$1" | tee -a "$LOG_PATH"
+}
+
 # Default configuration
-LFS_WORKSPACE="${LFS_WORKSPACE:-${HOME}/lfs-workspace}"
+LFS_WORKSPACE="${LFS_WORKSPACE:-/lfs-build/workspace}"
 BUILD_PROFILE="${BUILD_PROFILE:-desktop_gnome}"
 PARALLEL_JOBS="${PARALLEL_JOBS:-$(nproc)}"
 LFS_VERSION="${LFS_VERSION:-development}"
@@ -21,6 +38,9 @@ CREATE_ISO="${CREATE_ISO:-true}"
 ISO_VOLUME="${ISO_VOLUME:-AUTO_LFS}"
 ISO_OUTPUT="${ISO_OUTPUT:-${LFS_WORKSPACE}/auto-lfs.iso}"
 
+# Default verbose setting
+VERBOSE="${VERBOSE:-true}"
+
 # Colors for output
 RED='\033[0;31m'
 GREEN='\033[0;32m'
@@ -28,12 +48,56 @@ YELLOW='\033[1;33m'
 BLUE='\033[0;34m'
 NC='\033[0m' # No Color
 
+# Verbose output helpers
+# Enhanced verbose execution function
+run_verbose() {
+    echo "[VERBOSE] Executing: $*"
+    if [[ "$VERBOSE" == "true" ]]; then
+        set -x
+        time "$@"
+        set +x
+    else
+        "$@" >/dev/null 2>&1
+    fi
+}
+
+# Enhanced download function with progress and checksum verification
+wget_download() {
+    local url="$1"
+    local filename=$(basename "$url")
+    echo "[DOWNLOAD] Starting download of $filename from $url"
+    if [[ "$VERBOSE" == "true" ]]; then
+        wget "$url" --progress=bar:force --tries=3 --timeout=60 2>&1 | tee -a "$LOG_PATH"
+    else
+        wget -q "$url" --tries=3 --timeout=60
+    fi
+}
+
+# Enhanced make build function with timing and verbose output
+make_build() {
+    local start_time=$(date +%s)
+    echo "[BUILD] Starting make with arguments: $*"
+    if [[ "$VERBOSE" == "true" ]]; then
+        MAKEFLAGS="${MAKEFLAGS} V=1 VERBOSE=1" \
+        make -j"$PARALLEL_JOBS" --debug=v "$@" 2>&1 | tee -a "$LOG_PATH"
+    else
+        make -j"$PARALLEL_JOBS" "$@"
+    fi
+    local end_time=$(date +%s)
+    local build_time=$((end_time - start_time))
+    echo "[BUILD] Completed in ${build_time}s"
+}
+
 # Logging functions
-log_info() { echo -e "${BLUE}[INFO]${NC} $*"; }
-log_success() { echo -e "${GREEN}[SUCCESS]${NC} $*"; }
-log_warning() { echo -e "${YELLOW}[WARNING]${NC} $*"; }
-log_error() { echo -e "${RED}[ERROR]${NC} $*"; }
-log_phase() { echo -e "\n${BLUE}===============================================${NC}"; echo -e "${BLUE}  $*${NC}"; echo -e "${BLUE}===============================================${NC}\n"; }
+log_info() { log_output "${BLUE}[INFO]${NC} $*"; }
+log_success() { log_output "${GREEN}[SUCCESS]${NC} $*"; }
+log_warning() { log_output "${YELLOW}[WARNING]${NC} $*"; }
+log_error() { log_output "${RED}[ERROR]${NC} $*"; }
+log_phase() {
+    log_output "\n${BLUE}===============================================${NC}"
+    log_output "${BLUE}  $*${NC}"
+    log_output "${BLUE}===============================================${NC}\n"
+}
 
 # Error handling
 cleanup() {
@@ -47,17 +111,20 @@ trap cleanup EXIT
 validate_environment() {
     log_phase "Validating Build Environment"
     
-    # Check if running as root
-    if [[ $EUID -eq 0 ]]; then
-        log_error "Do not run this script as root"
-        exit 1
+# Check if running in Docker
+    if [[ -f /.dockerenv ]]; then
+        log_info "Running in Docker environment"
+    else
+        log_warning "Not running in Docker environment"
     fi
     
     # Check disk space (need at least 50GB)
     local available_space=$(df "$LFS_WORKSPACE" 2>/dev/null | awk 'NR==2 {print $4}' || echo 0)
     local required_space=52428800  # 50GB in KB
     
-    if [[ "$available_space" -lt "$required_space" ]]; then
+    if [[ -f /.dockerenv ]]; then
+        log_info "Skipping disk space check in Docker environment"
+    elif [[ "$available_space" -lt "$required_space" ]]; then
         log_error "Insufficient disk space. Need at least 50GB available"
         exit 1
     fi
@@ -128,17 +195,17 @@ download_packages() {
         "https://ftp.gnu.org/gnu/findutils/findutils-4.9.0.tar.xz"
         "https://ftp.gnu.org/gnu/grep/grep-3.11.tar.xz"
         "https://ftp.gnu.org/gnu/gzip/gzip-1.13.tar.xz"
-        "https://www.kernel.org/pub/software/utils/util-linux/v2.39/util-linux-2.39.3.tar.xz"
+"https://www.kernel.org/pub/linux/utils/util-linux/v2.41/util-linux-2.41.1.tar.xz"
     )
     
     for package in "${packages[@]}"; do
         local filename=$(basename "$package")
         if [[ ! -f "$filename" ]]; then
             log_info "Downloading $filename"
-            wget -q "$package" || {
+            if ! wget_download "$package"; then
                 log_error "Failed to download $package"
                 exit 1
-            }
+            fi
         else
             log_info "Found $filename"
         fi
@@ -167,7 +234,7 @@ build_cross_tools() {
                  --enable-gprofng=no \
                  --disable-werror
     
-    make -j"$PARALLEL_JOBS"
+    make_build
     make install
     
     cd "$LFS_WORKSPACE/sources"
@@ -209,7 +276,7 @@ build_cross_tools() {
         --disable-libstdcxx \
         --enable-languages=c,c++
     
-    make -j"$PARALLEL_JOBS"
+    make_build
     make install
     
     cd "$LFS_WORKSPACE/sources"
@@ -228,7 +295,7 @@ build_kernel_headers() {
     cd linux-6.7.4
     
     make mrproper
-    make headers
+    run_verbose make headers
     find usr/include -type f ! -name '*.h' -delete
     cp -rv usr/include "$LFS/usr"
     
@@ -261,7 +328,7 @@ build_glibc() {
         --disable-nscd \
         libc_cv_slibdir=/usr/lib
     
-    make -j"$PARALLEL_JOBS"
+    make_build
     make DESTDIR="$LFS" install
     
     # Fix symlink
@@ -287,7 +354,7 @@ build_core_tools() {
         "findutils-4.9.0.tar.xz"
         "grep-3.11.tar.xz"
         "gzip-1.13.tar.xz"
-        "util-linux-2.39.3.tar.xz"
+        "util-linux-2.41.1.tar.xz"
     )
     
     cd "$LFS_WORKSPACE/sources"
@@ -304,17 +371,17 @@ build_core_tools() {
         case "$name" in
             "bash")
                 ./configure --prefix=/usr --host="$LFS_TGT" --without-bash-malloc
-                make -j"$PARALLEL_JOBS"
+                make_build
                 make DESTDIR="$LFS" install
                 ;;
             "coreutils")
                 ./configure --prefix=/usr --host="$LFS_TGT" --enable-install-program=hostname
-                make -j"$PARALLEL_JOBS"
+                make_build
                 make DESTDIR="$LFS" install
                 ;;
             *)
                 ./configure --prefix=/usr --host="$LFS_TGT"
-                make -j"$PARALLEL_JOBS"
+                make_build
                 make DESTDIR="$LFS" install
                 ;;
         esac

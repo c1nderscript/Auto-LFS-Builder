@@ -1,0 +1,10 @@
+#!/bin/bash
+SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
+source "$SCRIPT_DIR/lfs-builder.env"
+
+echo "Cleaning build artifacts..."
+rm -rf "$LFS_WORKSPACE/lfs"
+rm -rf "$LFS_WORKSPACE/sources"
+rm -f "$LFS_WORKSPACE/lfs-system.tar.gz"
+rm -f "$SCRIPT_DIR/logs/"*.log
+echo "Cleanup complete"
