@@ -178,6 +178,8 @@ setup_lfs_environment() {
     export LFS_TGT=$(uname -m)-lfs-linux-gnu
     export PATH="$LFS/tools/bin:/bin:/usr/bin"
     export MAKEFLAGS="-j$PARALLEL_JOBS"
+    export CFLAGS="-D_MB_LEN_MAX=16"
+    export CXXFLAGS="-D_MB_LEN_MAX=16"
     
     log_success "LFS environment set up at $LFS"
 }
