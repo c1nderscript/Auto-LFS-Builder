@@ -1,20 +1,15 @@
 #!/bin/bash
 # Auto-LFS-Builder Master Build Script
-# Generated stub orchestrator for full system build
+# Redirects to the main build script
 set -euo pipefail
 
-log_phase() { echo "=== $1 ==="; }
+SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
+MAIN_SCRIPT="$SCRIPT_DIR/../lfs-build.sh"
 
-log_phase "Starting LFS build"
-# Placeholder for LFS build steps
-
-log_phase "Configuring networking"
-# Placeholder for networking setup
-
-log_phase "Installing GNOME desktop"
-# Placeholder for GNOME installation
-
-log_phase "Applying BLFS packages"
-# Placeholder for BLFS extras
-
-log_phase "Build process complete"
+if [[ -f "$MAIN_SCRIPT" ]]; then
+    echo "Starting Auto-LFS-Builder..."
+    exec bash "$MAIN_SCRIPT" "$@"
+else
+    echo "Error: Main build script not found at $MAIN_SCRIPT"
+    exit 1
+fi
