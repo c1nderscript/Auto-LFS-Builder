@@ -18,7 +18,7 @@ if [[ -f "$(dirname "$0")/lfs-builder.env" ]]; then
 fi
 
 # Set up logging
-LOG_PATH=/lfs-build/logs/build.log
+LOG_PATH=/mnt/lfs/logs/build.log
 LOG_DIR=$(dirname "$LOG_PATH")
 mkdir -p "$LOG_DIR"
 
@@ -170,6 +170,7 @@ setup_lfs_environment() {
     export LFS_TGT=$(uname -m)-lfs-linux-gnu
     export PATH="$LFS/tools/bin:/bin:/usr/bin"
     export MAKEFLAGS="-j$PARALLEL_JOBS"
+    export MB_LEN_MAX=16
     
     log_success "LFS environment set up at $LFS"
 }
@@ -326,7 +327,9 @@ build_glibc() {
         --enable-kernel=4.19 \
         --with-headers="$LFS/usr/include" \
         --disable-nscd \
-        libc_cv_slibdir=/usr/lib
+        libc_cv_slibdir=/usr/lib \
+        libc_cv_rtlddir=/usr/lib \
+        libc_cv_cpp_explicit_max_align=yes
     
     make_build
     make DESTDIR="$LFS" install

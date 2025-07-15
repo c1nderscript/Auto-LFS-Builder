@@ -59,10 +59,11 @@ ENV HOME=/lfs-build \
     SHELL=/bin/bash
 
 # Set up ccache symlinks
-RUN ln -s /usr/bin/ccache /usr/lib/ccache/bin/gcc && \
-    ln -s /usr/bin/ccache /usr/lib/ccache/bin/g++ && \
-    ln -s /usr/bin/ccache /usr/lib/ccache/bin/cc && \
-    ln -s /usr/bin/ccache /usr/lib/ccache/bin/c++
+RUN mkdir -p /usr/lib/ccache/bin && \
+    ln -sf /usr/bin/ccache /usr/lib/ccache/bin/gcc && \
+    ln -sf /usr/bin/ccache /usr/lib/ccache/bin/g++ && \
+    ln -sf /usr/bin/ccache /usr/lib/ccache/bin/cc && \
+    ln -sf /usr/bin/ccache /usr/lib/ccache/bin/c++
 
 # Create required build subdirs as user
 USER lfs-builder
