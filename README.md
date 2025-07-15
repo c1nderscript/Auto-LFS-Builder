@@ -1,16 +1,14 @@
 # Auto-LFS-Builder
 
-An automated linux from scratch builder.
+An automated Linux From Scratch (LFS) builder that creates a complete LFS system without requiring document parsing.
 
 This script builds:
+- **Linux from Scratch** - Complete base system
+- **GNOME Desktop** - Optional desktop environment
+- **Networking** - Network configuration and tools
+- **Development Tools** - Essential build tools and utilities
 
-- Linux from Scratch
-- Beyond Linux from Scratch
-- Gaming on Linux from Scratch
-
-All in one application.
-
-## Quick Installation
+## 🚀 Quick Installation
 
 The easiest way to install Auto-LFS-Builder is using the automated installation script:
 
@@ -40,7 +38,15 @@ Common options:
 - `--build-profile NAME`: Choose build profile (`desktop_gnome`, `minimal`, `server`, `developer`)
 - `--parallel-jobs N`: Set number of parallel build jobs (default: number of CPU cores)
 
-## Manual Installation
+## 📋 System Requirements
+
+- **OS**: Linux (x86_64 or aarch64)
+- **Disk Space**: At least 50GB available
+- **Memory**: 4GB RAM recommended (minimum 2GB)
+- **Network**: Internet connection for downloading packages
+- **Time**: Several hours for complete build
+
+## 🔧 Manual Installation
 
 If you prefer to install manually:
 
@@ -56,28 +62,30 @@ cd Auto-LFS-Builder
 **Ubuntu/Debian:**
 ```bash
 sudo apt-get update
-sudo apt-get install -y build-essential bison flex gawk texinfo wget curl git python3 python3-pip python3-venv libxml2-utils pandoc
+sudo apt-get install -y build-essential bison flex gawk texinfo wget curl git bash binutils coreutils diffutils findutils grep gzip m4 make patch sed tar xz-utils
 ```
 
 **Fedora/RHEL:**
 ```bash
-sudo dnf install -y @development-tools bison flex gawk texinfo wget curl git python3 python3-pip libxml2 pandoc
+sudo dnf install -y @development-tools bison flex gawk texinfo wget curl git bash binutils coreutils diffutils findutils grep gzip m4 make patch sed tar xz
 ```
 
-### 3. Set up Python environment
+**Arch Linux:**
+```bash
+sudo pacman -S base-devel bison flex gawk texinfo wget curl git bash binutils coreutils diffutils findutils grep gzip m4 make patch sed tar xz
+```
+
+### 3. Configure environment
+
+Edit `lfs-builder.env` to customize your build:
 
 ```bash
-python3 -m venv venv
-source venv/bin/activate
-pip install --upgrade pip
-pip install -r requirements.txt
+cp lfs-builder.env.example lfs-builder.env
+# Edit the configuration file
+nano lfs-builder.env
 ```
 
-### 4. Configure environment
-
-See [SETUP.md](SETUP.md) for detailed configuration options.
-
-## Quick Start
+## 🚀 Quick Start
 
 After installation:
 
@@ -91,79 +99,166 @@ After installation:
    source activate
    ```
 
-3. **Run validation (optional):**
+3. **Run validation (recommended):**
    ```bash
    ./lfs-validate
    ```
 
-4. **Parse documentation and generate build scripts:**
-   ```bash
-   python3 -m src.parsers.lfs_parser docs/lfs-git/chapter01/chapter01.xml
-   ```
-
-5. **Start a build:**
+4. **Start building LFS:**
    ```bash
    ./lfs-build
    ```
 
-## Build Profiles
+## 📊 Build Profiles
 
 The system supports several build profiles:
 
-- **`desktop_gnome`**: Full GNOME desktop with networking and multimedia support
+- **`desktop_gnome`** *(default)*: Full GNOME desktop with networking and multimedia support
 - **`minimal`**: Base LFS system only
 - **`server`**: Server configuration with networking, no GUI
 - **`developer`**: Development tools and environment
 
-## System Requirements
-
-- **OS**: Linux (x86_64 or aarch64)
-- **Disk Space**: At least 50GB available
-- **Memory**: 4GB RAM recommended (minimum 2GB)
-- **Network**: Internet connection for downloading packages
-
-## Validation
-
-The repository includes a validation suite at `generated/validation_suite.sh`.
-Run it to verify required tools are available before building:
+Change the build profile by editing `lfs-builder.env`:
 
 ```bash
-bash generated/validation_suite.sh
+export BUILD_PROFILE="minimal"
 ```
 
-## Available Commands
+## 🛠️ Available Commands
 
 After installation, you'll have access to these convenience commands:
 
-- `./lfs-validate` - Run validation suite
-- `./lfs-build` - Start LFS build process
-- `./lfs-test` - Run test suite
-- `./lfs-clean` - Clean build artifacts
+- `./lfs-validate` - Run validation suite to check required tools
+- `./lfs-build` - Start the complete LFS build process
+- `./lfs-test` - Run test suite (if available)
+- `./lfs-clean` - Clean build artifacts and temporary files
 
-## Documentation
+## 📖 Build Process
+
+The build process follows these main steps:
+
+1. **Environment Setup** - Prepare build environment and directories
+2. **Package Download** - Download source packages from official repositories
+3. **Cross-Compilation Tools** - Build initial cross-compilation toolchain
+4. **Kernel Headers** - Install Linux kernel headers
+5. **Glibc** - Build and install the C library
+6. **Core Tools** - Build essential system tools (bash, coreutils, etc.)
+7. **System Configuration** - Configure users, networking, and system files
+8. **Desktop Environment** - Install GNOME (if enabled)
+9. **Finalization** - Create bootable system image
+
+## 🔧 Configuration
+
+### Environment Variables
+
+Edit `lfs-builder.env` to customize your build:
+
+```bash
+# Core LFS Build Variables
+export LFS_WORKSPACE="${HOME}/lfs-workspace"
+export BUILD_PROFILE="desktop_gnome"
+export PARALLEL_JOBS="4"
+
+# Component Control Flags
+export ENABLE_GNOME="true"
+export ENABLE_NETWORKING="true"
+export ENABLE_MULTIMEDIA="true"
+export ENABLE_DEVELOPMENT_TOOLS="true"
+
+# Security and Verification
+export VERIFY_PACKAGES="true"
+export CHECKSUM_VALIDATION="sha256"
+export SECURITY_HARDENING="true"
+```
+
+### Build Profiles
+
+You can create custom build profiles by modifying the build script or environment variables.
+
+## 📝 Output
+
+After a successful build, you'll find:
+
+- **LFS System**: Complete file system at `$LFS_WORKSPACE/lfs/`
+- **System Image**: Compressed system image at `$LFS_WORKSPACE/lfs-system.tar.gz`
+- **Build Logs**: Detailed logs in the `logs/` directory
+
+## 🔍 Validation
+
+Always run validation before building:
+
+```bash
+./lfs-validate
+```
+
+This checks for:
+- Required build tools (gcc, make, bash, etc.)
+- System requirements (disk space, memory)
+- Environment configuration
+- Network connectivity
+
+## 🧪 Testing
+
+After building, you can test your LFS system:
+
+1. **Create a Virtual Machine** or prepare a test machine
+2. **Extract the system image** to the target disk
+3. **Install a bootloader** (GRUB recommended)
+4. **Boot your new LFS system**
+
+## 📚 Documentation
 
 - [README.md](README.md) - This file (quick start guide)
 - [SETUP.md](SETUP.md) - Detailed setup and configuration
-- [AGENTS.md](AGENTS.md) - Advanced usage and agent documentation
+- [AGENTS.md](AGENTS.md) - Advanced usage and automation
 
-## Important Notes
+## ⚠️ Important Notes
 
-⚠️ **Please read before building:**
+**Please read before building:**
 
-- LFS building requires root privileges for certain operations
+- The build process takes several hours (typically 3-8 hours depending on hardware)
 - Ensure you have at least 50GB free disk space
-- The build process can take several hours to complete
-- Read the documentation thoroughly before starting a build
-- Always run validation before attempting a build
+- Do not interrupt the build process once started
+- Review the configuration in `lfs-builder.env` before building
+- Always run validation before starting a build
+- The resulting system will need a bootloader to be bootable
 
-## License
+## 🎯 Next Steps After Building
+
+1. **Create a bootable disk** or VM
+2. **Extract the system image**:
+   ```bash
+   cd /mnt/lfs  # Your target mount point
+   tar -xzf ~/lfs-workspace/lfs-system.tar.gz
+   ```
+3. **Install GRUB bootloader**:
+   ```bash
+   grub-install --target=i386-pc /dev/sdX
+   grub-mkconfig -o /boot/grub/grub.cfg
+   ```
+4. **Boot your new LFS system**
+
+## 🐛 Troubleshooting
+
+Common issues and solutions:
+
+- **Build fails**: Check `logs/` directory for detailed error messages
+- **Missing tools**: Run `./lfs-validate` to check required dependencies
+- **Disk space**: Ensure you have sufficient free space (50GB+)
+- **Memory issues**: Reduce `PARALLEL_JOBS` for systems with limited RAM
+
+## 📄 License
 
 This project is licensed under the MIT License. See the [LICENSE](LICENSE) file for details.
 
-## Support
+## 🤝 Support
 
 For issues and questions:
 1. Check the [documentation](SETUP.md) first
 2. Run the validation suite to identify missing dependencies
 3. Review the logs in the `logs/` directory
 4. Open an issue on GitHub with detailed information
+
+---
+
+**Happy building!** 🎉
