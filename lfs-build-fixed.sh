@@ -125,9 +125,14 @@ cleanup() {
         return 0  # Prevent recursive cleanup calls
     fi
     CLEANUP_CALLED=true
-    
-    log_error "Build interrupted or failed"
-    log_info "Cleaning up..."
+    local status=$1
+    trap - ERR EXIT
+    if [[ $status -ne 0 ]]; then
+        log_error "Build interrupted or failed (status: $status)"
+        log_info "Cleaning up..."
+    else
+        log_success "Build completed successfully"
+    fi
     
     # Show current location and status
     log_info "Current directory: $(pwd)"
@@ -142,8 +147,8 @@ cleanup() {
     log_info "Run './debug-glibc.sh' for detailed diagnosis"
 }
 
-# Set trap but disable exit on error temporarily for better control
-trap cleanup ERR
+# Set traps for error handling and finalization
+trap 'cleanup $?' ERR EXIT
 
 # Validate environment
 validate_environment() {
@@ -818,7 +823,7 @@ main() {
     local seconds=$((build_time % 60))
     
     # Disable trap for successful completion
-    trap - ERR
+    trap - ERR EXIT
     
     log_phase "Build Complete!"
     log_success "Total build time: ${hours}h ${minutes}m ${seconds}s"
