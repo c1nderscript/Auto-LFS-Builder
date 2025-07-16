@@ -102,12 +102,13 @@ log_phase() {
 # Error handling
 CLEANUP_CALLED=false
 cleanup() {
-    local status=$?
+    local status=${1:-$?}
     if [[ "$CLEANUP_CALLED" == "true" ]]; then
         return 0
     fi
     CLEANUP_CALLED=true
-    if [[ $status -ne 0 ]]; then
+
+    if [[ "$status" -ne 0 ]]; then
         log_error "Build interrupted or failed (exit code $status)"
     else
         log_success "Build completed successfully"
@@ -115,7 +116,8 @@ cleanup() {
     log_info "Cleaning up..."
     # Add cleanup logic here
 }
-trap cleanup ERR EXIT
+trap 'cleanup $?' ERR
+trap 'cleanup $?' EXIT
 
 # Validate environment
 validate_environment() {

@@ -121,34 +121,34 @@ log_phase() {
 # Improved error handling to prevent loops
 CLEANUP_CALLED=false
 cleanup() {
-    local status=$?
+    local status=${1:-$?}
     if [[ "$CLEANUP_CALLED" == "true" ]]; then
         return 0  # Prevent recursive cleanup calls
     fi
     CLEANUP_CALLED=true
 
-    if [[ $status -ne 0 ]]; then
-        log_error "Build interrupted or failed (exit code $status)"
-    else
-        log_success "Build completed successfully"
-    fi
-    log_info "Cleaning up..."
-    
     # Show current location and status
     log_info "Current directory: $(pwd)"
     log_info "LFS directory: ${LFS:-NOT_SET}"
-    
+
     # Optional: Show last few log lines for debugging
     if [[ -f "$LOG_PATH" ]]; then
         log_info "Last 10 lines of build log:"
         tail -10 "$LOG_PATH" 2>/dev/null || true
     fi
-    
+
+    if [[ "$status" -ne 0 ]]; then
+        log_error "Build interrupted or failed (exit code $status)"
+    else
+        log_success "Build completed successfully"
+    fi
+    log_info "Cleaning up..."
     log_info "Run './debug-glibc.sh' for detailed diagnosis"
 }
 
 # Set trap but disable exit on error temporarily for better control
-trap cleanup ERR EXIT
+trap 'cleanup $?' ERR
+trap 'cleanup $?' EXIT
 
 # Validate environment
 validate_environment() {
