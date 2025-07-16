@@ -1,27 +1,43 @@
-version: "3.9"
-
 services:
   lfs-builder:
     build: 
       context: .
       args:
         BUILDKIT_STEP_LOG_MAX_SIZE: 10485760
-        BUILDKIT_STEP_LOG_MAX_SPEED: 10485760
+        PARALLEL_JOBS: 16
+        CCACHE_SIZE: 10G
+      dockerfile: Dockerfile
+      target: ""
+      labels:
+        - "project=auto-lfs-builder"
+        - "component=lfs-builder"
 
+    container_name: auto-lfs-builder
+    hostname: lfs-builder
+    
     volumes:
+      # Project directories
       - ./workspace:/lfs-build/workspace
       - ./logs:/lfs-build/logs
+      - ./config:/lfs-build/config
+      
+      # Persistent volumes
       - type: volume
         source: lfs_output
         target: /lfs-build/output
       - type: volume
         source: lfs_mount
-        target: /mnt/lfs  # 👈 persisted across container restarts
-
-      # Optional: Give container access to system
+        target: /mnt/lfs
+      - type: volume
+        source: lfs_ccache
+        target: /var/cache/ccache
+      
+      # System access for advanced features
       - /dev:/dev
       - /proc:/proc
       - /sys:/sys
+      
+      # Docker socket for nested builds (optional)
       - /var/run/docker.sock:/var/run/docker.sock
 
     privileged: true
@@ -31,46 +47,162 @@ services:
       - seccomp:unconfined
       - apparmor:unconfined
 
+    # Enhanced tmpfs configuration for performance
     tmpfs:
-      - /tmp:exec,dev
-      - /run:exec,dev
+      - /tmp:exec,dev,size=8g,mode=1777
+      - /run:exec,dev,size=2g,mode=755
+      - /var/tmp:exec,dev,size=4g,mode=1777
 
+    # System tunables for better performance
     sysctls:
-      net.ipv6.conf.all.disable_ipv6: 0
+      - net.ipv6.conf.all.disable_ipv6=0
+      - vm.max_map_count=262144
+      - fs.file-max=65536
 
     environment:
-      BUILDKIT_PROGRESS: plain
-      DOCKER_BUILDKIT: 1
-      BUILDKIT_STEP_LOG_MAX_SIZE: 10485760
-      COMPOSE_DOCKER_CLI_BUILD: 1
-      VERBOSE: "true"
-      PARALLEL_JOBS: 16  # Reduced from 32 for stability
+      # Build configuration
       BUILD_PROFILE: desktop_gnome
-      GNOME_ENABLED: "true"  # Standardized variable name
-      NETWORKING_ENABLED: "true"  # Standardized variable name
+      PARALLEL_JOBS: 16
+      MAKEFLAGS: "-j16 -l16"
+      
+      # Feature flags
+      GNOME_ENABLED: "true"
+      NETWORKING_ENABLED: "true"
       CREATE_ISO: "true"
-      LOG_PATH: /lfs-build/logs/build.log
-      DEBUG: 1
-      V: 1
-      SHELL: "/bin/bash -x"
+      VERIFY_PACKAGES: "true"
+      
+      # Optimization settings
+      CCACHE_ENABLED: "true"
+      CCACHE_SIZE: "10G"
+      CCACHE_COMPILERCHECK: "content"
+      CCACHE_SLOPPINESS: "file_macro,locale,time_macros"
+      
+      # Logging and debugging
+      VERBOSE: "true"
+      DEBUG: "1"
+      V: "1"
+      LOG_LEVEL: "INFO"
+      LOG_PATH: "/lfs-build/logs/build.log"
+      
+      # Docker/BuildKit settings
+      DOCKER_BUILDKIT: "1"
+      BUILDKIT_PROGRESS: "plain"
+      BUILDKIT_STEP_LOG_MAX_SIZE: "10485760"
+      BUILDKIT_STEP_LOG_MAX_SPEED: "10485760"
+      COMPOSE_DOCKER_CLI_BUILD: "1"
+      
+      # Shell configuration
+      SHELL: "/bin/bash"
+      CONFIG_SHELL: "/bin/bash"
+      
+      # Performance tuning
+      TMPDIR: "/tmp"
+      CCACHE_DIR: "/var/cache/ccache"
+      
+      # LFS specific
+      LFS: "/mnt/lfs"
+      LFS_WORKSPACE: "/lfs-build/workspace"
+      LC_ALL: "POSIX"
+      
+      # Compiler flags
+      CFLAGS: "-O2 -pipe -march=x86-64 -mtune=generic -fstack-protector-strong"
+      CXXFLAGS: "-O2 -pipe -march=x86-64 -mtune=generic -fstack-protector-strong"
+      LDFLAGS: "-Wl,-O1,--sort-common,--as-needed,-z,relro,-z,now"
 
+    # Interactive mode for debugging
     tty: true
     stdin_open: true
+    
     networks:
       - lfs_network
 
+    # Resource limits for stability
+    deploy:
+      resources:
+        limits:
+          cpus: '16'
+          memory: 32G
+        reservations:
+          cpus: '8'
+          memory: 16G
+
+    # Enhanced logging configuration
     logging:
       driver: "json-file"
       options:
         max-size: "100m"
-        max-file: "3"
+        max-file: "5"
+        compress: "true"
+        labels: "project,component"
 
+    # Restart policy
+    restart: unless-stopped
+
+    # Health check
+    healthcheck:
+      test: ["CMD", "test", "-f", "/lfs-build/logs/build.log"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+      start_period: 60s
+
+    # Dependencies
+    depends_on:
+      - lfs-monitor
+
+  # Optional monitoring container
+  lfs-monitor:
+    image: alpine:latest
+    container_name: lfs-monitor
+    command: >
+      sh -c "
+        while true; do
+          echo '[MONITOR] $(date): System status check'
+          df -h /mnt/lfs 2>/dev/null || echo 'LFS volume not mounted'
+          sleep 60
+        done
+      "
+    volumes:
+      - lfs_mount:/mnt/lfs:ro
+    restart: unless-stopped
+    profiles:
+      - monitoring
+
+# Named volumes for persistence
 volumes:
   lfs_output:
     name: lfs_output
+    driver: local
+    driver_opts:
+      type: none
+      o: bind
+      device: ${PWD}/output
+  
   lfs_mount:
-    name: lfs_mount  # 👈 keeps /mnt/lfs persistent
+    name: lfs_mount
+    driver: local
+    driver_opts:
+      type: none
+      o: bind
+      device: ${PWD}/lfs-mount
+  
+  lfs_ccache:
+    name: lfs_ccache
+    driver: local
+    driver_opts:
+      type: none
+      o: bind
+      device: ${PWD}/.ccache
 
+# Network configuration
 networks:
   lfs_network:
     driver: bridge
+    driver_opts:
+      com.docker.network.bridge.name: lfs-bridge
+    ipam:
+      driver: default
+      config:
+        - subnet: 172.20.0.0/16
+    labels:
+      - "project=auto-lfs-builder"
