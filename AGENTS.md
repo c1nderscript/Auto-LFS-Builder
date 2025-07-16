@@ -1,602 +1,357 @@
-------
+# AGENTS.md - Auto-LFS-Builder Project
 
-------
+## 🔧 Project Manager for Auto-LFS-Builder
+🔗 Repository: https://github.com/c1nderscript/Auto-LFS-Builder
 
-## name: "Auto-LFS-Builder: Complete System Automation" description: "Comprehensive LFS automation system that reads documentation from docs/ folder and generates complete self-installing Linux systems with LFS, networking, GNOME GUI, and full desktop environment" category: "Systems Automation & Documentation Processing" author: "LFS Automation Team" tags: ["linux-from-scratch", "jhalfs", "gnome", "blfs", "automation", "documentation-driven", "self-installing", "codex-agents"] lastUpdated: "2025-07-11"
+## 🎯 Project Overview
 
-# Auto-LFS-Builder: Complete System Automation for Codex Agents
+The Auto-LFS-Builder project automates the creation of Linux From Scratch (LFS) systems with support for various build profiles including desktop GNOME, minimal, server, and developer configurations. The project uses Docker containers for isolated building and supports both host-based and containerized execution environments.
 
-## Project Overview for AI Agents
+## 📍 Critical Path Information
 
-**CRITICAL CONTEXT**: This project is a documentation-driven LFS automation system that reads comprehensive Linux From Scratch documentation from the `docs/` folder and generates complete autobuilding scripts. Your primary task as a Codex agent is to process these documentation sources and create intelligent automation that builds fully functional Linux systems.
+### Primary Paths
+- **LFS Build Directory**: `/mnt/lfs` (THE MAIN BUILD LOCATION)
+- **Repository Location**: `/mnt/Auto-LFS-Builder`
+- **Workspace Directory**: `/mnt/lfs/workspace` or `/lfs-build/workspace` (in container)
+- **Log Directory**: `/mnt/Auto-LFS-Builder/logs`
+- **Config Directory**: `/mnt/Auto-LFS-Builder/config`
 
-### Documentation Sources Available in docs/
-
-- **LFS Documentation**: Core Linux From Scratch build instructions (toolchain, temporary system, final system)
-- **JHALFS Documentation**: Automated LFS build tool specifications and configuration
-- **GLFS Documentation**: GNOME Linux From Scratch desktop environment instructions
-- **BLFS Documentation**: Beyond Linux From Scratch extended packages and services
-
-### Primary Mission
-
-Generate a comprehensive autobuilding script that:
-
-1. **Processes all documentation sources** systematically
-2. **Builds complete LFS base system** with proper toolchain and dependency management
-3. **Implements networking capabilities** including NetworkManager, wireless support, and firewall
-4. **Installs full GNOME desktop environment** with all necessary components
-5. **Creates self-installing system** that can bootstrap on target hardware
-6. **Handles all dependencies** automatically with proper build order
-7. **Includes error recovery** and logging throughout the process
-8. **Sets up GitHub workflow actions** to automatically test the LFS build on every push
-9. **Maintains the build script** to reflect documentation updates and ensure reproducible builds
-10. **Builds Linux From Scratch, Beyond Linux From Scratch, and gaming components** for a complete gaming environment
-
-
-## Tech Stack & Tools for Documentation Processing
-
-- **Primary Languages**: Bash scripting (95%), Python (documentation parsing)
-- **Documentation Formats**: XML, HTML, Markdown, plain text
-- **Parsing Tools**: xmllint, Beautiful Soup (Python), pandoc, sed/awk
-- **Build System**: GNU Make, custom dependency resolver
-- **Package Management**: wget/curl for downloads, custom build automation
-- **Testing Environment**: QEMU/KVM for automated testing
-- **Version Control**: Git with submodules for documentation tracking
-
-## Project Structure for AI Navigation
-
-```
-auto-lfs-builder/
-├── docs/                           # DOCUMENTATION SOURCES (READ THESE FIRST)
-│   ├── lfs/                       # Linux From Scratch documentation
-│   │   ├── index.html             # Main LFS book index
-│   │   ├── chapter*/              # Build phases and instructions
-│   │   ├── packages.xml           # Package specifications
-│   │   └── dependencies.xml       # Dependency mappings
-│   ├── jhalfs/                    # JHALFS automation documentation
-│   │   ├── README                 # JHALFS setup and usage
-│   │   ├── config/                # Build configurations
-│   │   └── common/                # Common build functions
-│   ├── glfs/                      # GNOME LFS documentation
-│   │   ├── gnome-session/         # GNOME session setup
-│   │   ├── gtk4/                  # GTK4 desktop framework
-│   │   └── desktop-integration/   # Desktop environment integration
-│   └── blfs/                      # Beyond LFS documentation
-│       ├── networking/            # Network stack components
-│       ├── x/                     # X Window System
-│       ├── kde/                   # Alternative desktop (reference)
-│       └── multimedia/            # Media support packages
-├── src/                           # GENERATED AUTOMATION SCRIPTS
-│   ├── parsers/                   # Documentation processing engines
-│   │   ├── lfs_parser.py          # LFS XML/HTML parser
-│   │   ├── dependency_resolver.py # Build order calculator
-│   │   ├── package_analyzer.py    # Package requirement analyzer
-│   │   └── documentation_merger.py # Multi-source documentation combiner
-│   ├── builders/                  # Build automation generators
-│   │   ├── lfs_builder.sh         # Core LFS build automation
-│   │   ├── networking_builder.sh  # Network stack automation
-│   │   ├── gnome_builder.sh       # GNOME desktop automation
-│   │   ├── blfs_builder.sh        # Extended packages automation
-│   │   └── master_builder.sh      # Orchestrates complete build
-│   ├── installers/                # Self-installing system generators
-│   │   ├── iso_creator.sh         # Bootable ISO generation
-│   │   ├── partition_manager.sh   # Automatic disk partitioning
-│   │   └── bootstrap_installer.sh # Hardware detection and installation
-│   └── validators/                # Build verification and testing
-│       ├── dependency_checker.sh  # Validate build dependencies
-│       ├── package_tester.sh      # Test individual packages
-│       └── system_validator.sh    # Complete system validation
-├── generated/                     # AI-GENERATED BUILD SCRIPTS
-│   ├── complete_build.sh          # Master build script (YOUR PRIMARY OUTPUT)
-│   ├── networking_setup.sh        # Network configuration automation
-│   ├── gnome_desktop.sh           # Full GNOME installation
-│   ├── package_builds/            # Individual package build scripts
-│   └── validation_suite.sh        # Comprehensive testing
-├── config/                        # Build configurations
-│   ├── build_profiles/            # Target system configurations
-│   ├── package_versions.conf      # Version specifications
-│   └── hardware_support.conf      # Hardware-specific settings
-└── logs/                          # Build logs and debugging
-    ├── parsing_logs/              # Documentation processing logs
-    ├── build_logs/                # Construction logs
-    └── validation_logs/           # Testing and verification logs
-```
-
-## AI Agent Instructions for Documentation Processing
-
-### Phase 1: Documentation Analysis and Parsing
-
-**FIRST PRIORITY**: Read and analyze all documentation in `docs/` folder systematically:
-
-1. **Parse LFS Documentation Structure**:
-
-   ```bash
-   # Your analysis should identify:
-   - Build phases (toolchain, temporary system, final system)
-   - Package dependencies and build order
-   - Configuration requirements
-   - Testing procedures
-   ```
-
-2. **Extract JHALFS Automation Patterns**:
-
-   ```bash
-   # Focus on:
-   - Existing automation scripts and functions
-   - Configuration templates
-   - Error handling patterns
-   - Build optimization techniques
-   ```
-
-3. **Process GNOME/GLFS Requirements**:
-
-   ```bash
-   # Identify:
-   - Desktop environment components
-   - GTK and graphics requirements
-   - Session management setup
-   - User interface configurations
-   ```
-
-4. **Analyze BLFS Extended Packages**:
-
-   ```bash
-   # Map out:
-   - Networking components (NetworkManager, wireless tools)
-   - Multimedia support requirements
-   - Additional desktop applications
-   - System services and daemons
-   ```
-
-### Phase 2: Intelligent Build Script Generation
-
-**CORE REQUIREMENT**: Generate `generated/complete_build.sh` that orchestrates the entire process:
-
+### Essential Environment Variables
 ```bash
-#!/bin/bash
-# AUTO-GENERATED COMPLETE LFS BUILD SCRIPT
-# Generated by Codex agents from documentation in docs/ folder
-
-set -e
-source config/build_profiles/desktop_gnome.conf
-
-# Phase 1: LFS Base System
-echo "=== Phase 1: Building LFS Base System ==="
-./generated/lfs_base_build.sh
-
-# Phase 2: Networking Infrastructure  
-echo "=== Phase 2: Setting up Networking ==="
-./generated/networking_setup.sh
-
-# Phase 3: X Window System
-echo "=== Phase 3: Installing X Window System ==="
-./generated/x_window_build.sh
-
-# Phase 4: GNOME Desktop Environment
-echo "=== Phase 4: Installing GNOME Desktop ==="
-./generated/gnome_desktop.sh
-
-# Phase 5: Additional BLFS Packages
-echo "=== Phase 5: Installing Extended Packages ==="
-./generated/blfs_extras.sh
-
-# Phase 6: System Configuration and Validation
-echo "=== Phase 6: Final System Configuration ==="
-./generated/system_finalization.sh
-
-echo "=== LFS Build Complete with GNOME Desktop ==="
-```
-
-### Phase 3: Component-Specific Build Scripts
-
-Generate specialized scripts for each major component:
-
-#### LFS Base System Builder
-
-```bash
-# generated/lfs_base_build.sh
-# Build core LFS system following documentation in docs/lfs/
-
-# Toolchain construction
-build_toolchain() {
-    # Parse docs/lfs/chapter05/ for toolchain instructions
-    # Generate automated binutils, gcc, glibc builds
-}
-
-# Temporary system
-build_temporary_system() {
-    # Process docs/lfs/chapter06/ for temporary tools
-    # Automate chroot environment setup
-}
-
-# Final system
-build_final_system() {
-    # Follow docs/lfs/chapter07-10/ for final system
-    # Implement kernel compilation and bootloader setup
-}
-```
-
-#### Networking Infrastructure Builder
-
-```bash
-# generated/networking_setup.sh
-# Network stack automation from docs/blfs/networking/
-
-install_network_stack() {
-    # NetworkManager for desktop networking
-    # Wireless tools and drivers
-    # Firewall configuration (iptables/nftables)
-    # DNS resolution setup
-}
-
-configure_network_services() {
-    # SSH daemon setup
-    # Network time synchronization
-    # DHCP client configuration
-}
-```
-
-#### GNOME Desktop Builder
-
-```bash
-# generated/gnome_desktop.sh
-# Complete GNOME installation from docs/glfs/
-
-install_graphics_stack() {
-    # Mesa 3D graphics
-    # Graphics drivers (Intel, AMD, NVIDIA)
-    # Wayland and X11 support
-}
-
-install_gnome_core() {
-    # GTK4 and dependencies
-    # GNOME Shell and session
-    # GDM display manager
-    # Core GNOME applications
-}
-
-configure_desktop_environment() {
-    # User session setup
-    # Desktop themes and icons
-    # Application launchers
-    # System settings
-}
-```
-
-## Coding Standards for Generated Scripts
-
-### Error Handling Requirements
-
-- **Every command must check exit status**: Use `|| handle_error "description"`
-- **Comprehensive logging**: Log all operations with timestamps
-- **Recovery mechanisms**: Implement rollback for failed builds
-- **User feedback**: Provide clear progress indicators
-
-### Script Structure Standards
-
-```bash
-#!/bin/bash
-# Script header with purpose and dependencies
-set -euo pipefail  # Strict error handling
-
-# Source common functions
-source src/common/logging.sh
-source src/common/error_handling.sh
-source src/common/package_management.sh
-
-# Main function with clear phases
-main() {
-    log_info "Starting [COMPONENT] build process"
-    check_prerequisites
-    download_packages
-    build_packages
-    install_packages
-    validate_installation
-    log_success "[COMPONENT] build completed successfully"
-}
-```
-
-### Package Management Standards
-
-```bash
-# Consistent package handling
-download_package() {
-    local package_name="$1"
-    local package_url="$2"
-    local checksum="$3"
-    
-    log_info "Downloading $package_name"
-    wget -c "$package_url" -O "${PACKAGES_DIR}/${package_name}"
-    verify_checksum "${PACKAGES_DIR}/${package_name}" "$checksum"
-}
-
-build_package() {
-    local package_name="$1"
-    local build_function="$2"
-    
-    log_info "Building $package_name"
-    extract_package "$package_name"
-    cd "${BUILD_DIR}/${package_name}"
-    "$build_function"
-    cd - > /dev/null
-}
-```
-
-## Documentation Processing Requirements
-
-### XML/HTML Parsing for Build Instructions
-
-```python
-# src/parsers/lfs_parser.py
-def extract_build_commands(chapter_file):
-    """Extract build commands from LFS documentation"""
-    soup = BeautifulSoup(open(chapter_file), 'html.parser')
-    
-    # Find all code blocks with build instructions
-    build_blocks = soup.find_all('pre', class_='userinput')
-    
-    commands = []
-    for block in build_blocks:
-        # Clean and process commands
-        cmd = clean_command(block.get_text())
-        if is_build_command(cmd):
-            commands.append(cmd)
-    
-    return commands
-
-def resolve_dependencies(package_name):
-    """Parse dependency information from documentation"""
-    # Read docs/lfs/dependencies.xml or similar
-    # Build dependency graph
-    # Return ordered build list
-```
-
-### Configuration Extraction
-
-```bash
-# Extract configuration from JHALFS documentation
-parse_jhalfs_config() {
-    local config_file="docs/jhalfs/config/LFS"
-    
-    # Extract build parameters
-    grep -E "^[A-Z_]+=" "$config_file" | while IFS='=' read key value; do
-        echo "export $key=$value" >> config/extracted_jhalfs.conf
-    done
-}
-```
-
-## Build Validation and Testing
-
-### Automated Testing Requirements
-
-```bash
-# generated/validation_suite.sh
-validate_lfs_system() {
-    log_info "Validating LFS base system"
-    
-    # Check essential binaries exist
-    check_binary_exists gcc "Compiler not found"
-    check_binary_exists make "Build system not found"
-    check_binary_exists bash "Shell not found"
-    
-    # Verify system libraries
-    validate_glibc_installation
-    validate_kernel_modules
-}
-
-validate_gnome_desktop() {
-    log_info "Validating GNOME desktop installation"
-    
-    # Check GNOME components
-    check_binary_exists gnome-session "GNOME session not found"
-    check_binary_exists gdm "Display manager not found"
-    
-    # Test graphics stack
-    validate_graphics_drivers
-    validate_wayland_support
-}
-```
-
-## Current Task Priority for Codex Agents
-
-### Immediate Action Items
-
-1. **FIRST**: Parse all documentation in `docs/lfs/`, `docs/jhalfs/`, `docs/glfs/`, `docs/blfs/`
-2. **SECOND**: Generate dependency graph and build order from documentation
-3. **THIRD**: Create `generated/complete_build.sh` master orchestration script
-4. **FOURTH**: Generate component-specific builders (LFS, networking, GNOME, BLFS)
-5. **FIFTH**: Implement validation and testing automation
-6. **SIXTH**: Create self-installing ISO generation scripts
-
-### Critical Success Criteria
-
-- **Complete automation**: No manual intervention required after script launch
-- **Full desktop system**: Bootable system with GNOME desktop and networking
-- **Robust error handling**: Graceful failure and recovery mechanisms
-- **Documentation traceability**: All build steps traceable to source documentation
-- **Reproducible builds**: Consistent results across different hardware
-- **Modular architecture**: Individual components can be rebuilt independently
-
-## Environment Setup for Documentation Processing
-
-### Required Tools and Dependencies
-
-```bash
-# Documentation processing tools
-sudo apt-get install -y python3 python3-pip xmllint pandoc
-pip3 install beautifulsoup4 lxml requests
-
-# LFS build requirements
-sudo apt-get install -y build-essential bison gawk texinfo
-sudo apt-get install -y wget curl git subversion
-
-# Testing and virtualization
-sudo apt-get install -y qemu-kvm libvirt-clients virt-manager
-```
-
-### Environment Variables for Build Control
-
-```bash
-# Core LFS variables
+# MANDATORY - Source these before ANY action
 export LFS=/mnt/lfs
-export LFS_TGT=$(uname -m)-lfs-linux-gnu
-export LFS_MAKEFLAGS="-j$(nproc)"
-
-# Documentation processing
-export DOCS_ROOT="./docs"
-export BUILD_OUTPUT="./generated"
-export LOG_LEVEL="INFO"
-
-# Build customization
-export ENABLE_GNOME="true"
-export ENABLE_NETWORKING="true"
-export TARGET_ARCH="x86_64"
-export BUILD_PROFILE="desktop_gnome"
+export LFS_WORKSPACE=/mnt/lfs/workspace
+export BUILD_PROFILE=desktop_gnome
+export PARALLEL_JOBS=16
+export GNOME_ENABLED=true
+export NETWORKING_ENABLED=true
+export CREATE_ISO=true
+export LOG_PATH=/mnt/Auto-LFS-Builder/logs/build.log
+export VERBOSE=true
+export DEBUG=1
 ```
 
-## Performance Optimization for Large-Scale Builds
-
-### Parallel Processing Strategy
-
-- **Multi-core compilation**: Automatic detection of CPU cores for -j flags
-- **Parallel package downloads**: Download multiple packages simultaneously
-- **Staged building**: Overlap dependency building with main packages
-- **Caching strategy**: Cache compiled packages for faster rebuilds
-
-### Resource Management
-
+### Environment Activation Protocol
 ```bash
-# Memory and disk management
-monitor_system_resources() {
-    local available_memory=$(free -m | awk 'NR==2{printf "%.1f", $7/1024}')
-    local available_disk=$(df -h /tmp | awk 'NR==2{print $4}')
+# REQUIRED SEQUENCE - Execute BEFORE any build action
+cd /mnt/Auto-LFS-Builder
+source ./lfs-builder.env
+source ./activate
+```
+
+## 🚀 Codex Agent Bootstrapping (Ubuntu 22.04)
+
+**MANDATORY SETUP - Execute BEFORE any task**:
+
+### 1. Create codex_environment.md
+```markdown
+# codex_environment.md
+ENV UBUNTU_VERSION=22.04
+ENV LFS=/mnt/lfs
+ENV LFS_WORKSPACE=/mnt/lfs/workspace
+ENV BUILD_PROFILE=desktop_gnome
+ENV PARALLEL_JOBS=16
+ENV MAKEFLAGS=-j16
+ENV GNOME_ENABLED=true
+ENV NETWORKING_ENABLED=true
+ENV CREATE_ISO=true
+ENV LOG_PATH=/mnt/Auto-LFS-Builder/logs/build.log
+ENV VERBOSE=true
+ENV DEBUG=1
+
+# Required packages for LFS building
+REQUIREMENTS: build-essential,bison,flex,gawk,texinfo,wget,curl,git,bash,binutils,coreutils,diffutils,findutils,grep,gzip,m4,make,patch,sed,tar,xz-utils,docker.io,docker-compose
+
+# Critical paths
+PATH_ADDITIONS: /tools/bin:/usr/local/bin
+WORKING_DIR: /mnt/Auto-LFS-Builder
+```
+
+### 2. Create executable codex_script.sh
+```bash
+#!/bin/bash
+set -euo pipefail
+
+# Source environment variables
+source codex_environment.md
+
+# Validate critical paths
+echo "Validating critical paths..."
+if [[ ! -d "/mnt/lfs" ]]; then
+    echo "ERROR: /mnt/lfs does not exist"
+    exit 1
+fi
+
+if [[ ! -d "/mnt/Auto-LFS-Builder" ]]; then
+    echo "ERROR: /mnt/Auto-LFS-Builder does not exist"
+    exit 1
+fi
+
+# Update system and install required packages
+sudo apt-get update
+sudo apt-get install -y build-essential bison flex gawk texinfo wget curl git bash binutils coreutils diffutils findutils grep gzip m4 make patch sed tar xz-utils docker.io docker-compose
+
+# Create necessary directories
+sudo mkdir -p $LFS/sources $LFS/tools $LFS/workspace
+sudo chown -R $(whoami):$(whoami) $LFS
+
+# Set up environment
+export PATH=/tools/bin:$PATH
+export LFS=/mnt/lfs
+export LFS_WORKSPACE=/mnt/lfs/workspace
+
+# Change to working directory
+cd /mnt/Auto-LFS-Builder
+
+# Source project environment
+source ./lfs-builder.env
+source ./activate
+
+echo "Codex environment setup complete"
+echo "LFS: $LFS"
+echo "Workspace: $LFS_WORKSPACE"
+echo "Build Profile: $BUILD_PROFILE"
+```
+
+### 3. Execute setup
+```bash
+chmod +x codex_script.sh
+./codex_script.sh
+```
+
+## 📊 Current Build Status (AUTO-UPDATED)
+
+**Active Build**: NO
+**Build Profile**: desktop_gnome
+**Current Phase**: Initialization
+**Progress**: 0% complete
+**Estimated Time Remaining**: N/A
+**Last Update**: 2025-07-16 (Initial setup)
+
+## 🔥 Current Task (UPDATED PER FAILURE)
+
+**Status**: AWAITING INITIAL BUILD
+**Task Type**: SETUP_VALIDATION
+**Priority**: HIGH
+
+**Required Action for Codex**:
+1. **Execute Bootstrap**: Run codex_script.sh to set up environment
+2. **Validate Installation**: Run `./lfs-validate` to check system readiness
+3. **Test Docker Setup**: Verify `docker-compose ps` and container health
+4. **Run Initial Build**: Execute `./lfs-build` if validation passes
+5. **Monitor Progress**: Watch logs for any errors or failures
+
+**Success Criteria**: 
+- All validation checks pass
+- Docker containers start successfully
+- Build process begins without errors
+- No critical path issues detected
+
+**Next Steps**: Upon any failure, create GitHub issue with full diagnostic context and update this task section.
+
+## ⚠️ CODEX SAFETY DIRECTIVE
+
+**INFRASTRUCTURE/UNSAFE CHANGES DETECTED**:
+DO NOT MODIFY CODE. Instead:
+
+1. **Create GitHub Issue**:
+   ```json
+   {
+     "title": "Infrastructure Change Required: [description]",
+     "body": "**Error**: [error_summary]\n**File**: [file_path]\n**Action**: [required_change]\n**Logs**: [relevant_snippet]\n**Build Phase**: [current_phase]\n**Container Status**: [docker_ps_output]",
+     "labels": ["infra", "priority:high", "codex-escalation"]
+   }
+   ```
+
+2. **Update AGENTS.md Current Task Section**
+3. **TERMINATE SESSION IMMEDIATELY**
+
+**Forbidden Actions**:
+- Direct file modifications in `/mnt/lfs`
+- Docker system prune operations
+- Changing critical build scripts
+- Modifying environment variables without approval
+- Removing or recreating containers
+
+## 🔒 WARP TERMINAL AGENT RULES
+
+### Rule 1: MANDATORY PATH VALIDATION
+```bash
+# BEFORE ANY TOOL EXECUTION - VALIDATE PATHS
+REQUIRED_PATHS: [
+    "/mnt/lfs",
+    "/mnt/Auto-LFS-Builder",
+    "/mnt/Auto-LFS-Builder/install.sh",
+    "/mnt/Auto-LFS-Builder/lfs-build.sh",
+    "/mnt/Auto-LFS-Builder/lfs-builder.env"
+]
+
+FOR_EACH_PATH:
+    IF NOT EXISTS: create_github_issue("Missing Critical Path: $PATH")
+    THEN: terminate_session()
+```
+
+### Rule 2: ENVIRONMENT ACTIVATION PROTOCOL
+```bash
+# MANDATORY - Execute BEFORE any build action
+REQUIRED_SEQUENCE: [
+    "cd /mnt/Auto-LFS-Builder",
+    "source ./lfs-builder.env",
+    "source ./activate"
+]
+
+VALIDATION_COMMANDS: [
+    "echo $LFS",
+    "echo $LFS_WORKSPACE", 
+    "echo $BUILD_PROFILE"
+]
+
+IF_VALIDATION_FAILS: create_github_issue("Environment Activation Failed")
+```
+
+### Rule 3: FAILURE DETECTION & ISSUE CREATION
+```bash
+# MANDATORY ERROR HANDLING
+MONITOR_COMMANDS: [
+    "docker-compose logs -f lfs-builder",
+    "tail -f /mnt/Auto-LFS-Builder/logs/build.log",
+    "./lfs-validate"
+]
+
+ERROR_PATTERNS: [
+    "ERROR:",
+    "FAILED:",
+    "make.*Error",
+    "configure: error",
+    "No space left on device",
+    "Permission denied",
+    "command not found"
+]
+
+ON_ERROR_DETECTED: {
+    EXTRACT_CONTEXT: {
+        "file_path": "$(grep -n 'ERROR' logfile | head -1)",
+        "error_message": "$(grep -A5 -B5 'ERROR' logfile)",
+        "build_phase": "$(grep 'Building' logfile | tail -1)"
+    }
     
-    if (( $(echo "$available_memory < 2.0" | bc -l) )); then
-        log_warning "Low memory detected: ${available_memory}GB available"
-        reduce_parallel_jobs
-    fi
+    CREATE_ISSUE: {
+        "title": "LFS Build Failure: [specific_error]",
+        "body": "**Error**: [error_message]\n**File**: [file_path]\n**Phase**: [build_phase]\n**Context**: [log_snippet]",
+        "labels": ["lfs-build-failure", "priority:high"]
+    }
+    
+    TERMINATE_SESSION: true
 }
 ```
 
-## Security and Verification Standards
+## 🛠️ MCP Tool Configuration
 
-### Package Verification
-
-- **GPG signature verification**: Verify all downloaded packages
-- **Checksum validation**: SHA-256 checksum verification
-- **Source authenticity**: Download only from official sources
-- **Build environment isolation**: Use chroot/container environments
-
-### Security Hardening
-
-```bash
-# Security configuration during build
-apply_security_hardening() {
-    # Enable stack protection
-    export CFLAGS="$CFLAGS -fstack-protector-strong"
-    
-    # Position independent executables
-    export CFLAGS="$CFLAGS -fpie"
-    export LDFLAGS="$LDFLAGS -pie"
-    
-    # Remove debug symbols in production
-    export CFLAGS="$CFLAGS -s"
+### GitHub MCP Server
+```json
+{
+  "name": "github-lfs-builder",
+  "command": "github-mcp-server",
+  "args": ["--token", "${GITHUB_TOKEN}"],
+  "env": {
+    "GITHUB_OWNER": "c1nderscript",
+    "GITHUB_REPO": "Auto-LFS-Builder"
+  },
+  "start_on_launch": true
 }
 ```
 
-## Continuous Integration and Automation
-
-### Automated Testing Pipeline
-
-```bash
-# Automated build verification
-run_ci_pipeline() {
-    log_info "Starting CI pipeline for LFS build"
-    
-    # Phase 1: Documentation validation
-    validate_documentation_integrity
-    
-    # Phase 2: Generated script testing
-    test_generated_scripts
-    
-    # Phase 3: Virtual machine build test
-    run_vm_build_test
-    
-    # Phase 4: Hardware compatibility test
-    run_hardware_compatibility_test
-}
-```
-### GitHub Actions Integration
-
-Use a GitHub workflow to run `tests/run_tests.sh` for each push and pull request. This workflow should execute the `run_ci_pipeline` function on an Ubuntu runner.
-
-
-## Troubleshooting and Debug Support
-
-### Common Build Issues and Automated Solutions
-
-```bash
-# Automated problem detection and resolution
-detect_and_fix_issues() {
-    # Check for common LFS build problems
-    if ! check_toolchain_integrity; then
-        log_error "Toolchain integrity check failed"
-        rebuild_toolchain
-    fi
-    
-    # Verify GNOME dependencies
-    if ! check_gnome_dependencies; then
-        log_error "GNOME dependencies missing"
-        install_missing_gnome_deps
-    fi
-    
-    # Network configuration validation
-    if ! test_network_connectivity; then
-        log_error "Network configuration failed"
-        reconfigure_networking
-    fi
+### Code Sandbox MCP
+```json
+{
+  "name": "lfs-sandbox",
+  "command": "code-sandbox-mcp",
+  "args": ["--image", "ubuntu:22.04"],
+  "env": {
+    "WORKSPACE": "/workspace",
+    "LFS_DIR": "/mnt/lfs"
+  },
+  "start_on_launch": false
 }
 ```
 
-## Documentation Synchronization and Updates
-
-### Keeping Documentation Current
-
-```bash
-# Automated documentation updates
-update_documentation() {
-    log_info "Updating LFS documentation sources"
-    
-    # Update LFS book
-    cd docs/lfs && git pull origin master
-    
-    # Update BLFS book  
-    cd ../blfs && git pull origin master
-    
-    # Update JHALFS
-    cd ../jhalfs && git pull origin master
-    
-    # Regenerate build scripts if documentation changed
-    if documentation_changed; then
-        log_info "Documentation updated, regenerating build scripts"
-        ./src/parsers/regenerate_all_scripts.sh
-    fi
+### Docker MCP Server
+```json
+{
+  "name": "lfs-docker",
+  "command": "mcp-server-docker",
+  "args": ["--privileged"],
+  "env": {
+    "DOCKER_BUILDKIT": "1"
+  },
+  "start_on_launch": false
 }
 ```
 
-## Final Output Requirements
+## 🏗️ Build Process Workflows
 
-Your primary deliverable as a Codex agent must be a **complete, fully functional build automation system** that:
+### Standard Build Workflow
+1. **Initialization**: Source environment and validate paths
+2. **Preparation**: Run `./lfs-validate` to check system readiness
+3. **Container Setup**: Start Docker containers with `docker-compose up --build`
+4. **Build Execution**: Monitor logs and progress
+5. **Completion**: Extract artifacts and create ISO if enabled
 
-1. **Reads and processes all documentation** in the docs/ folder
-2. **Generates working shell scripts** that build a complete LFS system
-3. **Includes full GNOME desktop environment** with networking capabilities
-4. **Creates self-installing media** that can deploy on target hardware
-5. **Provides comprehensive logging and error handling**
-6. **Includes validation and testing automation**
+### Build Monitoring Commands
+```bash
+# Primary monitoring commands
+docker-compose logs -f lfs-builder
+tail -f /mnt/Auto-LFS-Builder/logs/build.log
+watch -n 30 'df -h /mnt/lfs'
+docker stats --no-stream
+```
 
-The generated `complete_build.sh` script should be able to take a bare metal system and produce a fully functional Linux desktop environment without any manual intervention.
+### Build Profiles Available
+- **desktop_gnome**: Full GNOME desktop with networking
+- **minimal**: Base LFS system only
+- **server**: Server configuration with networking, no GUI
+- **developer**: Development tools and environment
 
-------
+## 🔍 Validation Requirements
 
-**Remember**: This is a documentation-driven automation project. Your success depends on accurately parsing and implementing the build instructions found in the comprehensive documentation provided in the docs/ folder. Every generated script must be traceable back to its source documentation and include proper error handling and validation.
+### Pre-Build Validation Checklist
+- [ ] All required paths exist and are accessible
+- [ ] Environment variables properly set
+- [ ] Docker and docker-compose installed and running
+- [ ] Minimum 50GB free space in `/mnt/lfs`
+- [ ] All required build tools available
+- [ ] Network connectivity for package downloads
+
+### Post-Build Validation
+- [ ] LFS system successfully created
+- [ ] All build phases completed without errors
+- [ ] ISO file created (if enabled)
+- [ ] System boots successfully
+- [ ] All required packages installed
+
+## 📋 Common Issues and Solutions
+
+### Issue: Docker Container Won't Start
+**Symptoms**: `docker-compose up` fails
+**Diagnosis**: Check `docker-compose logs lfs-builder`
+**Action**: Create issue with full docker logs
+
+### Issue: Build Fails During Compilation
+**Symptoms**: make errors in build log
+**Diagnosis**: Check specific package being built
+**Action**: Create issue with error context and build phase
+
+### Issue: Insufficient Disk Space
+**Symptoms**: "No space left on device"
+**Diagnosis**: Check `df -h /mnt/lfs`
+**Action**: Create issue with disk usage information
+
+### Issue: Permission Denied Errors
+**Symptoms**: Permission errors in logs
+**Diagnosis**: Check ownership of `/mnt/lfs`
+**Action**: Create issue with permission details
+
+## 🚨 Emergency Procedures
+
+### Build Failure Recovery
+1. **Stop a
