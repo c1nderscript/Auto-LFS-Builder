@@ -121,12 +121,17 @@ log_phase() {
 # Improved error handling to prevent loops
 CLEANUP_CALLED=false
 cleanup() {
+    local status=$?
     if [[ "$CLEANUP_CALLED" == "true" ]]; then
         return 0  # Prevent recursive cleanup calls
     fi
     CLEANUP_CALLED=true
-    
-    log_error "Build interrupted or failed"
+
+    if [[ $status -ne 0 ]]; then
+        log_error "Build interrupted or failed (exit code $status)"
+    else
+        log_success "Build completed successfully"
+    fi
     log_info "Cleaning up..."
     
     # Show current location and status
@@ -143,7 +148,7 @@ cleanup() {
 }
 
 # Set trap but disable exit on error temporarily for better control
-trap cleanup ERR
+trap cleanup ERR EXIT
 
 # Validate environment
 validate_environment() {
