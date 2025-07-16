@@ -32,8 +32,8 @@ LFS_WORKSPACE="${LFS_WORKSPACE:-/lfs-build/workspace}"
 BUILD_PROFILE="${BUILD_PROFILE:-desktop_gnome}"
 PARALLEL_JOBS="${PARALLEL_JOBS:-$(nproc)}"
 LFS_VERSION="${LFS_VERSION:-development}"
-ENABLE_GNOME="${ENABLE_GNOME:-true}"
-ENABLE_NETWORKING="${ENABLE_NETWORKING:-true}"
+GNOME_ENABLED="${GNOME_ENABLED:-true}"
+NETWORKING_ENABLED="${NETWORKING_ENABLED:-true}"
 CREATE_ISO="${CREATE_ISO:-true}"
 ISO_VOLUME="${ISO_VOLUME:-AUTO_LFS}"
 ISO_OUTPUT="${ISO_OUTPUT:-${LFS_WORKSPACE}/auto-lfs.iso}"
@@ -480,7 +480,7 @@ EOF
 
 # Install networking (if enabled)
 install_networking() {
-    if [[ "$ENABLE_NETWORKING" == "true" ]]; then
+    if [[ "$NETWORKING_ENABLED" == "true" ]]; then
         log_phase "Installing Network Configuration"
         
         # Ensure sysconfig directory exists
@@ -511,7 +511,7 @@ EOF
 
 # Install GNOME (if enabled)
 install_gnome() {
-    if [[ "$ENABLE_GNOME" == "true" ]]; then
+    if [[ "$GNOME_ENABLED" == "true" ]]; then
         log_phase "Installing GNOME Desktop (Basic Setup)"
         
         # Create basic X11 configuration
@@ -623,8 +623,8 @@ main() {
     log_info "Build Profile: $BUILD_PROFILE"
     log_info "Parallel Jobs: $PARALLEL_JOBS"
     log_info "LFS Workspace: $LFS_WORKSPACE"
-    log_info "GNOME Enabled: $ENABLE_GNOME"
-    log_info "Networking Enabled: $ENABLE_NETWORKING"
+    log_info "GNOME Enabled: $GNOME_ENABLED"
+    log_info "Networking Enabled: $NETWORKING_ENABLED"
     log_info "Create ISO: $CREATE_ISO"
     echo
     
