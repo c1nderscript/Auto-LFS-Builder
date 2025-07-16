@@ -1,1 +1,13 @@
 workspace/sources/*.tar.xz
+
+# Python artifacts
+__pycache__/
+*.pyc
+.coverage
+
+# Build logs and test results
+logs/
+test_results/
+
+# Workspace generated files
+workspace/
