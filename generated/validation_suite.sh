@@ -22,13 +22,27 @@ log_warning() { echo -e "${YELLOW}[WARNING]${NC} $*"; }
 check_binary_exists() {
     local bin="$1"
     local msg="$2"
-    if ! command -v "$bin" >/dev/null 2>&1; then
-        log_error "$msg ($bin not found)"
-        return 1
-    else
+    local alt_bins="${3:-}"
+    
+    # First try the main binary
+    if command -v "$bin" >/dev/null 2>&1; then
         log_success "$bin found"
         return 0
     fi
+    
+    # If main binary not found, try alternatives
+    if [[ -n "$alt_bins" ]]; then
+        IFS=',' read -ra BINS <<< "$alt_bins"
+        for alt in "${BINS[@]}"; do
+            if command -v "$alt" >/dev/null 2>&1; then
+                log_success "$msg found (as $alt)"
+                return 0
+            fi
+        done
+    fi
+    
+    log_error "$msg ($bin not found)"
+    return 1
 }
 
 # Check system requirements
@@ -101,9 +115,9 @@ check_build_tools() {
         "sed:Stream editor"
         "grep:Pattern matching"
         "binutils:Binary utilities"
-        "coreutils:Core utilities"
-        "findutils:Find utilities"
-        "diffutils:Diff utilities"
+        "coreutils:Core utilities:ls,cat,cp"
+        "findutils:Find utilities:find,xargs"
+        "diffutils:Diff utilities:diff,cmp"
         "m4:Macro processor"
     )
     

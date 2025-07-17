@@ -5,6 +5,16 @@ set -euo pipefail
 export CI=true
 
 # basic unit test for validation_suite functions
+
+# Ensure generated directory exists
+mkdir -p generated
+
+# Copy validation suite if it doesn't exist
+if [[ ! -f generated/validation_suite.sh ]]; then
+    cp scripts/templates/validation_suite.sh.template generated/validation_suite.sh
+fi
+
+# Source validation suite
 source generated/validation_suite.sh
 
 check_binary_exists bash "bash missing"

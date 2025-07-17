@@ -146,9 +146,6 @@ services:
       retries: 3
       start_period: 60s
 
-    # Dependencies
-    depends_on:
-      - lfs-monitor
 
   # Optional monitoring container
   lfs-monitor:

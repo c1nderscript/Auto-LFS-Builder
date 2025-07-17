@@ -12,4 +12,13 @@ export NETWORKING_ENABLED="true"
 export VERIFY_PACKAGES="false"
 export CHECKSUM_VALIDATION="sha256"
 
+# Ensure generated directory exists
+mkdir -p generated
+
+# Copy validation suite if it doesn't exist
+if [[ ! -f generated/validation_suite.sh ]]; then
+    cp scripts/templates/validation_suite.sh.template generated/validation_suite.sh
+fi
+
+# Run validation suite
 bash generated/validation_suite.sh
