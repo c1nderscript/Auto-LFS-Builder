@@ -19,6 +19,13 @@ services:
       - ./workspace:/lfs-build/workspace
       - ./logs:/lfs-build/logs
       - ./config:/lfs-build/config
+      # jhalfs directories
+      - type: volume
+        source: jhalfs_build
+        target: /mnt/build_dir
+      - type: volume
+        source: jhalfs_sources
+        target: /usr/src
       
       # Persistent volumes
       - type: volume
@@ -189,6 +196,22 @@ volumes:
       type: none
       o: bind
       device: ${PWD}/.ccache
+
+  jhalfs_build:
+    name: jhalfs_build
+    driver: local
+    driver_opts:
+      type: none
+      o: bind
+      device: ${PWD}/jhalfs-build
+
+  jhalfs_sources:
+    name: jhalfs_sources
+    driver: local
+    driver_opts:
+      type: none
+      o: bind
+      device: ${PWD}/jhalfs-sources
 
 # Network configuration
 networks:
