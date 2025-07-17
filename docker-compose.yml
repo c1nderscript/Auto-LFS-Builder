@@ -7,7 +7,6 @@ services:
         PARALLEL_JOBS: 16
         CCACHE_SIZE: 10G
       dockerfile: Dockerfile
-      target: ""
       labels:
         - "project=auto-lfs-builder"
         - "component=lfs-builder"
