@@ -39,8 +39,9 @@ sed -i -f /tmp/fix_core_packages.sed lfs-build.sh
 # Fix 3: Standardize environment variables in lfs-build.sh
 echo "🔧 Standardizing environment variables..."
 
-sed -i 's/GNOME_ENABLED/GNOME_ENABLED/g' lfs-build.sh
-sed -i 's/NETWORKING_ENABLED/NETWORKING_ENABLED/g' lfs-build.sh
+# Rename deprecated variable names
+sed -i 's/ENABLE_GNOME/GNOME_ENABLED/g' lfs-build.sh
+sed -i 's/ENABLE_NETWORKING/NETWORKING_ENABLED/g' lfs-build.sh
 
 # Fix 4: Add missing tools to core tools list
 echo "🔧 Adding missing tools to build list..."
@@ -121,10 +122,14 @@ else
 fi
 
 # Check if environment variables were standardized
-if grep -q "GNOME_ENABLED" lfs-build.sh && ! grep -q "GNOME_ENABLED" lfs-build.sh; then
+if grep -q "GNOME_ENABLED" lfs-build.sh \
+   && grep -q "NETWORKING_ENABLED" lfs-build.sh \
+   && ! grep -q "ENABLE_GNOME" lfs-build.sh \
+   && ! grep -q "ENABLE_NETWORKING" lfs-build.sh; then
     echo "✅ Environment variables standardized"
 else
     echo "❌ Environment variable standardization incomplete"
+    exit 1
 fi
 
 # Check if additional packages were added
