@@ -30,6 +30,18 @@ cd Auto-LFS-Builder
 docker compose up --build
 ```
 
+## Directory Setup
+
+Before running the container, create the directories used for bind mounts and
+ensure they are writable by Docker:
+
+```bash
+mkdir -p output lfs-mount .ccache
+sudo chown -R 1000:1000 output lfs-mount .ccache
+```
+
+Run `docker compose up --build` after preparing these directories.
+
 ## Container Structure
 
 The build container uses several mounted volumes:
