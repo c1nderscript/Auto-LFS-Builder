@@ -1,9 +1,74 @@
+from __future__ import annotations
+
+from lxml import etree
+from typing import Optional, Dict, Any
+import logging
+
+logger = logging.getLogger(__name__)
+
+class XMLParseError(Exception):
+    """Custom exception for XML parsing errors"""
+    pass
+
+def parse_xml(content: str) -> Dict[str, Any]:
+    """
+    Parse XML content using lxml with robust error handling.
+    
+    Args:
+        content: String containing XML data
+        
+    Returns:
+        Dict containing parsed XML data
+        
+    Raises:
+        XMLParseError: If there are issues parsing the XML content
+    """
+    try:
+        # Create a parser with error recovery enabled
+        parser = etree.XMLParser(recover=True)
+        
+        # Parse the XML content
+        tree = etree.fromstring(content.encode('utf-8'), parser=parser)
+        
+        # Check for parser errors
+        if len(parser.error_log) > 0:
+            for error in parser.error_log:
+                logger.warning(f"XML parse warning: {error.message}")
+        
+        # Convert the XML tree to a dictionary structure
+        result = {}
+        
+        # Process the XML tree
+        for element in tree.iter():
+            # Strip namespace if present
+            tag = element.tag.split('}')[-1] if '}' in element.tag else element.tag
+            
+            # Get text content, stripping whitespace
+            text = element.text.strip() if element.text else ""
+            
+            # Store attributes and text content
+            if element.attrib or text:
+                result[tag] = {
+                    'attributes': dict(element.attrib),
+                    'text': text
+                }
+        
+        return result
+        
+    except etree.XMLSyntaxError as e:
+        error_msg = f"Failed to parse XML: {str(e)}"
+        logger.error(error_msg)
+        raise XMLParseError(error_msg)
+        
+    except Exception as e:
+        error_msg = f"Unexpected error parsing XML: {str(e)}"
+        logger.error(error_msg)
+        raise XMLParseError(error_msg)
+
 # SPDX-License-Identifier: MIT
 # Copyright (c) 2025 The LFS Automation Team
 
 """Utilities for parsing LFS documentation files."""
-
-from __future__ import annotations
 
 import argparse
 import re
