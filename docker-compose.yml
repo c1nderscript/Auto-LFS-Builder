@@ -26,6 +26,8 @@ services:
       - type: volume
         source: jhalfs_sources
         target: /usr/src
+      - ./config/jhalfs/configuration:/lfs-build/jhalfs/configuration:ro
+
       
       # Persistent volumes
       - type: volume
@@ -109,6 +111,7 @@ services:
       LFS: "/mnt/lfs"
       LFS_WORKSPACE: "/lfs-build/workspace"
       LC_ALL: "POSIX"
+      JHALFS_CONFIG: "/lfs-build/jhalfs/configuration"
       
       # Compiler flags
       CFLAGS: "-O2 -pipe -march=x86-64 -mtune=generic -fstack-protector-strong"

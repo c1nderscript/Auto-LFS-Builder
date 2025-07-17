@@ -37,6 +37,16 @@ NETWORKING_ENABLED="${NETWORKING_ENABLED:-true}"
 CREATE_ISO="${CREATE_ISO:-true}"
 ISO_VOLUME="${ISO_VOLUME:-AUTO_LFS}"
 ISO_OUTPUT="${ISO_OUTPUT:-${LFS_WORKSPACE}/auto-lfs.iso}"
+JHALFS_CONFIG="${JHALFS_CONFIG:-/lfs-build/jhalfs/configuration}"
+
+# Load jhalfs configuration if available
+if [[ -f "$JHALFS_CONFIG" ]]; then
+    log_output "[INFO] Loading jhalfs config from $JHALFS_CONFIG"
+    # shellcheck disable=SC1090
+    source "$JHALFS_CONFIG"
+else
+    log_output "[WARNING] jhalfs config not found: $JHALFS_CONFIG"
+fi
 
 # Default verbose setting
 VERBOSE="${VERBOSE:-true}"
