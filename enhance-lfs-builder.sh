@@ -439,7 +439,7 @@ mpc-1.3.1.tar.gz
 ```
 
 ### ✅ Environment Variable Conflicts
-**Problem**: Mixed usage of ENABLE_GNOME vs GNOME_ENABLED
+**Problem**: Mixed usage of GNOME_ENABLED vs GNOME_ENABLED
 **Solution**: Standardized all variable names across all files
 
 ### ✅ Docker Configuration Issues

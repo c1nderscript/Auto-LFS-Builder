@@ -6,9 +6,9 @@
 - Added missing GMP, MPFR, MPC packages to download list
 - These are essential for GCC compilation but were missing from packages array
 
-### 2. Environment Variable Inconsistencies
-- Standardized on `GNOME_ENABLED` instead of mixed `ENABLE_GNOME`/`GNOME_ENABLED`
-- Standardized on `NETWORKING_ENABLED` instead of mixed `ENABLE_NETWORKING`/`NETWORKING_ENABLED`
+-### 2. Environment Variable Inconsistencies
+- Standardized on `GNOME_ENABLED`
+- Standardized on `NETWORKING_ENABLED`
 - Updated docker-compose.yml environment variables to match
 
 ### 3. Path Configuration Issues
@@ -62,8 +62,8 @@
 ## Environment Variable Standardization
 
 Changed from mixed usage to consistent naming:
-- `ENABLE_GNOME` → `GNOME_ENABLED` (everywhere)
-- `ENABLE_NETWORKING` → `NETWORKING_ENABLED` (everywhere)
+- `GNOME_ENABLED`
+- `NETWORKING_ENABLED`
 
 ## Quick Start After Fixes
 

@@ -12,7 +12,7 @@ source generated/validation_suite.sh
 
 validate_system() {
     validate_lfs_system || return 1
-    if [ "${ENABLE_GNOME:-false}" = "true" ]; then
+    if [ "${GNOME_ENABLED:-false}" = "true" ]; then
         validate_gnome_desktop || return 1
     fi
 }

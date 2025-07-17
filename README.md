@@ -55,9 +55,9 @@ The original script was missing critical packages needed to build GCC:
 - Added `mpc-1.3.1.tar.gz`
 
 ### Environment Variables
-Standardized all environment variable names:
-- `ENABLE_GNOME` → `GNOME_ENABLED`
-- `ENABLE_NETWORKING` → `NETWORKING_ENABLED`
+Standardized environment variable names:
+- `GNOME_ENABLED`
+- `NETWORKING_ENABLED`
 
 ### Additional Core Packages
 Added missing essential packages:

@@ -28,8 +28,8 @@ This document describes all environment variables, configuration options, and se
 - **`BUILD_OPTIMIZATION`**: Compilation optimization level (`-O2`, `-O3`, `-Os`)
 
 ### Component Control Flags
-- **`ENABLE_GNOME`**: Install GNOME desktop environment (`true`/`false`)
-- **`ENABLE_NETWORKING`**: Configure network stack and tools (`true`/`false`)
+- **`GNOME_ENABLED`**: Install GNOME desktop environment (`true`/`false`)
+- **`NETWORKING_ENABLED`**: Configure network stack and tools (`true`/`false`)
 - **`ENABLE_MULTIMEDIA`**: Include multimedia codecs and tools (`true`/`false`)
 - **`ENABLE_DEVELOPMENT_TOOLS`**: Include compilers and dev tools (`true`/`false`)
 - **`ENABLE_VIRTUALIZATION`**: Support for VM/container tools (`true`/`false`)
@@ -50,8 +50,8 @@ export BUILD_PROFILE="desktop_gnome"
 export PARALLEL_JOBS="auto"
 export PARSING_LOG_LEVEL="DEBUG"
 export VALIDATION_MODE="strict"
-export ENABLE_GNOME="true"
-export ENABLE_NETWORKING="true"
+export GNOME_ENABLED="true"
+export NETWORKING_ENABLED="true"
 export ENABLE_DEVELOPMENT_TOOLS="true"
 export VERIFY_PACKAGES="true"
 export CHECKSUM_VALIDATION="sha256"
@@ -65,8 +65,8 @@ export BUILD_PROFILE="desktop_gnome"
 export PARALLEL_JOBS="$(nproc)"
 export PARSING_LOG_LEVEL="INFO"
 export VALIDATION_MODE="strict"
-export ENABLE_GNOME="true"
-export ENABLE_NETWORKING="true"
+export GNOME_ENABLED="true"
+export NETWORKING_ENABLED="true"
 export ENABLE_MULTIMEDIA="true"
 export SECURITY_HARDENING="true"
 export VERIFY_PACKAGES="true"
@@ -81,8 +81,8 @@ export BUILD_PROFILE="minimal"
 export PARALLEL_JOBS="2"
 export PARSING_LOG_LEVEL="DEBUG"
 export VALIDATION_MODE="permissive"
-export ENABLE_GNOME="false"
-export ENABLE_NETWORKING="true"
+export GNOME_ENABLED="false"
+export NETWORKING_ENABLED="true"
 export VERIFY_PACKAGES="false"  # Speed up CI builds
 export CHECKSUM_VALIDATION="sha256"
 ```
@@ -421,8 +421,8 @@ check_environment_health() {
 # Quick setup for desktop GNOME build
 source venv/bin/activate
 export BUILD_PROFILE="desktop_gnome"
-export ENABLE_GNOME="true"
-export ENABLE_NETWORKING="true"
+export GNOME_ENABLED="true"
+export NETWORKING_ENABLED="true"
 export PARALLEL_JOBS="$(nproc)"
 ./generated/complete_build.sh
 ```
@@ -432,8 +432,8 @@ export PARALLEL_JOBS="$(nproc)"
 # Quick setup for a headless server build
 source venv/bin/activate
 export BUILD_PROFILE="server"
-export ENABLE_GNOME="false"
-export ENABLE_NETWORKING="true"
+export GNOME_ENABLED="false"
+export NETWORKING_ENABLED="true"
 export PARALLEL_JOBS="$(nproc)"
 ./generated/complete_build.sh
 ```
@@ -444,7 +444,7 @@ export PARALLEL_JOBS="$(nproc)"
 source venv/bin/activate
 export BUILD_PROFILE="developer"
 export ENABLE_DEVELOPMENT_TOOLS="true"
-export ENABLE_NETWORKING="true"
+export NETWORKING_ENABLED="true"
 export PARALLEL_JOBS="$(nproc)"
 ./generated/complete_build.sh
 ```
@@ -461,7 +461,7 @@ To execute them manually run:
 
 ```bash
 # Validate the base system
-ENABLE_GNOME=false bash generated/validation_suite.sh
+GNOME_ENABLED=false bash generated/validation_suite.sh
 
 # Run unit tests
 bash tests/run_tests.sh
