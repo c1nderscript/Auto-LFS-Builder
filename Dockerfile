@@ -98,6 +98,11 @@ RUN pacman -S --noconfirm --needed \
 # Clean package cache to reduce image size
 RUN pacman -Scc --noconfirm
 
+# Install utilities needed for jhalfs
+RUN pacman -S --noconfirm --needed \
+    python \
+    make
+
 # Create lfs-builder user with proper permissions
 RUN useradd -m -s /bin/bash -u 1000 -G wheel lfs-builder && \
     echo "lfs-builder ALL=(ALL) NOPASSWD:ALL" >> /etc/sudoers && \
@@ -123,6 +128,9 @@ RUN mkdir -p /usr/lib/ccache/bin /var/cache/ccache && \
 # Copy source files with proper ownership
 COPY --chown=lfs-builder:lfs-builder . .
 
+# Copy jhalfs tool into the image
+COPY --chown=lfs-builder:lfs-builder docs/jhalfs /opt/jhalfs
+
 # Create comprehensive environment setup
 ENV HOME=/home/lfs-builder \
     LFS=/mnt/lfs \
@@ -142,6 +150,9 @@ ENV HOME=/home/lfs-builder \
     VERBOSE=true \
     DEBUG=1 \
     V=1 \
+    JHALFSDIR=/opt/jhalfs \
+    BUILDDIR=/mnt/build_dir \
+    SRC_ARCHIVE=/usr/src \
     LOG_LEVEL=INFO \
     LOG_PATH=/lfs-build/logs/build.log \
     CONFIG_SHELL=/bin/bash \
@@ -301,6 +312,10 @@ EOF
 RUN chmod +x /lfs-build/build-wrapper.sh && \
     chown lfs-builder:lfs-builder /lfs-build/build-wrapper.sh
 
+# Add jhalfs wrapper script
+COPY --chown=lfs-builder:lfs-builder run-jhalfs.sh /lfs-build/run-jhalfs.sh
+RUN chmod +x /lfs-build/run-jhalfs.sh
+
 # Switch to lfs-builder user
 USER lfs-builder
 
@@ -323,7 +338,7 @@ LABEL maintainer="c1nderscript" \
       vcs_ref="$(git rev-parse --short HEAD 2>/dev/null || echo 'unknown')"
 
 # Entry point with enhanced error handling and logging
-ENTRYPOINT ["bash", "-c", "./build-wrapper.sh \"$@\"", "--"]
+ENTRYPOINT ["bash", "-c", "/lfs-build/run-jhalfs.sh && ./build-wrapper.sh \"$@\"", "--"]
 
 # Default command
 CMD []
