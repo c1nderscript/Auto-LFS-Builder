@@ -11,3 +11,5 @@ test_results/
 
 # Workspace generated files
 workspace/
+# Node.js artifacts (project does not use Node)
+package-lock.json
