@@ -97,6 +97,26 @@ The build process follows these steps:
 - **server**: Networking, no GUI
 - **developer**: Development tools
 
+## 🧰 Running jhalfs in Docker
+
+The project includes the [jhalfs](docs/jhalfs/README) automation
+tool. It can be executed inside the container to generate an LFS
+Makefile and run the build interactively. Mount the same directories as
+the normal builder service so jhalfs can access your host volumes:
+`lfs-mount` -> `/mnt/lfs`, `workspace/` -> `/lfs-build/workspace`, and
+`logs/` -> `/lfs-build/logs`.
+
+```bash
+# Launch the jhalfs menu
+docker compose run lfs-builder ./docs/jhalfs/jhalfs
+
+# Run with additional options
+docker compose run lfs-builder ./docs/jhalfs/jhalfs -d /mnt/lfs
+```
+
+For configuration details see `docs/jhalfs/README`,
+`docs/jhalfs/README.BLFS` and related files.
+
 ## 📝 Output Files
 
 After building, you'll find:
