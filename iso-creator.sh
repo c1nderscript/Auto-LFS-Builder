@@ -37,7 +37,7 @@ create_iso_image() {
     fi
     
     # Check if we have a kernel
-    if [[ ! -f "$build_root/boot/vmlinuz"* ]]; then
+    if ! compgen -G "$build_root/boot/vmlinuz*" > /dev/null; then
         log_warning "No kernel found in $build_root/boot/"
         log_info "Creating minimal boot structure"
         mkdir -p "$build_root/boot"
