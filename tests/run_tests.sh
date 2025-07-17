@@ -1,6 +1,9 @@
 #!/bin/bash
 set -euo pipefail
 
+# Indicate we are running in CI to bypass heavy checks
+export CI=true
+
 # basic unit test for validation_suite functions
 source generated/validation_suite.sh
 

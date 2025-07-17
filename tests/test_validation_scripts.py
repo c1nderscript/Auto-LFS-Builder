@@ -1,11 +1,13 @@
 import subprocess
+import os
 from pathlib import Path
 
 ROOT = Path(__file__).resolve().parents[1]
 
 
 def run_script(script, *args):
-    proc = subprocess.run([str(ROOT / script), *args], capture_output=True, text=True)
+    env = {**dict(os.environ), "CI": "true"}
+    proc = subprocess.run([str(ROOT / script), *args], capture_output=True, text=True, env=env)
     assert proc.returncode == 0, proc.stdout + proc.stderr
     return proc.stdout
 

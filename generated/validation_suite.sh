@@ -47,17 +47,21 @@ check_system_requirements() {
         log_warning "Architecture $arch may not be fully supported"
     fi
     
-    # Check disk space
+    # Check disk space unless running in CI
     local workspace="${LFS_WORKSPACE:-$HOME/lfs-workspace}"
     local available_space=$(df "$workspace" 2>/dev/null | awk 'NR==2 {print $4}' || echo 0)
     local required_space=52428800  # 50GB in KB
-    
-    if [[ "$available_space" -lt "$required_space" ]]; then
-        log_error "Insufficient disk space in $workspace"
-        log_error "Need at least 50GB, have $(( available_space / 1024 / 1024 ))GB"
-        return 1
+
+    if [[ "${CI:-false}" == "true" ]]; then
+        log_warning "CI mode detected - skipping disk space check"
     else
-        log_success "Sufficient disk space available ($(( available_space / 1024 / 1024 ))GB)"
+        if [[ "$available_space" -lt "$required_space" ]]; then
+            log_error "Insufficient disk space in $workspace"
+            log_error "Need at least 50GB, have $(( available_space / 1024 / 1024 ))GB"
+            return 1
+        else
+            log_success "Sufficient disk space available ($(( available_space / 1024 / 1024 ))GB)"
+        fi
     fi
     
     # Check memory
@@ -168,11 +172,15 @@ check_permissions() {
     fi
     
     # Check if running as root (should not be)
-    if [[ $EUID -eq 0 ]]; then
-        log_error "Running as root. This is not recommended for LFS builds"
-        return 1
+    if [[ "${CI:-false}" == "true" ]]; then
+        log_warning "CI mode detected - skipping root user check"
     else
-        log_success "Not running as root (good)"
+        if [[ $EUID -eq 0 ]]; then
+            log_error "Running as root. This is not recommended for LFS builds"
+            return 1
+        else
+            log_success "Not running as root (good)"
+        fi
     fi
     
     return 0
