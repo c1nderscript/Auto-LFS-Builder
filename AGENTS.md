@@ -130,24 +130,19 @@ chmod +x codex_script.sh
 
 ## 🔥 Current Task (UPDATED PER FAILURE)
 
-**Status**: AWAITING INITIAL BUILD
-**Task Type**: SETUP_VALIDATION
+**Status**: BLOCKED - INFRASTRUCTURE CHANGE
+**Task Type**: VARIABLE RENAMING REQUEST
 **Priority**: HIGH
 
 **Required Action for Codex**:
-1. **Execute Bootstrap**: Run codex_script.sh to set up environment
-2. **Validate Installation**: Run `./lfs-validate` to check system readiness
-3. **Test Docker Setup**: Verify `docker-compose ps` and container health
-4. **Run Initial Build**: Execute `./lfs-build` if validation passes
-5. **Monitor Progress**: Watch logs for any errors or failures
+1. Create GitHub issue describing the requested rename of `ENABLE_GNOME` to `GNOME_ENABLED` and `ENABLE_NETWORKING` to `NETWORKING_ENABLED`.
+2. Await maintainer approval before modifying any build scripts or environment files.
 
-**Success Criteria**: 
-- All validation checks pass
-- Docker containers start successfully
-- Build process begins without errors
-- No critical path issues detected
+**Success Criteria**:
+- GitHub issue created with details of the requested change.
+- Maintainer approves the infrastructure update.
 
-**Next Steps**: Upon any failure, create GitHub issue with full diagnostic context and update this task section.
+**Next Steps**: Update this task section once approval is granted.
 
 ## ⚠️ CODEX SAFETY DIRECTIVE
 
