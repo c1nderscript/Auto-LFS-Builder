@@ -7,6 +7,7 @@ ROOT = Path(__file__).resolve().parents[1]
 
 def run_script(path, *args, env=None):
     env_dict = os.environ.copy()
+    env_dict["CI"] = "true"
     if env:
         env_dict.update(env)
     result = subprocess.run([
