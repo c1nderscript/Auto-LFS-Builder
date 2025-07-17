@@ -172,7 +172,7 @@ export MAKEFLAGS="-j$(nproc)"
 #### Minimal Profile
 ```bash
 export BUILD_PROFILE="arch_minimal"
-export ENABLE_GNOME=false
+export GNOME_ENABLED=false
 export ENABLE_MULTIMEDIA=false
 export CFLAGS="-march=x86-64 -mtune=generic -Os -pipe"
 ```
@@ -209,7 +209,7 @@ export LFS_WORKSPACE="/home/build/lfs-workspace"
 ```bash
 # Build minimal system
 export BUILD_PROFILE="minimal"
-export ENABLE_GNOME=false
+export GNOME_ENABLED=false
 ./lfs-build
 ```
 

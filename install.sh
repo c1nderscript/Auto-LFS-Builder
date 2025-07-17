@@ -22,8 +22,8 @@ VENV_NAME="venv"
 # Default environment variables
 export LFS_WORKSPACE="${HOME}/lfs-workspace"
 export BUILD_PROFILE="desktop_gnome"
-export ENABLE_GNOME="true"
-export ENABLE_NETWORKING="true"
+export GNOME_ENABLED="true"
+export NETWORKING_ENABLED="true"
 export PARALLEL_JOBS="$(nproc)"
 export VALIDATION_MODE="strict"
 export VERIFY_PACKAGES="true"
@@ -222,8 +222,8 @@ export BUILD_PROFILE="$BUILD_PROFILE"
 export PARALLEL_JOBS="$PARALLEL_JOBS"
 
 # Component Control Flags
-export ENABLE_GNOME="$ENABLE_GNOME"
-export ENABLE_NETWORKING="$ENABLE_NETWORKING"
+export GNOME_ENABLED="$GNOME_ENABLED"
+export NETWORKING_ENABLED="$NETWORKING_ENABLED"
 export ENABLE_MULTIMEDIA="true"
 export ENABLE_DEVELOPMENT_TOOLS="true"
 

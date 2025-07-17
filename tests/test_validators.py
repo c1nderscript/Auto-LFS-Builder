@@ -27,5 +27,5 @@ def test_package_tester_runs():
 
 
 def test_system_validator_runs():
-    out = run_script('src/validators/system_validator.sh', env={'ENABLE_GNOME': 'false'})
+    out = run_script('src/validators/system_validator.sh', env={'GNOME_ENABLED': 'false'})
     assert 'System validation complete' in out
