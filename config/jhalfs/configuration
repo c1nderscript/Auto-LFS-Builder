@@ -1,0 +1,3 @@
+# Sample jhalfs configuration
+# Set your jhalfs options here
+JHALFS_OPTION_EXAMPLE=y

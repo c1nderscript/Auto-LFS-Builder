@@ -212,6 +212,22 @@ After successful build:
 - **workspace/**: Build artifacts
 - **logs/**: Build logs
 
+## Running jhalfs Inside the Container
+
+The `docs/jhalfs/` directory ships the upstream **jhalfs** automation
+tool. It may be launched from the container using `docker compose run`.
+Use the same bind mounts as the normal builder so that jhalfs writes to
+your host directories: `lfs-mount` -> `/mnt/lfs`, `workspace/` ->
+`/lfs-build/workspace`, and `logs/` -> `/lfs-build/logs`.
+
+```bash
+# Start the interactive jhalfs menu
+docker compose run lfs-builder ./docs/jhalfs/jhalfs
+```
+
+Refer to `docs/jhalfs/README` and the other READMEs in that directory
+for configuration details and advanced usage.
+
 ## Next Steps
 
 1. **Create Boot Media**

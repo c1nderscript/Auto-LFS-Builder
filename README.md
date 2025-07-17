@@ -41,7 +41,7 @@ docker compose up --build
 - 🔄 **Resumable**: Can continue from interruptions
 - 🧪 **Validated**: Comprehensive testing suite
 
-## 💻 System Requirements
+## 🚀 System Requirements
 
 ### Docker Setup (Recommended)
 - **OS**: Any OS that supports Docker
