@@ -14,8 +14,9 @@ if [[ ! -f generated/validation_suite.sh ]]; then
     cp scripts/templates/validation_suite.sh.template generated/validation_suite.sh
 fi
 
-# Source validation suite
-source generated/validation_suite.sh
+# Source validation suite functions without running main
+# Strip the final invocation to allow sourcing in CI environments
+source <(grep -v 'main \"\$@\"' generated/validation_suite.sh)
 
 check_binary_exists bash "bash missing"
 if check_binary_exists nonexistent_binary "should fail"; then
