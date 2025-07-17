@@ -18,7 +18,7 @@ if [[ -f "$(dirname "$0")/lfs-builder.env" ]]; then
 fi
 
 # Set up logging
-LOG_PATH=/mnt/lfs/logs/build.log
+LOG_PATH="${LOG_PATH:-/lfs-build/logs/build.log}"
 LOG_DIR=$(dirname "$LOG_PATH")
 mkdir -p "$LOG_DIR"
 
@@ -162,7 +162,7 @@ setup_lfs_environment() {
     log_phase "Setting up LFS Environment"
     
     # Create LFS directories
-    export LFS="$LFS_WORKSPACE/lfs"
+    export LFS="${LFS:-/mnt/lfs}"
     mkdir -p "$LFS"
     mkdir -p "$LFS"/{etc,var,usr,tools,home,mnt,proc,sys,dev}
     mkdir -p "$LFS/usr"/{bin,lib,sbin}
